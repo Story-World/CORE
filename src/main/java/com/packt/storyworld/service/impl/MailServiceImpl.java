@@ -8,13 +8,13 @@ import org.springframework.stereotype.Service;
 import com.packt.storyworld.service.MailService;
 
 @Service
-public class MailServiceImpl implements MailService{
-	
+public class MailServiceImpl implements MailService {
+
 	@Autowired
 	private MailSender mailSender;
-	
+
 	private SimpleMailMessage crunchifyMsg;
-	
+
 	@Override
 	public void registration(String toAddress, String name) {
 		crunchifyMsg = new SimpleMailMessage();
