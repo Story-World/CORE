@@ -13,13 +13,6 @@
 				/WEB-INF/spring/webcontext/DispatcherServlet-context.xml
 			</param-value>
 		</init-param>
-		<init-param>
-			<param-name>contextConfigLocation</param-name>
-			<param-value>com.packt.storyworld.config.WebSocketStompConfig, 
-						 com.packt.storyworld.config.MongoDBConfig, 
-						 com.packt.storyworld.config.MySQLConfig, 
-						 com.packt.storyworld.config.MailConfig</param-value>
-		</init-param>
 	</servlet>
 
 	<servlet-mapping>

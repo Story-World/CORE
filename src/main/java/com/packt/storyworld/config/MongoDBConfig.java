@@ -11,9 +11,11 @@ import com.mongodb.MongoClient;
 @EnableMongoRepositories(basePackages = "storyworld.db")
 public class MongoDBConfig extends AbstractMongoConfiguration {
 
+	private static final String PROPERTY_NAME_DATABASE_NAME = "storyworld";
+
 	@Override
 	protected String getDatabaseName() {
-		return "storyworld";
+		return PROPERTY_NAME_DATABASE_NAME;
 	}
 
 	@Override
