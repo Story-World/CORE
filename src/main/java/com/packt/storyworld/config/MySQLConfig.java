@@ -20,7 +20,8 @@ public class MySQLConfig {
 
 	private static final String PROPERTY_NAME_HIBERNATE_DIALECT = "org.hibernate.dialect.MySQL5Dialect";
 	private static final String PROPERTY_NAME_HIBERNATE_SHOW_SQL = "true";
-	private static final String PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN = "com.packt.storyworld.domain";
+	private static final String PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN = "com.packt.storyworld.domain.sql";
+	private static final String PROPERTY_NAME_HIBERNATE_AUTO = "update";
 
 	@Bean
 	public DataSource dataSource() {
@@ -42,6 +43,7 @@ public class MySQLConfig {
 		Properties properties = new Properties();
 		properties.put("hibernate.show_sql", PROPERTY_NAME_HIBERNATE_SHOW_SQL);
 		properties.put("hibernate.dialect", PROPERTY_NAME_HIBERNATE_DIALECT);
+		properties.put("hibernate.hbm2ddl.auto", PROPERTY_NAME_HIBERNATE_AUTO);
 		return properties;
 	}
 }

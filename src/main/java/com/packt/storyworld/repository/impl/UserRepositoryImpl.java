@@ -1,5 +1,6 @@
 package com.packt.storyworld.repository.impl;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,13 +13,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.packt.storyworld.domain.User;
+import com.packt.storyworld.domain.sql.User;
 import com.packt.storyworld.repository.UserRepository;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
 
-	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(UserRepositoryImpl.class);
 
 	@Autowired
@@ -43,6 +43,39 @@ public class UserRepositoryImpl implements UserRepository {
 		session.update(user);
 		session.getTransaction().commit();
 		session.close();
+	}
+
+	@Override
+	public User getUserByName(String name) {
+		Session session = sessionFactory.openSession();
+		@SuppressWarnings("deprecation")
+		Criteria criteria = session.createCriteria(User.class);
+		criteria.add(Restrictions.eq("name", name));
+		List<User> listOfUser = new ArrayList<>(0);
+		listOfUser = criteria.list();
+		User user = new User();
+		if (!listOfUser.isEmpty())
+			user = listOfUser.get(0);
+		session.close();
+		return user;
+	}
+
+	@Override
+	public User register(User user) {
+		Session session = null;
+		try {
+			session = sessionFactory.openSession();
+			session.beginTransaction();
+			session.save(user);
+			session.getTransaction().commit();
+			return user;
+		} catch (Exception e) {
+			session.getTransaction().rollback();
+			log.error("Error when save user ", e);
+		} finally {
+			session.close();
+		}
+		return null;
 	}
 
 }

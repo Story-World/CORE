@@ -1,5 +1,6 @@
-package com.packt.storyworld.domain;
+package com.packt.storyworld.domain.sql;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
@@ -10,7 +11,9 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "USER")
-public class User {
+public class User implements Serializable {
+
+	private static final long serialVersionUID = -3325353040709283369L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

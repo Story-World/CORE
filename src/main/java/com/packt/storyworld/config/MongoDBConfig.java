@@ -8,7 +8,7 @@ import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 
 @Configuration
-@EnableMongoRepositories(basePackages = "storyworld.db")
+@EnableMongoRepositories(basePackages = "com.packt.storyworld.repository")
 public class MongoDBConfig extends AbstractMongoConfiguration {
 
 	private static final String PROPERTY_NAME_DATABASE_NAME = "storyworld";

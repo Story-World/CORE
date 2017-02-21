@@ -1,4 +1,4 @@
-package com.packt.storyworld.domain;
+package com.packt.storyworld.domain.sql;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
