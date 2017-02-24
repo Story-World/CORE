@@ -27,7 +27,7 @@ public class User implements Serializable {
 
 	private String token;
 
-	private LocalDateTime time;
+	private LocalDateTime lastActionTime;
 
 	public int getId() {
 		return id;
@@ -65,12 +65,12 @@ public class User implements Serializable {
 		this.token = token;
 	}
 
-	public LocalDateTime getTime() {
-		return time;
+	public LocalDateTime getLastActionTime() {
+		return lastActionTime;
 	}
 
-	public void setTime(LocalDateTime time) {
-		this.time = time;
+	public void setLastActionTime(LocalDateTime lastActionTime) {
+		this.lastActionTime = lastActionTime;
 	}
 
 }

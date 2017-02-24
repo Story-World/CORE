@@ -2,16 +2,16 @@ package com.packt.storyworld.domain.json;
 
 public class Message {
 
-	private StatusMessage statusMessage;
+	private StatusMessage status;
 
 	private String message;
 
 	public StatusMessage getStatusMessage() {
-		return statusMessage;
+		return status;
 	}
 
-	public void setStatusMessage(StatusMessage statusMessage) {
-		this.statusMessage = statusMessage;
+	public void setStatusMessage(StatusMessage status) {
+		this.status = status;
 	}
 
 	public String getMessage() {

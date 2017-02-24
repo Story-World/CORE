@@ -4,9 +4,9 @@ public class Response {
 
 	private boolean success;
 
-	private Object object;
-
 	private Message message;
+	
+	private JsonUser user;
 
 	public boolean isSuccess() {
 		return success;
@@ -16,20 +16,20 @@ public class Response {
 		this.success = success;
 	}
 
-	public Object getObject() {
-		return object;
-	}
-
-	public void setObject(Object object) {
-		this.object = object;
-	}
-
 	public Message getMessage() {
 		return message;
 	}
 
 	public void setMessage(Message message) {
 		this.message = message;
+	}
+
+	public JsonUser getUser() {
+		return user;
+	}
+
+	public void setUser(JsonUser user) {
+		this.user = user;
 	}
 
 }
