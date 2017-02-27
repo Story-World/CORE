@@ -1,27 +1,16 @@
 package com.packt.storyworld.domain.json;
 
+import com.packt.storyworld.domain.sql.User;
+
 public class Request {
 
-	private String token;
-	
-	private JsonUser user;
-	
-	public String getToken() {
-		return token;
-	}
+	private User user;
 
-	public void setToken(String token) {
-		this.token = token;
-	}
-
-	public JsonUser getUser() {
+	public User getUser() {
 		return user;
 	}
 
-	public void setUser(JsonUser user) {
+	public void setUser(User user) {
 		this.user = user;
 	}
-	
-	
-	
 }
