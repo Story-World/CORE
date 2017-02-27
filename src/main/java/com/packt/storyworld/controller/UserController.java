@@ -4,15 +4,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.packt.storyworld.domain.json.Request;
 import com.packt.storyworld.domain.json.Response;
-import com.packt.storyworld.domain.sql.User;
 import com.packt.storyworld.service.UserService;
 
-@Controller
+@RestController
 @RequestMapping(value = "user")
 public class UserController {
 
@@ -20,19 +21,19 @@ public class UserController {
 	private UserService userService;
 
 	@RequestMapping(value = "login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Response> login(User user) {
+	public ResponseEntity<Response> login(@RequestBody Request request) {
 		Response response = new Response();
 
-		userService.login(user, response);
+		userService.login(request.getUser(), response);
 
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "register", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Response> register(User user) {
+	public ResponseEntity<Response> register(@RequestBody Request request) {
 		Response response = new Response();
 
-		userService.register(user, response);
+		userService.register(request.getUser(), response);
 
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}

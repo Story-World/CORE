@@ -53,7 +53,7 @@ public class UserRepositoryImpl implements UserRepository {
 		criteria.add(Restrictions.eq("name", name));
 		List<User> listOfUser = new ArrayList<>(0);
 		listOfUser = criteria.list();
-		User user = new User();
+		User user = null;
 		if (!listOfUser.isEmpty())
 			user = listOfUser.get(0);
 		session.close();
