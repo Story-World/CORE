@@ -6,11 +6,11 @@ public class Message {
 
 	private String message;
 
-	public StatusMessage getStatusMessage() {
+	public StatusMessage getStatus() {
 		return status;
 	}
 
-	public void setStatusMessage(StatusMessage status) {
+	public void setStatus(StatusMessage status) {
 		this.status = status;
 	}
 
@@ -21,5 +21,7 @@ public class Message {
 	public void setMessage(String message) {
 		this.message = message;
 	}
+
+	
 
 }

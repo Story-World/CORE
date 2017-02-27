@@ -39,14 +39,14 @@ public class UserServiceImpl implements UserService {
 			if (userLogon.getName().equals(request.getUser().getName())
 					&& userLogon.getPassword().equals(request.getUser().getPassword())) {
 				response.setSuccess(true);
-				message.setStatusMessage(StatusMessage.INFO);
+				message.setStatus(StatusMessage.SUCCESS);
 				message.setMessage("LOGIN");
 				response.setUser(request.getUser());
 				response.setMessage(message);
 			}
 		} else {
 			response.setSuccess(false);
-			message.setStatusMessage(StatusMessage.ERROR);
+			message.setStatus(StatusMessage.ERROR);
 			message.setMessage("INCORRECT_DATA");
 			response.setMessage(message);
 		}
@@ -58,13 +58,13 @@ public class UserServiceImpl implements UserService {
 		Message message = new Message();
 		if (userRegister != null) {
 			response.setSuccess(true);
-			message.setStatusMessage(StatusMessage.INFO);
+			message.setStatus(StatusMessage.INFO);
 			message.setMessage("REGISTER");
 			response.setUser(user);
 			response.setMessage(message);
 		} else {
 			response.setSuccess(false);
-			message.setStatusMessage(StatusMessage.ERROR);
+			message.setStatus(StatusMessage.ERROR);
 			message.setMessage("INCORRECT_DATA");
 			response.setMessage(message);
 		}
