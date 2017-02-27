@@ -2,15 +2,20 @@ package com.packt.storyworld.config;
 
 import java.util.Properties;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
-import org.hibernate.SessionFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.orm.hibernate5.LocalSessionFactoryBuilder;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
+@EnableJpaRepositories(value = "com.packt.storyworld.repository.sql")
 public class MySQLConfig {
 
 	private static final String PROPERTY_NAME_DATABASE_DRIVER = "com.mysql.jdbc.Driver";
@@ -33,11 +38,12 @@ public class MySQLConfig {
 		return dataSource;
 	}
 
-	@Bean
-	public SessionFactory sessionFactory() throws Exception {
-		return new LocalSessionFactoryBuilder(dataSource()).scanPackages(PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN)
-				.addProperties(getHibernateProperties()).buildSessionFactory();
-	}
+	/*
+	 * @Bean public SessionFactory sessionFactory() throws Exception { return
+	 * new LocalSessionFactoryBuilder(dataSource()).scanPackages(
+	 * PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN)
+	 * .addProperties(getHibernateProperties()).buildSessionFactory(); }
+	 */
 
 	private Properties getHibernateProperties() {
 		Properties properties = new Properties();
@@ -45,5 +51,27 @@ public class MySQLConfig {
 		properties.put("hibernate.dialect", PROPERTY_NAME_HIBERNATE_DIALECT);
 		properties.put("hibernate.hbm2ddl.auto", PROPERTY_NAME_HIBERNATE_AUTO);
 		return properties;
+	}
+
+	@Bean
+	public EntityManagerFactory entityManagerFactory() {
+		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+		vendorAdapter.setGenerateDdl(true);
+
+		LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
+		factory.setJpaVendorAdapter(vendorAdapter);
+		factory.setPackagesToScan(PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN);
+		factory.setDataSource(dataSource());
+		factory.setJpaProperties(getHibernateProperties());
+		factory.afterPropertiesSet();
+
+		return factory.getObject();
+	}
+
+	@Bean
+	public PlatformTransactionManager transactionManager() {
+		JpaTransactionManager txManager = new JpaTransactionManager();
+		txManager.setEntityManagerFactory(entityManagerFactory());
+		return txManager;
 	}
 }
