@@ -3,7 +3,7 @@ package com.packt.storyworld.scheduling;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import com.packt.storyworld.repository.UserRepository;
+import com.packt.storyworld.repository.sql.UserRepository;
 import com.packt.storyworld.service.UserService;
 
 import org.slf4j.Logger;
@@ -22,6 +22,6 @@ public class TokenScheduler {
 
 	@Scheduled(fixedRate = 60000)
 	public void removeToken() {
-		userRepository.getLogonUsers().forEach(userService::removeToken);
+		userRepository.findByTokenNotNull().forEach(userService::removeToken);
 	}
 }

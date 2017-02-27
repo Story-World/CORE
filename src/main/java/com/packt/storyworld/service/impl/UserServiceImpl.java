@@ -6,13 +6,12 @@ import java.time.temporal.ChronoUnit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.packt.storyworld.domain.json.JsonUser;
 import com.packt.storyworld.domain.json.Message;
 import com.packt.storyworld.domain.json.Request;
 import com.packt.storyworld.domain.json.Response;
 import com.packt.storyworld.domain.json.StatusMessage;
 import com.packt.storyworld.domain.sql.User;
-import com.packt.storyworld.repository.UserRepository;
+import com.packt.storyworld.repository.sql.UserRepository;
 import com.packt.storyworld.service.UserService;
 
 @Service
@@ -26,13 +25,13 @@ public class UserServiceImpl implements UserService {
 		if (ChronoUnit.HOURS.between(user.getLastActionTime(), LocalDateTime.now()) >= 2) {
 			user.setLastActionTime(null);
 			user.setToken(null);
-			userRepository.update(user);
+			userRepository.save(user);
 		}
 	}
 
 	@Override
 	public void login(Request request, Response response) {
-		User userLogon = userRepository.getUserByName(request.getUser().getName());
+		User userLogon = userRepository.findByName(request.getUser().getName());
 		System.out.println(userLogon);
 		Message message = new Message();
 		if (userLogon != null) {
@@ -54,7 +53,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void register(User user, Response response) {
-		User userRegister = userRepository.register(user);
+		User userRegister = userRepository.save(user);
 		Message message = new Message();
 		if (userRegister != null) {
 			response.setSuccess(true);
