@@ -1,12 +1,14 @@
 package com.packt.storyworld.domain.json;
 
+import com.packt.storyworld.domain.sql.User;
+
 public class Response {
 
 	private boolean success;
 
 	private Message message;
 	
-	private JsonUser user;
+	private User user;
 
 	public boolean isSuccess() {
 		return success;
@@ -24,11 +26,11 @@ public class Response {
 		this.message = message;
 	}
 
-	public JsonUser getUser() {
+	public User getUser() {
 		return user;
 	}
 
-	public void setUser(JsonUser user) {
+	public void setUser(User user) {
 		this.user = user;
 	}
 

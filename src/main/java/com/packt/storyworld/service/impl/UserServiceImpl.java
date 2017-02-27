@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService {
 			response.setSuccess(true);
 			message.setStatusMessage(StatusMessage.INFO);
 			message.setMessage("REGISTER");
-			response.setUser(new JsonUser(user));
+			response.setUser(user);
 			response.setMessage(message);
 		} else {
 			response.setSuccess(false);
