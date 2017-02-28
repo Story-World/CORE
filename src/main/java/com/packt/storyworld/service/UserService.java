@@ -10,5 +10,5 @@ public interface UserService {
 
 	public void login(Request request, Response response);
 
-	public void register(User user, Response response);
+	public void register(Request request, Response response);
 }

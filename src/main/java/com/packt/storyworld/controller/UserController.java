@@ -33,7 +33,7 @@ public class UserController {
 	public ResponseEntity<Response> register(@RequestBody Request request) {
 		Response response = new Response();
 
-		userService.register(request.getUser(), response);
+		userService.register(request, response);
 
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}

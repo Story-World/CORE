@@ -9,6 +9,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+
 @Entity
 @Table(name = "USER")
 public class User implements Serializable {
@@ -17,19 +21,22 @@ public class User implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private long id;
 
 	private String name;
 
+	@JsonProperty(access = Access.WRITE_ONLY)
 	private String password;
 
 	private String email;
 
+	@JsonIgnore
 	private String token;
 
+	@JsonIgnore
 	private LocalDateTime lastActionTime;
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 

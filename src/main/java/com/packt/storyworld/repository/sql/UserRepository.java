@@ -8,7 +8,7 @@ import com.packt.storyworld.domain.sql.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-	User findByName(String name);
+	public User findByName(String name);
 
-	List<User> findByTokenNotNull();
+	public List<User> findByTokenNotNull();
 }

@@ -1,5 +1,6 @@
 package com.packt.storyworld.domain.json;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.packt.storyworld.domain.sql.User;
 
 public class Response {
@@ -7,7 +8,8 @@ public class Response {
 	private boolean success;
 
 	private Message message;
-	
+
+	@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 	private User user;
 
 	public boolean isSuccess() {
