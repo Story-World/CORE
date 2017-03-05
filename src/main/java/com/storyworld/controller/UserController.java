@@ -38,4 +38,11 @@ public class UserController {
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
+	@RequestMapping(value = "restart", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Response> restart(@RequestBody Request request) {
+		Response response = new Response();
+
+		return new ResponseEntity<Response>(response, HttpStatus.OK);
+	}
+
 }

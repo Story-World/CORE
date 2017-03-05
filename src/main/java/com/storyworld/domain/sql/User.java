@@ -36,6 +36,15 @@ public class User implements Serializable {
 	@JsonIgnore
 	private LocalDateTime lastActionTime;
 
+	@JsonIgnore
+	private int incorrectLogin;
+
+	@JsonIgnore
+	private boolean block;
+
+	@JsonIgnore
+	private LocalDateTime lastIncoorectLogin;
+
 	public long getId() {
 		return id;
 	}
@@ -78,6 +87,51 @@ public class User implements Serializable {
 
 	public void setLastActionTime(LocalDateTime lastActionTime) {
 		this.lastActionTime = lastActionTime;
+	}
+
+	/**
+	 * @return the incorrectLogin
+	 */
+	public int getIncorrectLogin() {
+		return incorrectLogin;
+	}
+
+	/**
+	 * @param incorrectLogin
+	 *            the incorrectLogin to set
+	 */
+	public void setIncorrectLogin(int incorrectLogin) {
+		this.incorrectLogin = incorrectLogin;
+	}
+
+	/**
+	 * @return the block
+	 */
+	public boolean isBlock() {
+		return block;
+	}
+
+	/**
+	 * @param block
+	 *            the block to set
+	 */
+	public void setBlock(boolean block) {
+		this.block = block;
+	}
+
+	/**
+	 * @return the lastIncoorectLogin
+	 */
+	public LocalDateTime getLastIncoorectLogin() {
+		return lastIncoorectLogin;
+	}
+
+	/**
+	 * @param lastIncoorectLogin
+	 *            the lastIncoorectLogin to set
+	 */
+	public void setLastIncoorectLogin(LocalDateTime lastIncoorectLogin) {
+		this.lastIncoorectLogin = lastIncoorectLogin;
 	}
 
 }

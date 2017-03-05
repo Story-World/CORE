@@ -2,6 +2,7 @@ package com.storyworld.service.impl;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,7 +11,10 @@ import com.storyworld.domain.json.Message;
 import com.storyworld.domain.json.Request;
 import com.storyworld.domain.json.Response;
 import com.storyworld.domain.json.StatusMessage;
+import com.storyworld.domain.sql.Mail;
 import com.storyworld.domain.sql.User;
+import com.storyworld.enums.Status;
+import com.storyworld.repository.sql.MailReposiotory;
 import com.storyworld.repository.sql.UserRepository;
 import com.storyworld.service.UserService;
 
@@ -19,6 +23,9 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private MailReposiotory mailReposiotory;
 
 	@Override
 	public void removeToken(User user) {
@@ -33,26 +40,28 @@ public class UserServiceImpl implements UserService {
 	public void login(Request request, Response response) {
 		User userLogon = userRepository.findByName(request.getUser().getName());
 		Message message = new Message();
-<<<<<<< HEAD:src/main/java/com/packt/storyworld/service/impl/UserServiceImpl.java
 		if (userLogon != null && userLogon.getName().equals(request.getUser().getName())
-				&& userLogon.getPassword().equals(request.getUser().getPassword())) {
+				&& userLogon.getPassword().equals(request.getUser().getPassword()) && !userLogon.isBlock()
+				&& ChronoUnit.MINUTES.between(userLogon.getLastIncoorectLogin(), LocalDateTime.now()) >= 10) {
+			userLogon.setToken(UUID.randomUUID().toString());
+			userLogon.setLastActionTime(LocalDateTime.now());
+			userRepository.save(userLogon);
 			response.setSuccess(true);
-			message.setStatusMessage(StatusMessage.INFO);
+			message.setStatus(StatusMessage.SUCCESS);
 			message.setMessage("LOGIN");
-			response.setUser(userLogon);
+			response.setUser(request.getUser());
 			response.setMessage(message);
-=======
-		if (userLogon != null) {
-			if (userLogon.getName().equals(request.getUser().getName())
-					&& userLogon.getPassword().equals(request.getUser().getPassword())) {
-				response.setSuccess(true);
-				message.setStatus(StatusMessage.SUCCESS);
-				message.setMessage("LOGIN");
-				response.setUser(request.getUser());
-				response.setMessage(message);
-			}
->>>>>>> 0f1b820abcd7f476f4f56d35a01eee31c02e1926:src/main/java/com/storyworld/service/impl/UserServiceImpl.java
 		} else {
+			if (userLogon != null) {
+				int incrementIncorrect = userLogon.getIncorrectLogin();
+				incrementIncorrect++;
+				userLogon.setIncorrectLogin(incrementIncorrect);
+				if (userLogon.getIncorrectLogin() == 5) {
+					userLogon.setBlock(true);
+					userLogon.setLastIncoorectLogin(LocalDateTime.now());
+				}
+				userRepository.save(userLogon);
+			}
 			response.setSuccess(false);
 			message.setStatus(StatusMessage.ERROR);
 			message.setMessage("INCORRECT_DATA");
@@ -61,38 +70,28 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-<<<<<<< HEAD:src/main/java/com/packt/storyworld/service/impl/UserServiceImpl.java
 	public void register(Request request, Response response) {
-		if (request.getUser() != null) {
-			User userRegister = userRepository.save(request.getUser());
+		User user = request.getUser();
+		if (user.getEmail() != null && user.getName() != null && user.getPassword() != null) {
+			User userRegister = userRepository.save(user);
 			Message message = new Message();
 			if (userRegister != null) {
 				response.setSuccess(true);
-				message.setStatusMessage(StatusMessage.INFO);
+				message.setStatus(StatusMessage.INFO);
 				message.setMessage("REGISTER");
+				response.setUser(userRegister);
 				response.setMessage(message);
+				Mail mail = new Mail();
+				mail.setStatus(Status.READY);
+				mail.setTemplate("REGISTER");
+				mail.setEmail(userRegister.getEmail());
+				mailReposiotory.save(mail);
 			} else {
 				response.setSuccess(false);
-				message.setStatusMessage(StatusMessage.ERROR);
+				message.setStatus(StatusMessage.ERROR);
 				message.setMessage("INCORRECT_DATA");
 				response.setMessage(message);
 			}
-=======
-	public void register(User user, Response response) {
-		User userRegister = userRepository.save(user);
-		Message message = new Message();
-		if (userRegister != null) {
-			response.setSuccess(true);
-			message.setStatus(StatusMessage.INFO);
-			message.setMessage("REGISTER");
-			response.setUser(user);
-			response.setMessage(message);
-		} else {
-			response.setSuccess(false);
-			message.setStatus(StatusMessage.ERROR);
-			message.setMessage("INCORRECT_DATA");
-			response.setMessage(message);
->>>>>>> 0f1b820abcd7f476f4f56d35a01eee31c02e1926:src/main/java/com/storyworld/service/impl/UserServiceImpl.java
 		}
 	}
 
