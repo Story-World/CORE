@@ -14,6 +14,8 @@ public class Response {
 	
 	private User user;
 	
+	private List<User> users;
+	
 	private List<FavouritePlaces> favouritePlaces;
 
 	public boolean isSuccess() {
@@ -38,6 +40,14 @@ public class Response {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public List<User> getUsers() {
+		return users;
+	}
+
+	public void setUsers(List<User> users) {
+		this.users = users;
 	}
 
 	public List<FavouritePlaces> getFavouritePlaces() {

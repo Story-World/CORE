@@ -23,7 +23,7 @@ public class User implements Serializable {
 
 	private String password;
 
-	private String email;
+	private String mail;
 
 	private String token;
 
@@ -50,11 +50,11 @@ public class User implements Serializable {
 	}
 
 	public String getEmail() {
-		return email;
+		return mail;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setEmail(String mail) {
+		this.mail = mail;
 	}
 
 	public String getToken() {
