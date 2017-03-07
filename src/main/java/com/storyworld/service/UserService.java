@@ -11,4 +11,8 @@ public interface UserService {
 	public void login(Request request, Response response);
 
 	public void register(Request request, Response response);
+
+	public void restartPassword(String email, Response response);
+
+	public void confirmPassword(Request request, Response response);
 }

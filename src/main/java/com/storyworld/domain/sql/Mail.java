@@ -33,10 +33,6 @@ public class Mail implements Serializable {
 		return id;
 	}
 
-	public void setId(long id) {
-		this.id = id;
-	}
-
 	public String getEmail() {
 		return email;
 	}

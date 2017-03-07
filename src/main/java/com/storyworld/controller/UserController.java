@@ -39,10 +39,20 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "restart", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Response> restart(@RequestBody Request request) {
+	public ResponseEntity<Response> restart(@RequestBody String email) {
 		Response response = new Response();
+
+		userService.restartPassword(email, response);
 
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
+	@RequestMapping(value = "confirmPass", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Response> confirmPass(@RequestBody Request request) {
+		Response response = new Response();
+
+		userService.confirmPassword(request, response);
+
+		return new ResponseEntity<Response>(response, HttpStatus.OK);
+	}
 }

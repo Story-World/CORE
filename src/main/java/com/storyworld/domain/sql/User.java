@@ -2,12 +2,20 @@ package com.storyworld.domain.sql;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -23,11 +31,16 @@ public class User implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
+	@Column(unique = true)
 	private String name;
 
 	@JsonProperty(access = Access.WRITE_ONLY)
 	private String password;
 
+	@Transient
+	private String confirmPassword;
+
+	@Column(unique = true)
 	private String email;
 
 	@JsonIgnore
@@ -44,6 +57,12 @@ public class User implements Serializable {
 
 	@JsonIgnore
 	private LocalDateTime lastIncoorectLogin;
+
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private Set<Role> roles = new HashSet<>();
+
+	@OneToOne(cascade = CascadeType.ALL)
+	private RestartPassword restartPassword;
 
 	public long getId() {
 		return id;
@@ -63,6 +82,10 @@ public class User implements Serializable {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getConfirmPassword() {
+		return confirmPassword;
 	}
 
 	public String getEmail() {
@@ -89,49 +112,44 @@ public class User implements Serializable {
 		this.lastActionTime = lastActionTime;
 	}
 
-	/**
-	 * @return the incorrectLogin
-	 */
 	public int getIncorrectLogin() {
 		return incorrectLogin;
 	}
 
-	/**
-	 * @param incorrectLogin
-	 *            the incorrectLogin to set
-	 */
 	public void setIncorrectLogin(int incorrectLogin) {
 		this.incorrectLogin = incorrectLogin;
 	}
 
-	/**
-	 * @return the block
-	 */
 	public boolean isBlock() {
 		return block;
 	}
 
-	/**
-	 * @param block
-	 *            the block to set
-	 */
 	public void setBlock(boolean block) {
 		this.block = block;
 	}
 
-	/**
-	 * @return the lastIncoorectLogin
-	 */
 	public LocalDateTime getLastIncoorectLogin() {
 		return lastIncoorectLogin;
 	}
 
-	/**
-	 * @param lastIncoorectLogin
-	 *            the lastIncoorectLogin to set
-	 */
 	public void setLastIncoorectLogin(LocalDateTime lastIncoorectLogin) {
 		this.lastIncoorectLogin = lastIncoorectLogin;
+	}
+
+	public Set<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Set<Role> roles) {
+		this.roles = roles;
+	}
+
+	public RestartPassword getRestartPassword() {
+		return restartPassword;
+	}
+
+	public void setRestartPassword(RestartPassword restartPassword) {
+		this.restartPassword = restartPassword;
 	}
 
 }
