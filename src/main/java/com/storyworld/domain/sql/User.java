@@ -16,6 +16,10 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.Length;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,16 +35,23 @@ public class User implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
+	@NotNull
 	@Column(unique = true)
+	@Length(min = 1, max = 255)
 	private String name;
 
+	@NotNull
+	@Length(min = 1, max = 255)
 	@JsonProperty(access = Access.WRITE_ONLY)
 	private String password;
 
 	@Transient
 	private String confirmPassword;
 
+	@NotNull
 	@Column(unique = true)
+	@Length(min = 1, max = 255)
+	@Pattern(regexp = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}")
 	private String email;
 
 	@JsonIgnore
@@ -61,6 +72,7 @@ public class User implements Serializable {
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<Role> roles = new HashSet<>();
 
+	@JsonIgnore
 	@OneToOne(cascade = CascadeType.ALL)
 	private RestartPassword restartPassword;
 

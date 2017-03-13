@@ -2,8 +2,12 @@ package com.storyworld.service.impl;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +16,13 @@ import com.storyworld.domain.json.Request;
 import com.storyworld.domain.json.Response;
 import com.storyworld.domain.json.StatusMessage;
 import com.storyworld.domain.sql.Mail;
+import com.storyworld.domain.sql.RestartPassword;
+import com.storyworld.domain.sql.Role;
 import com.storyworld.domain.sql.User;
 import com.storyworld.enums.Status;
 import com.storyworld.repository.sql.MailReposiotory;
+import com.storyworld.repository.sql.RestartPasswordRepository;
+import com.storyworld.repository.sql.RoleRepository;
 import com.storyworld.repository.sql.UserRepository;
 import com.storyworld.service.UserService;
 
@@ -25,7 +33,15 @@ public class UserServiceImpl implements UserService {
 	private UserRepository userRepository;
 
 	@Autowired
+	private RoleRepository roleRepository;
+
+	@Autowired
+	private RestartPasswordRepository restartPasswordRepository;
+
+	@Autowired
 	private MailReposiotory mailReposiotory;
+
+	private static final Logger LOG = LoggerFactory.getLogger(UserServiceImpl.class);
 
 	@Override
 	public void removeToken(User user) {
@@ -73,32 +89,31 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void register(Request request, Response response) {
-		User user = request.getUser();
-		if (user.getEmail() != null && user.getName() != null && user.getPassword() != null) {
-			/*Role role = new Role();
-			role.setName("USER");
+		Message message = new Message();
+		try {
+			User user = request.getUser();
+			User userRegister = userRepository.save(user);
+			Role role = roleRepository.findOne((long) 1);
 			Set<Role> roles = new HashSet<>();
 			roles.add(role);
-			user.setRoles(roles);*/
-			User userRegister = userRepository.save(user);
-			Message message = new Message();
-			if (userRegister != null) {
-				response.setSuccess(true);
-				message.setStatus(StatusMessage.INFO);
-				message.setMessage("REGISTER");
-				response.setUser(userRegister);
-				response.setMessage(message);
-				Mail mail = new Mail();
-				mail.setStatus(Status.READY);
-				mail.setTemplate("REGISTER");
-				mail.setEmail(userRegister.getEmail());
-				mailReposiotory.save(mail);
-			} else {
-				response.setSuccess(false);
-				message.setStatus(StatusMessage.ERROR);
-				message.setMessage("INCORRECT_DATA");
-				response.setMessage(message);
-			}
+			userRegister.setRoles(roles);
+			userRepository.save(userRegister);
+			response.setSuccess(true);
+			message.setStatus(StatusMessage.INFO);
+			message.setMessage("REGISTER");
+			response.setUser(userRegister);
+			response.setMessage(message);
+			Mail mail = new Mail();
+			mail.setStatus(Status.READY);
+			mail.setTemplate("REGISTER");
+			mail.setEmail(userRegister.getEmail());
+			mailReposiotory.save(mail);
+		} catch (Exception e) {
+			LOG.error(e.getMessage());
+			response.setSuccess(false);
+			message.setStatus(StatusMessage.ERROR);
+			message.setMessage("INCORRECT_DATA");
+			response.setMessage(message);
 		}
 	}
 
@@ -126,7 +141,30 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void confirmPassword(Request request, Response response) {
-
+		RestartPassword restartPassword = restartPasswordRepository
+				.findByToken(request.getRestartPassword().getToken());
+		Message message = new Message();
+		if (ChronoUnit.DAYS.between(restartPassword.getValidationTime(), LocalDateTime.now()) >= 1
+				&& restartPassword.getToken().equals(request.getToken())) {
+			User user = userRepository.findByRestartPassword(restartPassword);
+			try {
+				user.setPassword(request.getUser().getPassword());
+				userRepository.save(user);
+				response.setSuccess(true);
+				message.setStatus(StatusMessage.INFO);
+				message.setMessage("RESTARTED");
+				response.setMessage(message);
+			} catch (Exception e) {
+				LOG.error(e.getMessage());
+				message.setStatus(StatusMessage.ERROR);
+				message.setMessage("INCORRECT_DATA");
+				response.setMessage(message);
+			}
+		} else {
+			message.setStatus(StatusMessage.ERROR);
+			message.setMessage("INCORRECT_DATA");
+			response.setMessage(message);
+		}
 	}
 
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.storyworld.domain.sql.RestartPassword;
 import com.storyworld.domain.sql.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -17,4 +18,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	public List<User> findByTokenNotNull();
 
 	public User findByEmail(String email);
+
+	public User findByRestartPassword(RestartPassword restartPassword);
 }
