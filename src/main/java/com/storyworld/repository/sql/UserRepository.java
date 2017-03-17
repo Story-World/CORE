@@ -17,7 +17,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	public List<User> findByTokenNotNull();
 
-	public User findByEmail(String email);
+	public User findByMail(String mail);
 
 	public User findByRestartPassword(RestartPassword restartPassword);
 }

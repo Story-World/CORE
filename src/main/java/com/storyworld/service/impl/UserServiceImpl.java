@@ -91,23 +91,30 @@ public class UserServiceImpl implements UserService {
 	public void register(Request request, Response response) {
 		Message message = new Message();
 		try {
-			User user = request.getUser();
-			User userRegister = userRepository.save(user);
-			Role role = roleRepository.findOne((long) 1);
-			Set<Role> roles = new HashSet<>();
-			roles.add(role);
-			userRegister.setRoles(roles);
-			userRepository.save(userRegister);
-			response.setSuccess(true);
-			message.setStatus(StatusMessage.INFO);
-			message.setMessage("REGISTER");
-			response.setUser(userRegister);
-			response.setMessage(message);
-			Mail mail = new Mail();
-			mail.setStatus(Status.READY);
-			mail.setTemplate("REGISTER");
-			mail.setEmail(userRegister.getEmail());
-			mailReposiotory.save(mail);
+			if (request.getUser().getPassword().equals(request.getUser().getConfirmPassword())) {
+				User user = request.getUser();
+				User userRegister = userRepository.save(user);
+				Role role = roleRepository.findOne((long) 1);
+				Set<Role> roles = new HashSet<>();
+				roles.add(role);
+				userRegister.setRoles(roles);
+				userRepository.save(userRegister);
+				response.setSuccess(true);
+				message.setStatus(StatusMessage.INFO);
+				message.setMessage("REGISTER");
+				response.setUser(userRegister);
+				response.setMessage(message);
+				Mail mail = new Mail();
+				mail.setStatus(Status.READY);
+				mail.setTemplate("REGISTER");
+				mail.setEmail(userRegister.getMail());
+				mailReposiotory.save(mail);
+			} else {
+				response.setSuccess(false);
+				message.setStatus(StatusMessage.ERROR);
+				message.setMessage("INCORRECT_DATA");
+				response.setMessage(message);
+			}
 		} catch (Exception e) {
 			LOG.error(e.getMessage());
 			response.setSuccess(false);
@@ -119,7 +126,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void restartPassword(String email, Response response) {
-		User user = userRepository.findByEmail(email);
+		User user = userRepository.findByMail(email);
 		Message message = new Message();
 		if (user != null) {
 			response.setSuccess(true);
@@ -129,7 +136,7 @@ public class UserServiceImpl implements UserService {
 			Mail mail = new Mail();
 			mail.setStatus(Status.READY);
 			mail.setTemplate("RESTART");
-			mail.setEmail(user.getEmail());
+			mail.setEmail(user.getMail());
 			mailReposiotory.save(mail);
 		} else {
 			response.setSuccess(false);

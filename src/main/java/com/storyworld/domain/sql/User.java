@@ -52,7 +52,7 @@ public class User implements Serializable {
 	@Column(unique = true)
 	@Length(min = 1, max = 255)
 	@Pattern(regexp = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}")
-	private String email;
+	private String mail;
 
 	@JsonIgnore
 	private String token;
@@ -100,12 +100,12 @@ public class User implements Serializable {
 		return confirmPassword;
 	}
 
-	public String getEmail() {
-		return email;
+	public String getMail() {
+		return mail;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setMail(String mail) {
+		this.mail = mail;
 	}
 
 	public String getToken() {
