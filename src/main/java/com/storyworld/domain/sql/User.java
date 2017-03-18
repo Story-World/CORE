@@ -14,7 +14,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -36,17 +35,13 @@ public class User implements Serializable {
 
 	@NotNull
 	@Column(unique = true)
-	@Length(min = 1, max = 255)
+	@Length(min = 4, max = 255)
 	private String name;
 
 	@NotNull
-	@Length(min = 1, max = 255)
+	@Length(min = 6, max = 255)
 	@JsonProperty(access = Access.WRITE_ONLY)
 	private String password;
-
-	@Transient
-	@JsonProperty(access = Access.WRITE_ONLY)
-	private String confirmPassword;
 
 	@NotNull
 	@Column(unique = true)
@@ -90,10 +85,6 @@ public class User implements Serializable {
 
 	public void setPassword(String password) {
 		this.password = password;
-	}
-
-	public String getConfirmPassword() {
-		return confirmPassword;
 	}
 
 	public String getMail() {

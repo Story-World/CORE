@@ -93,35 +93,28 @@ public class UserServiceImpl implements UserService {
 	public void register(Request request, Response response) {
 		Message message = new Message();
 		try {
-			if (request.getUser().getPassword().equals(request.getUser().getConfirmPassword())) {
-				User user = request.getUser();
-				user.setBlock(false);//change to true after ui already
-				User userRegister = userRepository.save(user);
-				Role role = roleRepository.findOne((long) 1);
-				Set<Role> roles = new HashSet<>();
-				roles.add(role);
-				userRegister.setRoles(roles);
-				MailToken mailToken = new MailToken();
-				mailToken.setStatus(TokenStatus.REGISTER);
-				mailToken.setToken(UUID.randomUUID().toString());
-				Set<MailToken> tokens = new HashSet<>();
-				tokens.add(mailToken);
-				mailTokenRepository.save(tokens);
-				response.setSuccess(true);
-				message.setStatus(StatusMessage.INFO);
-				message.setMessage("REGISTER");
-				response.setMessage(message);
-				Mail mail = new Mail();
-				mail.setStatus(Status.READY);
-				mail.setTemplate("TEST1");
-				mail.setEmail(userRegister.getMail());
-				mailReposiotory.save(mail);
-			} else {
-				response.setSuccess(false);
-				message.setStatus(StatusMessage.ERROR);
-				message.setMessage("INCORRECT_DATA");
-				response.setMessage(message);
-			}
+			User user = request.getUser();
+			user.setBlock(false);// change to true after ui already
+			User userRegister = userRepository.save(user);
+			Role role = roleRepository.findOne((long) 1);
+			Set<Role> roles = new HashSet<>();
+			roles.add(role);
+			userRegister.setRoles(roles);
+			MailToken mailToken = new MailToken();
+			mailToken.setStatus(TokenStatus.REGISTER);
+			mailToken.setToken(UUID.randomUUID().toString());
+			Set<MailToken> tokens = new HashSet<>();
+			tokens.add(mailToken);
+			mailTokenRepository.save(tokens);
+			response.setSuccess(true);
+			message.setStatus(StatusMessage.INFO);
+			message.setMessage("REGISTER");
+			response.setMessage(message);
+			Mail mail = new Mail();
+			mail.setStatus(Status.READY);
+			mail.setTemplate("TEST1");
+			mail.setEmail(userRegister.getMail());
+			mailReposiotory.save(mail);
 		} catch (Exception e) {
 			LOG.error(e.getMessage());
 			response.setSuccess(false);
@@ -169,18 +162,12 @@ public class UserServiceImpl implements UserService {
 				&& mailToken.getToken().equals(request.getToken())) {
 			User user = userRepository.findOne(mailToken.getUser().getId());
 			try {
-				if (request.getUser().getPassword().equals(request.getUser().getConfirmPassword())) {
-					user.setPassword(request.getUser().getPassword());
-					userRepository.save(user);
-					response.setSuccess(true);
-					message.setStatus(StatusMessage.INFO);
-					message.setMessage("RESTARTED");
-					response.setMessage(message);
-				} else {
-					message.setStatus(StatusMessage.ERROR);
-					message.setMessage("INCORRECT_DATA");
-					response.setMessage(message);
-				}
+				user.setPassword(request.getUser().getPassword());
+				userRepository.save(user);
+				response.setSuccess(true);
+				message.setStatus(StatusMessage.INFO);
+				message.setMessage("RESTARTED");
+				response.setMessage(message);
 			} catch (Exception e) {
 				LOG.error(e.getMessage());
 				message.setStatus(StatusMessage.ERROR);
@@ -220,15 +207,9 @@ public class UserServiceImpl implements UserService {
 		User user = userRepository.findByToken(request.getToken());
 		Message message = new Message();
 		try {
-			if (request.getUser().getPassword().equals(request.getUser().getConfirmPassword())) {
-				user.setPassword(request.getUser().getPassword());
-				user.setLastActionTime(LocalDateTime.now());
-				userRepository.save(user);
-			} else {
-				message.setStatus(StatusMessage.ERROR);
-				message.setMessage("INCORRECT_DATA");
-				response.setMessage(message);
-			}
+			user.setPassword(request.getUser().getPassword());
+			user.setLastActionTime(LocalDateTime.now());
+			userRepository.save(user);
 		} catch (Exception e) {
 			LOG.error(e.getMessage());
 			message.setStatus(StatusMessage.ERROR);

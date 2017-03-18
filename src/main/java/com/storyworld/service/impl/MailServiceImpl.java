@@ -28,7 +28,7 @@ public class MailServiceImpl implements MailService {
 	private JavaMailSender mailSender;
 
 	@Autowired
-	MailReposiotory mailReposiotory;
+	private MailReposiotory mailReposiotory;
 
 	@Autowired
 	private Configuration freemarkerConfiguration;
