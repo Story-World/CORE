@@ -15,4 +15,10 @@ public interface UserService {
 	public void restartPassword(String email, Response response);
 
 	public void confirmPassword(Request request, Response response);
+
+	public void confirmRegister(Request request, Response response);
+
+	public void changePassword(Request request, Response response);
+
+	public void updateUser(Request request, Response response);
 }

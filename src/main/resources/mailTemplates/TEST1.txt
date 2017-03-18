@@ -1,0 +1,10 @@
+<html>
+    <body>
+        <h3>Dear ${mail.email}, thank you for placing order.</h3>
+ 
+        <div>
+            Your order id is : ${mail.template}.
+        </div>
+        <span>Sent using Velocity Template</span>
+    </body>
+</html>

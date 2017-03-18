@@ -2,7 +2,7 @@ package com.storyworld.domain.json;
 
 import java.util.List;
 
-import com.storyworld.domain.sql.RestartPassword;
+import com.storyworld.domain.sql.MailToken;
 import com.storyworld.domain.sql.User;
 
 public class Request {
@@ -11,7 +11,7 @@ public class Request {
 
 	private User user;
 
-	private RestartPassword restartPassword;
+	private MailToken mailToken;
 
 	private List<FavouritePlaces> favouritePlaces;
 
@@ -31,12 +31,12 @@ public class Request {
 		this.user = user;
 	}
 
-	public RestartPassword getRestartPassword() {
-		return restartPassword;
+	public MailToken getMailToken() {
+		return mailToken;
 	}
 
-	public void setRestartPassword(RestartPassword restartPassword) {
-		this.restartPassword = restartPassword;
+	public void setMailToken(MailToken mailToken) {
+		this.mailToken = mailToken;
 	}
 
 	public List<FavouritePlaces> getFavouritePlaces() {

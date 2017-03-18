@@ -13,7 +13,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
@@ -46,6 +45,7 @@ public class User implements Serializable {
 	private String password;
 
 	@Transient
+	@JsonProperty(access = Access.WRITE_ONLY)
 	private String confirmPassword;
 
 	@NotNull
@@ -54,7 +54,7 @@ public class User implements Serializable {
 	@Pattern(regexp = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}")
 	private String mail;
 
-	@JsonIgnore
+	@JsonProperty(access = Access.READ_ONLY)
 	private String token;
 
 	@JsonIgnore
@@ -67,14 +67,10 @@ public class User implements Serializable {
 	private boolean block;
 
 	@JsonIgnore
-	private LocalDateTime lastIncoorectLogin;
+	private LocalDateTime lastIncorrectLogin;
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<Role> roles = new HashSet<>();
-
-	@JsonIgnore
-	@OneToOne(cascade = CascadeType.ALL)
-	private RestartPassword restartPassword;
 
 	public long getId() {
 		return id;
@@ -140,12 +136,12 @@ public class User implements Serializable {
 		this.block = block;
 	}
 
-	public LocalDateTime getLastIncoorectLogin() {
-		return lastIncoorectLogin;
+	public LocalDateTime getLastIncorrectLogin() {
+		return lastIncorrectLogin;
 	}
 
-	public void setLastIncoorectLogin(LocalDateTime lastIncoorectLogin) {
-		this.lastIncoorectLogin = lastIncoorectLogin;
+	public void setLastIncorrectLogin(LocalDateTime lastIncorrectLogin) {
+		this.lastIncorrectLogin = lastIncorrectLogin;
 	}
 
 	public Set<Role> getRoles() {
@@ -154,14 +150,6 @@ public class User implements Serializable {
 
 	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
-	}
-
-	public RestartPassword getRestartPassword() {
-		return restartPassword;
-	}
-
-	public void setRestartPassword(RestartPassword restartPassword) {
-		this.restartPassword = restartPassword;
 	}
 
 }

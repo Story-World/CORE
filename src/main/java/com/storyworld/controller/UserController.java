@@ -55,4 +55,31 @@ public class UserController {
 
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
+
+	@RequestMapping(value = "confirmRegister", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Response> confirmRegister(@RequestBody Request request) {
+		Response response = new Response();
+
+		userService.confirmRegister(request, response);
+
+		return new ResponseEntity<Response>(response, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "changePassword", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Response> changePassword(@RequestBody Request request) {
+		Response response = new Response();
+
+		userService.changePassword(request, response);
+
+		return new ResponseEntity<Response>(response, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "updateUser", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Response> updateUser(@RequestBody Request request) {
+		Response response = new Response();
+
+		userService.updateUser(request, response);
+
+		return new ResponseEntity<Response>(response, HttpStatus.OK);
+	}
 }

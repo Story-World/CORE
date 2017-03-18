@@ -3,15 +3,22 @@ package com.storyworld.domain.sql;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.storyworld.enums.TokenStatus;
+
 @Entity
-@Table(name = "RESTARTPASSWORD")
-public class RestartPassword implements Serializable {
+@Table(name = "MAIL_TOKEN")
+public class MailToken implements Serializable {
 
 	private static final long serialVersionUID = 1475611475595422357L;
 
@@ -19,12 +26,26 @@ public class RestartPassword implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
+	@Enumerated(EnumType.STRING)
+	private TokenStatus status;
+
 	private String token;
 
 	private LocalDateTime validationTime;
 
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private User user;
+
 	public long getId() {
 		return id;
+	}
+
+	public TokenStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(TokenStatus status) {
+		this.status = status;
 	}
 
 	public String getToken() {
@@ -41,6 +62,14 @@ public class RestartPassword implements Serializable {
 
 	public void setValidationTime(LocalDateTime validationTime) {
 		this.validationTime = validationTime;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 }
