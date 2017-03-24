@@ -7,6 +7,7 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,7 +43,7 @@ public class MailServiceImpl implements MailService {
 		MimeMessagePreparator preparator = new MimeMessagePreparator() {
 			public void prepare(MimeMessage mimeMessage) throws Exception {
 				MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
-				message.setTo(mail.getEmail());
+				message.setTo(mail.getUser().getMail());
 				message.setFrom(FROM);
 				message.setSubject(mail.getTemplate());
 				Map<String, Object> model = new HashMap<>();
@@ -53,6 +54,7 @@ public class MailServiceImpl implements MailService {
 		};
 		try {
 			mailSender.send(preparator);
+			mail.setSent(LocalDateTime.now());
 			mail.setStatus(Status.FINISHED);
 		} catch (Exception e) {
 			LOG.error(e.getMessage());

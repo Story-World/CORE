@@ -107,13 +107,13 @@ public class UserServiceImpl implements UserService {
 			tokens.add(mailToken);
 			mailTokenRepository.save(tokens);
 			response.setSuccess(true);
-			message.setStatus(StatusMessage.INFO);
+			message.setStatus(StatusMessage.SUCCESS);
 			message.setMessage("REGISTER");
 			response.setMessage(message);
 			Mail mail = new Mail();
 			mail.setStatus(Status.READY);
 			mail.setTemplate("TEST1");
-			mail.setEmail(userRegister.getMail());
+			mail.setUser(userRegister);
 			mailReposiotory.save(mail);
 		} catch (Exception e) {
 			LOG.error(e.getMessage());
@@ -139,7 +139,7 @@ public class UserServiceImpl implements UserService {
 			Mail mail = new Mail();
 			mail.setStatus(Status.READY);
 			mail.setTemplate("TEST1");
-			mail.setEmail(user.getMail());
+			mail.setUser(user);
 			mailReposiotory.save(mail);
 			response.setSuccess(true);
 			message.setStatus(StatusMessage.INFO);

@@ -1,13 +1,17 @@
 package com.storyworld.domain.sql;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.storyworld.enums.Status;
@@ -22,23 +26,18 @@ public class Mail implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
-	private String email;
-
 	private String template;
 
 	@Enumerated(EnumType.STRING)
 	private Status status;
+	
+	private LocalDateTime sent;
+
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private User user;
 
 	public long getId() {
 		return id;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
 	}
 
 	public String getTemplate() {
@@ -55,6 +54,22 @@ public class Mail implements Serializable {
 
 	public void setStatus(Status status) {
 		this.status = status;
+	}
+
+	public LocalDateTime getSent() {
+		return sent;
+	}
+
+	public void setSent(LocalDateTime sent) {
+		this.sent = sent;
+	}
+	
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 }
