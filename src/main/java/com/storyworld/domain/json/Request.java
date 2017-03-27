@@ -2,8 +2,8 @@ package com.storyworld.domain.json;
 
 import java.util.List;
 
-import com.storyworld.domain.sql.MailToken;
 import com.storyworld.domain.sql.User;
+import com.storyworld.enums.TypeTokenStatus;
 
 public class Request {
 
@@ -11,7 +11,7 @@ public class Request {
 
 	private User user;
 
-	private MailToken mailToken;
+	private TypeTokenStatus tokenType;
 
 	private List<FavouritePlaces> favouritePlaces;
 
@@ -31,12 +31,12 @@ public class Request {
 		this.user = user;
 	}
 
-	public MailToken getMailToken() {
-		return mailToken;
+	public TypeTokenStatus getTokenType() {
+		return tokenType;
 	}
 
-	public void setMailToken(MailToken mailToken) {
-		this.mailToken = mailToken;
+	public void setTokenType(TypeTokenStatus tokenType) {
+		this.tokenType = tokenType;
 	}
 
 	public List<FavouritePlaces> getFavouritePlaces() {
@@ -45,6 +45,12 @@ public class Request {
 
 	public void setFavouritePlaces(List<FavouritePlaces> favouritePlaces) {
 		this.favouritePlaces = favouritePlaces;
+	}
+
+	@Override
+	public String toString() {
+		return "Request [token=" + token + ", user=" + user + ", tokenType=" + tokenType + ", favouritePlaces="
+				+ favouritePlaces + "]";
 	}
 
 }

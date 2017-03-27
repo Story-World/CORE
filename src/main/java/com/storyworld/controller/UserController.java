@@ -38,11 +38,11 @@ public class UserController {
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "restart", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Response> restart(@RequestBody String email) {
+	@RequestMapping(value = "restartPassword", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Response> restart(@RequestBody Request request) {
 		Response response = new Response();
 
-		userService.restartPassword(email, response);
+		userService.restartPassword(request, response);
 
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}

@@ -54,5 +54,10 @@ public class FavouritePlaces {
 	public void setValue(String value) {
 		this.value = value;
 	}
+
+	@Override
+	public String toString() {
+		return "FavouritePlaces [type=" + type + ", facet=" + facet + ", name=" + name + ", value=" + value + "]";
+	}
 	
 }

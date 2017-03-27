@@ -3,7 +3,6 @@ package com.storyworld.domain.sql;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -15,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.storyworld.enums.Status;
+import com.storyworld.enums.TypeTokenStatus;
 
 @Entity
 @Table(name = "MAIL")
@@ -26,25 +26,26 @@ public class Mail implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
-	private String template;
+	@Enumerated(EnumType.STRING)
+	private TypeTokenStatus template;
 
 	@Enumerated(EnumType.STRING)
 	private Status status;
-	
+
 	private LocalDateTime sent;
 
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER)
 	private User user;
 
 	public long getId() {
 		return id;
 	}
 
-	public String getTemplate() {
+	public TypeTokenStatus getTemplate() {
 		return template;
 	}
 
-	public void setTemplate(String template) {
+	public void setTemplate(TypeTokenStatus template) {
 		this.template = template;
 	}
 
@@ -63,13 +64,19 @@ public class Mail implements Serializable {
 	public void setSent(LocalDateTime sent) {
 		this.sent = sent;
 	}
-	
+
 	public User getUser() {
 		return user;
 	}
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	@Override
+	public String toString() {
+		return "Mail [id=" + id + ", template=" + template + ", status=" + status + ", sent=" + sent + ", user=" + user
+				+ "]";
 	}
 
 }
