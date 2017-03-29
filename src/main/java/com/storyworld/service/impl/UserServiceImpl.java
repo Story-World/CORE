@@ -2,9 +2,13 @@ package com.storyworld.service.impl;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+<<<<<<< HEAD
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+=======
+import java.util.List;
+>>>>>>> c9b81d0c914b4ff27fc13eade0eff256454fbfb6
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +60,9 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void login(Request request, Response response) {
 		User userLogon = userRepository.findByName(request.getUser().getName());
+		System.out.println(userLogon);
 		Message message = new Message();
+
 		if (userLogon != null && userLogon.getName().equals(request.getUser().getName())
 				&& userLogon.getPassword().equals(request.getUser().getPassword())
 				&& (!userLogon.isBlock() || (userLogon.getLastIncorrectLogin() != null

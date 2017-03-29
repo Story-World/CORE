@@ -21,4 +21,5 @@ public interface UserService {
 	public void changePassword(Request request, Response response);
 
 	public void updateUser(Request request, Response response);
+
 }
