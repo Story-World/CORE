@@ -2,13 +2,11 @@ package com.storyworld.service.impl;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-<<<<<<< HEAD
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-=======
 import java.util.List;
->>>>>>> c9b81d0c914b4ff27fc13eade0eff256454fbfb6
+import java.util.function.Predicate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +22,7 @@ import com.storyworld.domain.sql.MailToken;
 import com.storyworld.domain.sql.Role;
 import com.storyworld.domain.sql.User;
 import com.storyworld.enums.Status;
-import com.storyworld.enums.TokenStatus;
+import com.storyworld.enums.TypeTokenStatus;
 import com.storyworld.repository.sql.MailReposiotory;
 import com.storyworld.repository.sql.MailTokenRepository;
 import com.storyworld.repository.sql.RoleRepository;
@@ -70,6 +68,7 @@ public class UserServiceImpl implements UserService {
 			userLogon.setToken(UUID.randomUUID().toString());
 			userLogon.setLastActionTime(LocalDateTime.now());
 			userLogon.setBlock(false);
+			userLogon.setIncorrectLogin(0);
 			userLogon.setLastIncorrectLogin(null);
 			userRepository.save(userLogon);
 			response.setSuccess(true);
@@ -100,26 +99,29 @@ public class UserServiceImpl implements UserService {
 		Message message = new Message();
 		try {
 			User user = request.getUser();
-			user.setBlock(false);// change to true after ui already
+			user.setBlock(true);
 			User userRegister = userRepository.save(user);
 			Role role = roleRepository.findOne((long) 1);
 			Set<Role> roles = new HashSet<>();
 			roles.add(role);
 			userRegister.setRoles(roles);
+			userRepository.save(userRegister);
 			MailToken mailToken = new MailToken();
-			mailToken.setStatus(TokenStatus.REGISTER);
+			mailToken.setUser(userRegister);
+			mailToken.setValidationTime(LocalDateTime.now());
+			mailToken.setTypeToken(TypeTokenStatus.REGISTER);
 			mailToken.setToken(UUID.randomUUID().toString());
 			Set<MailToken> tokens = new HashSet<>();
 			tokens.add(mailToken);
 			mailTokenRepository.save(tokens);
 			response.setSuccess(true);
-			message.setStatus(StatusMessage.INFO);
+			message.setStatus(StatusMessage.SUCCESS);
 			message.setMessage("REGISTER");
 			response.setMessage(message);
 			Mail mail = new Mail();
 			mail.setStatus(Status.READY);
-			mail.setTemplate("TEST1");
-			mail.setEmail(userRegister.getMail());
+			mail.setTemplate(TypeTokenStatus.REGISTER);
+			mail.setUser(userRegister);
 			mailReposiotory.save(mail);
 		} catch (Exception e) {
 			LOG.error(e.getMessage());
@@ -131,21 +133,34 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void restartPassword(String email, Response response) {
-		User user = userRepository.findByMail(email);
+	public void restartPassword(Request request, Response response) {
+		User user = userRepository.findByMail(request.getUser().getMail());
 		Message message = new Message();
 		if (user != null) {
-			MailToken mailToken = new MailToken();
-			mailToken.setStatus(TokenStatus.RESTART_PASSWORD);
-			mailToken.setToken(UUID.randomUUID().toString());
-			mailToken.setValidationTime(LocalDateTime.now());
-			Set<MailToken> tokens = mailTokenRepository.findByUser(user);
-			tokens.add(mailToken);
-			mailTokenRepository.save(tokens);
+			MailToken mailToken = mailTokenRepository.findByUserAndTypeToken(user, TypeTokenStatus.RESTART_PASSWORD);
+			if (mailToken == null) {
+				mailToken = new MailToken();
+				mailToken.setUser(user);
+				mailToken.setTypeToken(TypeTokenStatus.RESTART_PASSWORD);
+				mailToken.setToken(UUID.randomUUID().toString());
+				mailToken.setValidationTime(LocalDateTime.now());
+				Set<MailToken> tokens = mailTokenRepository.findByUser(user);
+				tokens.add(mailToken);
+				mailTokenRepository.save(tokens);
+			} else {
+				long id = mailToken.getId();
+				Predicate<MailToken> mailTokenPredicate = x -> x.getId() == id;
+				Set<MailToken> tokens = mailTokenRepository.findByUser(user);
+				tokens.removeIf(mailTokenPredicate);
+				mailToken.setValidationTime(LocalDateTime.now());
+				mailToken.setToken(UUID.randomUUID().toString());
+				tokens.add(mailToken);
+				mailTokenRepository.save(tokens);
+			}
 			Mail mail = new Mail();
 			mail.setStatus(Status.READY);
-			mail.setTemplate("TEST1");
-			mail.setEmail(user.getMail());
+			mail.setTemplate(TypeTokenStatus.RESTART_PASSWORD);
+			mail.setUser(user);
 			mailReposiotory.save(mail);
 			response.setSuccess(true);
 			message.setStatus(StatusMessage.INFO);
@@ -161,13 +176,14 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void confirmPassword(Request request, Response response) {
-		MailToken mailToken = mailTokenRepository.findByToken(request.getMailToken().getToken());
+		MailToken mailToken = mailTokenRepository.findByToken(request.getToken());
 		Message message = new Message();
-		if (mailToken != null && mailToken.getStatus().equals(TokenStatus.RESTART_PASSWORD)
-				&& ChronoUnit.DAYS.between(mailToken.getValidationTime(), LocalDateTime.now()) >= 1
+		if (mailToken != null && mailToken.getTypeToken().equals(TypeTokenStatus.RESTART_PASSWORD)
+				&& ChronoUnit.DAYS.between(mailToken.getValidationTime(), LocalDateTime.now()) <= 1
 				&& mailToken.getToken().equals(request.getToken())) {
 			User user = userRepository.findOne(mailToken.getUser().getId());
 			try {
+				mailTokenRepository.delete(mailToken);
 				user.setPassword(request.getUser().getPassword());
 				userRepository.save(user);
 				response.setSuccess(true);
@@ -189,9 +205,9 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void confirmRegister(Request request, Response response) {
-		MailToken mailToken = mailTokenRepository.findByToken(request.getMailToken().getToken());
+		MailToken mailToken = mailTokenRepository.findByToken(request.getToken());
 		Message message = new Message();
-		if (mailToken != null && mailToken.getStatus().equals(TokenStatus.REGISTER)
+		if (mailToken != null && mailToken.getTypeToken().equals(TypeTokenStatus.REGISTER)
 				&& ChronoUnit.DAYS.between(mailToken.getValidationTime(), LocalDateTime.now()) >= 1
 				&& mailToken.getToken().equals(request.getToken())) {
 			User user = userRepository.findOne(mailToken.getUser().getId());

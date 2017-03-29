@@ -13,8 +13,8 @@ public class MailConfig {
 
 	private static final String PROPERTY_NAME_HOST = "smtp.gmail.com";
 	private static final int PROPERTY_NAME_PORT = 587;
-	private static final String PROPERTY_NAME_USERNAME = "mycookbook.sup";
-	private static final String PROPERTY_NAME_PASSWORD = "myCookBook2016";
+	private static final String PROPERTY_NAME_USERNAME = "dev.storyworld";
+	private static final String PROPERTY_NAME_PASSWORD = "historyjka";
 	private static final String PROPERTY_NAME_PROTOCOL = "smtp";
 	private static final String PROPERTY_NAME_AUTH = "true";
 	private static final String PROPERTY_NAME_STARTTLS_ENABLE = "true";

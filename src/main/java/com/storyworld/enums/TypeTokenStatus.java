@@ -1,6 +1,6 @@
 package com.storyworld.enums;
 
-public enum TokenStatus {
+public enum TypeTokenStatus {
 	RESTART_PASSWORD,
 	CHANGE_PASSWORD,
 	REGISTER

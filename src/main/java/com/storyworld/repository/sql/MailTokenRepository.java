@@ -6,10 +6,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.storyworld.domain.sql.MailToken;
 import com.storyworld.domain.sql.User;
+import com.storyworld.enums.TypeTokenStatus;
 
 public interface MailTokenRepository extends JpaRepository<MailToken, Long> {
 
 	public MailToken findByToken(String token);
 
 	public Set<MailToken> findByUser(User user);
+
+	public MailToken findByUserAndTypeToken(User user, TypeTokenStatus typeToken);
 }

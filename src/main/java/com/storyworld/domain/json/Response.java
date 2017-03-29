@@ -5,13 +5,14 @@ import java.util.List;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.storyworld.domain.sql.User;
 
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+@SuppressWarnings("deprecation")
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class Response {
 
 	private boolean success;
 
 	private Message message;
-	
+
 	private User user;
 	
 	private List<User> users;
@@ -57,7 +58,11 @@ public class Response {
 	public void setFavouritePlaces(List<FavouritePlaces> favouritePlaces) {
 		this.favouritePlaces = favouritePlaces;
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		return "Response [success=" + success + ", message=" + message + ", user=" + user + ", favouritePlaces="
+				+ favouritePlaces + "]";
+	}
 
 }
