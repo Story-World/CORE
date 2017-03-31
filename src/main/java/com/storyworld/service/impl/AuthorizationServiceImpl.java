@@ -1,5 +1,8 @@
 package com.storyworld.service.impl;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,5 +35,13 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 		// if(user==null)
 		// throw new AccessDeniedException("AccesDenied");
 		return user;
+	}
+
+	@Override
+	public boolean checkAccessToEditUser(Request request) {
+		User user = userRepository.findByToken(request.getToken());
+		return user != null && ChronoUnit.HOURS.between(user.getLastActionTime(), LocalDateTime.now()) <= 2
+				&& (user.getId() == request.getUser().getId()
+						|| user.getRoles().removeIf(x -> x.getName().equals("ADMIN")));
 	}
 }

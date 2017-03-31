@@ -1,5 +1,7 @@
 package com.storyworld.controller;
 
+import java.nio.file.AccessDeniedException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.storyworld.domain.json.Request;
 import com.storyworld.domain.json.Response;
+import com.storyworld.service.AuthorizationService;
 import com.storyworld.service.UserService;
 
 @RestController
@@ -19,6 +22,9 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private AuthorizationService authorizationService;
 
 	@RequestMapping(value = "login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Response> login(@RequestBody Request request) {
@@ -74,11 +80,26 @@ public class UserController {
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "updateUser", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "updateUser", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Response> updateUser(@RequestBody Request request) {
 		Response response = new Response();
 
-		userService.updateUser(request, response);
+		if (authorizationService.checkAccessToEditUser(request))
+			userService.updateUser(request, response);
+		else
+			return new ResponseEntity<Response>(response, HttpStatus.FORBIDDEN);
+
+		return new ResponseEntity<Response>(response, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "getUser", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Response> getUser(@RequestBody Request request) throws AccessDeniedException {
+		Response response = new Response();
+
+		if (authorizationService.checkAccessToEditUser(request))
+			userService.getUser(request, response);
+		else
+			return new ResponseEntity<Response>(response, HttpStatus.FORBIDDEN);
 
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}

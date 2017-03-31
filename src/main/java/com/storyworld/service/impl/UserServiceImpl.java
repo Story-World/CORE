@@ -5,7 +5,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-import java.util.List;
 import java.util.function.Predicate;
 
 import org.slf4j.Logger;
@@ -13,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.storyworld.domain.json.Message;
 import com.storyworld.domain.json.Request;
 import com.storyworld.domain.json.Response;
 import com.storyworld.domain.json.StatusMessage;
@@ -27,6 +25,7 @@ import com.storyworld.repository.sql.MailReposiotory;
 import com.storyworld.repository.sql.MailTokenRepository;
 import com.storyworld.repository.sql.RoleRepository;
 import com.storyworld.repository.sql.UserRepository;
+import com.storyworld.service.JSONService;
 import com.storyworld.service.UserService;
 
 @Service
@@ -44,6 +43,9 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private MailReposiotory mailReposiotory;
 
+	@Autowired
+	private JSONService jsonService;
+
 	private static final Logger LOG = LoggerFactory.getLogger(UserServiceImpl.class);
 
 	@Override
@@ -58,8 +60,6 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void login(Request request, Response response) {
 		User userLogon = userRepository.findByName(request.getUser().getName());
-		System.out.println(userLogon);
-		Message message = new Message();
 
 		if (userLogon != null && userLogon.getName().equals(request.getUser().getName())
 				&& userLogon.getPassword().equals(request.getUser().getPassword())
@@ -71,11 +71,7 @@ public class UserServiceImpl implements UserService {
 			userLogon.setIncorrectLogin(0);
 			userLogon.setLastIncorrectLogin(null);
 			userRepository.save(userLogon);
-			response.setSuccess(true);
-			message.setStatus(StatusMessage.SUCCESS);
-			message.setMessage("LOGIN");
-			response.setUser(userLogon);
-			response.setMessage(message);
+			jsonService.prepareResponse(response, StatusMessage.SUCCESS, "LOGIN", userLogon, true);
 		} else {
 			if (userLogon != null) {
 				int incrementIncorrect = userLogon.getIncorrectLogin();
@@ -87,19 +83,15 @@ public class UserServiceImpl implements UserService {
 				}
 				userRepository.save(userLogon);
 			}
-			response.setSuccess(false);
-			message.setStatus(StatusMessage.ERROR);
-			message.setMessage("INCORRECT_DATA");
-			response.setMessage(message);
+			jsonService.prepareResponse(response, StatusMessage.ERROR, "INCORRECT_DATA", null, false);
 		}
 	}
 
 	@Override
 	public void register(Request request, Response response) {
-		Message message = new Message();
 		try {
 			User user = request.getUser();
-			user.setBlock(true);
+			user.setBlock(false);
 			User userRegister = userRepository.save(user);
 			Role role = roleRepository.findOne((long) 1);
 			Set<Role> roles = new HashSet<>();
@@ -114,28 +106,22 @@ public class UserServiceImpl implements UserService {
 			Set<MailToken> tokens = new HashSet<>();
 			tokens.add(mailToken);
 			mailTokenRepository.save(tokens);
-			response.setSuccess(true);
-			message.setStatus(StatusMessage.SUCCESS);
-			message.setMessage("REGISTER");
-			response.setMessage(message);
 			Mail mail = new Mail();
 			mail.setStatus(Status.READY);
 			mail.setTemplate(TypeTokenStatus.REGISTER);
 			mail.setUser(userRegister);
 			mailReposiotory.save(mail);
+			jsonService.prepareResponse(response, StatusMessage.SUCCESS, "REGISTER", null, true);
 		} catch (Exception e) {
 			LOG.error(e.getMessage());
-			response.setSuccess(false);
-			message.setStatus(StatusMessage.ERROR);
-			message.setMessage("INCORRECT_DATA");
-			response.setMessage(message);
+			jsonService.prepareResponse(response, StatusMessage.ERROR, "INCORRECT_DATA", null, false);
 		}
 	}
 
 	@Override
 	public void restartPassword(Request request, Response response) {
 		User user = userRepository.findByMail(request.getUser().getMail());
-		Message message = new Message();
+
 		if (user != null) {
 			MailToken mailToken = mailTokenRepository.findByUserAndTypeToken(user, TypeTokenStatus.RESTART_PASSWORD);
 			if (mailToken == null) {
@@ -162,22 +148,15 @@ public class UserServiceImpl implements UserService {
 			mail.setTemplate(TypeTokenStatus.RESTART_PASSWORD);
 			mail.setUser(user);
 			mailReposiotory.save(mail);
-			response.setSuccess(true);
-			message.setStatus(StatusMessage.INFO);
-			message.setMessage("RESTARTED");
-			response.setMessage(message);
-		} else {
-			response.setSuccess(false);
-			message.setStatus(StatusMessage.ERROR);
-			message.setMessage("INCORRECT_DATA");
-			response.setMessage(message);
-		}
+			jsonService.prepareResponse(response, StatusMessage.INFO, "RESTARTED", null, true);
+		} else
+			jsonService.prepareResponse(response, StatusMessage.ERROR, "INCORRECT_DATA", null, false);
 	}
 
 	@Override
 	public void confirmPassword(Request request, Response response) {
 		MailToken mailToken = mailTokenRepository.findByToken(request.getToken());
-		Message message = new Message();
+
 		if (mailToken != null && mailToken.getTypeToken().equals(TypeTokenStatus.RESTART_PASSWORD)
 				&& ChronoUnit.DAYS.between(mailToken.getValidationTime(), LocalDateTime.now()) <= 1
 				&& mailToken.getToken().equals(request.getToken())) {
@@ -186,78 +165,72 @@ public class UserServiceImpl implements UserService {
 				mailTokenRepository.delete(mailToken);
 				user.setPassword(request.getUser().getPassword());
 				userRepository.save(user);
-				response.setSuccess(true);
-				message.setStatus(StatusMessage.INFO);
-				message.setMessage("RESTARTED");
-				response.setMessage(message);
+				jsonService.prepareResponse(response, StatusMessage.INFO, "RESTARTED", null, true);
 			} catch (Exception e) {
 				LOG.error(e.getMessage());
-				message.setStatus(StatusMessage.ERROR);
-				message.setMessage("INCORRECT_DATA");
-				response.setMessage(message);
+				jsonService.prepareResponse(response, StatusMessage.ERROR, "INCORRECT_DATA", null, false);
 			}
-		} else {
-			message.setStatus(StatusMessage.ERROR);
-			message.setMessage("INCORRECT_DATA");
-			response.setMessage(message);
-		}
+		} else
+			jsonService.prepareResponse(response, StatusMessage.ERROR, "INCORRECT_DATA", null, false);
 	}
 
 	@Override
 	public void confirmRegister(Request request, Response response) {
 		MailToken mailToken = mailTokenRepository.findByToken(request.getToken());
-		Message message = new Message();
+
 		if (mailToken != null && mailToken.getTypeToken().equals(TypeTokenStatus.REGISTER)
-				&& ChronoUnit.DAYS.between(mailToken.getValidationTime(), LocalDateTime.now()) >= 1
+				&& ChronoUnit.DAYS.between(mailToken.getValidationTime(), LocalDateTime.now()) <= 1
 				&& mailToken.getToken().equals(request.getToken())) {
 			User user = userRepository.findOne(mailToken.getUser().getId());
 			user.setLastActionTime(LocalDateTime.now());
 			user.setBlock(false);
 			userRepository.save(user);
-			message.setStatus(StatusMessage.SUCCESS);
-			message.setMessage("SUCCESS_REGISTERED");
-			response.setMessage(message);
-		} else {
-			message.setStatus(StatusMessage.ERROR);
-			message.setMessage("INCORRECT_DATA");
-			response.setMessage(message);
-		}
+			jsonService.prepareResponse(response, StatusMessage.SUCCESS, "SUCCESS_REGISTERED", null, true);
+		} else
+			jsonService.prepareResponse(response, StatusMessage.ERROR, "INCORRECT_DATA", null, false);
 	}
 
 	@Override
 	public void changePassword(Request request, Response response) {
 		User user = userRepository.findByToken(request.getToken());
-		Message message = new Message();
+
 		try {
 			user.setPassword(request.getUser().getPassword());
 			user.setLastActionTime(LocalDateTime.now());
 			userRepository.save(user);
+			jsonService.prepareResponse(response, StatusMessage.SUCCESS, "SUCCESS_UPDATED", user, true);
 		} catch (Exception e) {
 			LOG.error(e.getMessage());
-			message.setStatus(StatusMessage.ERROR);
-			message.setMessage("INCORRECT_DATA");
-			response.setMessage(message);
+			jsonService.prepareResponse(response, StatusMessage.ERROR, "INCORRECT_DATA", null, false);
 		}
 	}
 
 	@Override
 	public void updateUser(Request request, Response response) {
-		User user = userRepository.findByToken(request.getToken());
-		Message message = new Message();
+		User user = userRepository.findOne(request.getUser().getId());
+
 		try {
-			user.setLastActionTime(LocalDateTime.now());
-			user.setMail(request.getUser().getMail());
+			if (request.getUser().getName() != null)
+				user.setName(request.getUser().getName());
+			if (request.getUser().getMail() != null)
+				user.setMail(request.getUser().getMail());
 			userRepository.save(user);
-			message.setStatus(StatusMessage.SUCCESS);
-			message.setMessage("SUCCESS_UPDATED");
-			response.setMessage(message);
-			response.setUser(user);
+			jsonService.prepareResponse(response, StatusMessage.SUCCESS, "SUCCESS_UPDATED", user, true);
 		} catch (Exception e) {
 			LOG.error(e.getMessage());
-			message.setStatus(StatusMessage.ERROR);
-			message.setMessage("INCORRECT_DATA");
-			response.setMessage(message);
+			jsonService.prepareResponse(response, StatusMessage.ERROR, "INCORRECT_DATA", null, false);
 		}
+	}
+
+	@Override
+	public void getUser(Request request, Response response) {
+		User user = userRepository.findOne(request.getUser().getId());
+
+		if (user != null) {
+			user.setToken(null);
+			jsonService.prepareResponse(response, null, null, user, true);
+		} else
+			jsonService.prepareResponse(response, StatusMessage.ERROR, "INCORRECT_DATA", null, false);
 	}
 
 }

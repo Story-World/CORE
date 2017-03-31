@@ -22,4 +22,6 @@ public interface UserService {
 
 	public void updateUser(Request request, Response response);
 
+	public void getUser(Request request, Response response);
+
 }
