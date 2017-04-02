@@ -41,7 +41,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 	public boolean checkAccessToEditUser(Request request) {
 		User user = userRepository.findByToken(request.getToken());
 		return user != null && ChronoUnit.HOURS.between(user.getLastActionTime(), LocalDateTime.now()) <= 2
-				&& (user.getId() == request.getUser().getId()
-						|| user.getRoles().removeIf(x -> x.getName().equals("ADMIN")));
+				&& (request.getUser() == null || (user.getId() == request.getUser().getId()
+						|| user.getRoles().removeIf(x -> x.getName().equals("ADMIN"))));
 	}
 }

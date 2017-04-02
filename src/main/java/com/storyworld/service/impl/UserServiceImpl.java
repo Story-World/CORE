@@ -179,7 +179,6 @@ public class UserServiceImpl implements UserService {
 		MailToken mailToken = mailTokenRepository.findByToken(request.getToken());
 
 		if (mailToken != null && mailToken.getTypeToken().equals(TypeTokenStatus.REGISTER)
-				&& ChronoUnit.DAYS.between(mailToken.getValidationTime(), LocalDateTime.now()) <= 1
 				&& mailToken.getToken().equals(request.getToken())) {
 			User user = userRepository.findOne(mailToken.getUser().getId());
 			user.setLastActionTime(LocalDateTime.now());
@@ -223,7 +222,12 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void getUser(Request request, Response response) {
-		User user = userRepository.findOne(request.getUser().getId());
+		User user = null;
+
+		if (request.getUser() != null)
+			user = userRepository.findOne(request.getUser().getId());
+		else
+			user = userRepository.findByToken(request.getToken());
 
 		if (user != null) {
 			user.setToken(null);
