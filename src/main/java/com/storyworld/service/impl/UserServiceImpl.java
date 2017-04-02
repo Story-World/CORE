@@ -91,7 +91,7 @@ public class UserServiceImpl implements UserService {
 	public void register(Request request, Response response) {
 		try {
 			User user = request.getUser();
-			user.setBlock(false);
+			user.setBlock(true);
 			User userRegister = userRepository.save(user);
 			Role role = roleRepository.findOne((long) 1);
 			Set<Role> roles = new HashSet<>();
@@ -192,11 +192,10 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void changePassword(Request request, Response response) {
-		User user = userRepository.findByToken(request.getToken());
+		User user = userRepository.findOne(request.getUser().getId());
 
 		try {
 			user.setPassword(request.getUser().getPassword());
-			user.setLastActionTime(LocalDateTime.now());
 			userRepository.save(user);
 			jsonService.prepareResponse(response, StatusMessage.SUCCESS, "SUCCESS_UPDATED", user, true);
 		} catch (Exception e) {
@@ -229,6 +228,18 @@ public class UserServiceImpl implements UserService {
 		if (user != null) {
 			user.setToken(null);
 			jsonService.prepareResponse(response, null, null, user, true);
+		} else
+			jsonService.prepareResponse(response, StatusMessage.ERROR, "INCORRECT_DATA", null, false);
+	}
+
+	@Override
+	public void logout(Request request, Response response) {
+		User user = userRepository.findByToken(request.getToken());
+		if (user != null) {
+			user.setToken(null);
+			user.setLastActionTime(null);
+			userRepository.save(user);
+			jsonService.prepareResponse(response, StatusMessage.SUCCESS, "LOGOUT", null, true);
 		} else
 			jsonService.prepareResponse(response, StatusMessage.ERROR, "INCORRECT_DATA", null, false);
 	}

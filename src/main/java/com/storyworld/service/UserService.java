@@ -24,4 +24,6 @@ public interface UserService {
 
 	public void getUser(Request request, Response response);
 
+	public void logout(Request request, Response response);
+
 }

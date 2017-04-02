@@ -1,7 +1,5 @@
 package com.storyworld.controller;
 
-import java.nio.file.AccessDeniedException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -44,7 +42,7 @@ public class UserController {
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "restartPassword", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "restartPassword", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Response> restart(@RequestBody Request request) {
 		Response response = new Response();
 
@@ -80,7 +78,7 @@ public class UserController {
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "updateUser", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "updateUser", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Response> updateUser(@RequestBody Request request) {
 		Response response = new Response();
 
@@ -93,13 +91,22 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "getUser", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Response> getUser(@RequestBody Request request) throws AccessDeniedException {
+	public ResponseEntity<Response> getUser(@RequestBody Request request) {
 		Response response = new Response();
 
 		if (authorizationService.checkAccessToEditUser(request))
 			userService.getUser(request, response);
 		else
 			return new ResponseEntity<Response>(response, HttpStatus.FORBIDDEN);
+
+		return new ResponseEntity<Response>(response, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "logout", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Response> logout(@RequestBody Request request) {
+		Response response = new Response();
+
+		userService.logout(request, response);
 
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}

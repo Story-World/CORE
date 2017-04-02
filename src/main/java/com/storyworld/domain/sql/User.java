@@ -142,5 +142,12 @@ public class User implements Serializable {
 	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
 	}
+	
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", name=" + name + ", password=" + password + ", mail=" + mail + ", token=" + token
+				+ ", lastActionTime=" + lastActionTime + ", incorrectLogin=" + incorrectLogin + ", block=" + block
+				+ ", lastIncorrectLogin=" + lastIncorrectLogin + ", roles=" + roles + "]";
+	}
 
 }
