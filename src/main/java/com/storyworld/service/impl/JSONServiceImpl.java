@@ -1,5 +1,7 @@
 package com.storyworld.service.impl;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.storyworld.domain.json.Message;
@@ -13,11 +15,12 @@ public class JSONServiceImpl implements JSONService {
 
 	@Override
 	public void prepareResponse(Response response, StatusMessage messageStatus, String messageString, User user,
-			boolean success) {
+			List<User> users, boolean success) {
 		Message message = new Message();
 		message.setMessage(messageString);
 		message.setStatus(messageStatus);
 		response.setUser(user);
+		response.setUsers(users);
 		response.setSuccess(success);
 		response.setMessage(message);
 	}

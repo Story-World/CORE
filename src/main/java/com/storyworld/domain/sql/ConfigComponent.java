@@ -19,28 +19,25 @@ import org.hibernate.annotations.Type;
 import com.storyworld.enums.ConfigComponentType;
 
 @Entity
-@Table(name= "CONFIG_COMPONENT")
+@Table(name = "CONFIG_COMPONENT")
 public class ConfigComponent implements Serializable {
-	
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -3762014167430699321L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "userId")
 	@NotNull
 	private User user;
-	
+
 	@Enumerated(EnumType.STRING)
 	@NotNull
 	private ConfigComponentType type;
-	
-	@Type(type="text")
+
+	@Type(type = "text")
 	@NotNull
 	private String value;
 

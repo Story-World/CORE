@@ -5,8 +5,8 @@ public class Message {
 	private StatusMessage status;
 
 	private String message;
-	
-	public Message(){
+
+	public Message() {
 	}
 
 	public Message(StatusMessage status, String message) {
@@ -30,7 +30,5 @@ public class Message {
 	public void setMessage(String message) {
 		this.message = message;
 	}
-
-	
 
 }

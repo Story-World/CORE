@@ -5,16 +5,16 @@ import com.storyworld.enums.FavouritePlacesType;
 public class FavouritePlaces {
 
 	private FavouritePlacesType type;
-	
+
 	private String facet;
-	
+
 	private String name;
-	
+
 	private String value;
-	
-	public FavouritePlaces(){
+
+	public FavouritePlaces() {
 	}
-	
+
 	public FavouritePlaces(FavouritePlacesType type, String facet, String name, String value) {
 		super();
 		this.type = type;
@@ -59,5 +59,5 @@ public class FavouritePlaces {
 	public String toString() {
 		return "FavouritePlaces [type=" + type + ", facet=" + facet + ", name=" + name + ", value=" + value + "]";
 	}
-	
+
 }

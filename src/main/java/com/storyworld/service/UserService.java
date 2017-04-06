@@ -14,7 +14,7 @@ public interface UserService {
 
 	public void restartPassword(Request request, Response response);
 
-	public void confirmPassword(Request request, Response response);
+	public void remindPassword(Request request, Response response);
 
 	public void confirmRegister(Request request, Response response);
 
@@ -25,5 +25,7 @@ public interface UserService {
 	public void getUser(Request request, Response response);
 
 	public void logout(Request request, Response response);
+
+	public void getUsers(Request request, Response response);
 
 }

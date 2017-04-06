@@ -10,5 +10,5 @@ public interface AuthorizationService {
 
 	public User checkAccessToUser(String token);
 
-	public boolean checkAccessToEditUser(Request request);
+	public boolean checkAccessToUser(Request request);
 }

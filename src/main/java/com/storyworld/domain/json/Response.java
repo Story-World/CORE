@@ -14,9 +14,9 @@ public class Response {
 	private Message message;
 
 	private User user;
-	
+
 	private List<User> users;
-	
+
 	private List<FavouritePlaces> favouritePlaces;
 
 	public boolean isSuccess() {

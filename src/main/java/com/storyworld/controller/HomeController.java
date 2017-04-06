@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/")
 public class HomeController {
-	
-	@RequestMapping(value = "")
-	public String greeting(){
+
+	@RequestMapping("/")
+	public String greeting() {
 		return "welcome";
 	}
-	
+
 }

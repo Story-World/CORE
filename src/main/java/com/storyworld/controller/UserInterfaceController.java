@@ -14,28 +14,28 @@ import com.storyworld.domain.json.Response;
 import com.storyworld.service.UserInterfaceService;
 
 @RestController
-@RequestMapping(value="userInterface")
+@RequestMapping(value = "userInterface")
 public class UserInterfaceController {
-	
+
 	@Autowired
 	private UserInterfaceService userInterfaceService;
-	
+
 	@RequestMapping(value = "favouritePlaces", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Response> getFavouritePlaces(@RequestBody Request request){
+	public ResponseEntity<Response> getFavouritePlaces(@RequestBody Request request) {
 		Response response = new Response();
-		
+
 		response = userInterfaceService.getFavouritePlaces(request, response);
-		
+
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
-	
+
 	@RequestMapping(value = "favouritePlaces", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Response> saveFavouritePlaces(@RequestBody Request request){
+	public ResponseEntity<Response> saveFavouritePlaces(@RequestBody Request request) {
 		Response response = new Response();
-		
+
 		response = userInterfaceService.saveFavouritePlaces(request, response);
-		
+
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
-	
+
 }

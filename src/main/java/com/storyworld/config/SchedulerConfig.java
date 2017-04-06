@@ -15,7 +15,7 @@ public class SchedulerConfig {
 	public TokenScheduler token() {
 		return new TokenScheduler();
 	}
-	
+
 	@Bean
 	public MailSchaduler mail() {
 		return new MailSchaduler();

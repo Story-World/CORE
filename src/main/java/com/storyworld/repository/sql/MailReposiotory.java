@@ -9,5 +9,5 @@ import com.storyworld.enums.Status;
 
 public interface MailReposiotory extends JpaRepository<Mail, Long> {
 
-	List<Mail> findByStatus(Status status);
+	public List<Mail> findByStatus(Status status);
 }

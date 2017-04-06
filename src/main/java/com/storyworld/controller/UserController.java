@@ -51,11 +51,11 @@ public class UserController {
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "confirmPass", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<Response> confirmPass(@RequestBody Request request) {
+	@RequestMapping(value = "remindPassword", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<Response> remindPassword(@RequestBody Request request) {
 		Response response = new Response();
 
-		userService.confirmPassword(request, response);
+		userService.remindPassword(request, response);
 
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
@@ -82,7 +82,7 @@ public class UserController {
 	public ResponseEntity<Response> updateUser(@RequestBody Request request) {
 		Response response = new Response();
 
-		if (authorizationService.checkAccessToEditUser(request))
+		if (authorizationService.checkAccessToUser(request))
 			userService.updateUser(request, response);
 		else
 			return new ResponseEntity<Response>(response, HttpStatus.FORBIDDEN);
@@ -94,8 +94,20 @@ public class UserController {
 	public ResponseEntity<Response> getUser(@RequestBody Request request) {
 		Response response = new Response();
 
-		if (authorizationService.checkAccessToEditUser(request))
+		if (authorizationService.checkAccessToUser(request))
 			userService.getUser(request, response);
+		else
+			return new ResponseEntity<Response>(response, HttpStatus.FORBIDDEN);
+
+		return new ResponseEntity<Response>(response, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "getUsers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<Response> getUsers(@RequestBody Request request) {
+		Response response = new Response();
+
+		if (authorizationService.checkAccessToUser(request))
+			userService.getUsers(request, response);
 		else
 			return new ResponseEntity<Response>(response, HttpStatus.FORBIDDEN);
 
