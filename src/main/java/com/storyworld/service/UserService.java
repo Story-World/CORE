@@ -28,4 +28,6 @@ public interface UserService {
 
 	public void getUsers(Request request, Response response);
 
+	public void delete(Request request, Response response);
+
 }

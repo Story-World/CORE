@@ -40,7 +40,7 @@ public class User implements Serializable {
 
 	@NotNull
 	@Length(min = 6, max = 255)
-	@JsonProperty(access = Access.WRITE_ONLY)
+	// @JsonProperty(access = Access.WRITE_ONLY)
 	private String password;
 
 	@NotNull
@@ -63,6 +63,27 @@ public class User implements Serializable {
 
 	@JsonIgnore
 	private LocalDateTime lastIncorrectLogin;
+
+	@JsonIgnore
+	private boolean deleted;
+
+	public User() {
+	}
+
+	public User(String name, String password, String mail, String token, LocalDateTime lastActionTime,
+			int incorrectLogin, boolean block, LocalDateTime lastIncorrectLogin, boolean deleted, Set<Role> roles) {
+		super();
+		this.name = name;
+		this.password = password;
+		this.mail = mail;
+		this.token = token;
+		this.lastActionTime = lastActionTime;
+		this.incorrectLogin = incorrectLogin;
+		this.block = block;
+		this.lastIncorrectLogin = lastIncorrectLogin;
+		this.deleted = deleted;
+		this.roles = roles;
+	}
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<Role> roles = new HashSet<>();
@@ -133,6 +154,14 @@ public class User implements Serializable {
 
 	public void setLastIncorrectLogin(LocalDateTime lastIncorrectLogin) {
 		this.lastIncorrectLogin = lastIncorrectLogin;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDelete(boolean deleted) {
+		this.deleted = deleted;
 	}
 
 	public Set<Role> getRoles() {

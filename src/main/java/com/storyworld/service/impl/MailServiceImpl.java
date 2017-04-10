@@ -54,9 +54,9 @@ public class MailServiceImpl implements MailService {
 				message.setSubject(mail.getTemplate().toString());
 				Map<String, Object> model = new HashMap<>();
 				model.put("link",
-						new StringBuffer().append("http://localhost:3000/token/").append(mailToken.getTypeToken())
-								.append("/").append(mailToken.getUser().getId()).append("/")
-								.append(mailToken.getToken()).toString());
+						new StringBuffer("http://localhost:3000/token/").append(mailToken.getTypeToken()).append("/")
+								.append(mailToken.getUser().getId()).append("/").append(mailToken.getToken())
+								.toString());
 				String text = geFreeMarkerTemplateContent(model, mail.getTemplate().toString());
 				message.setText(text, true);
 			}

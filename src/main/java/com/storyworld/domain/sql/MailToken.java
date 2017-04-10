@@ -13,7 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.storyworld.enums.TypeTokenStatus;
+import com.storyworld.enums.TypeToken;
 
 @Entity
 @Table(name = "MAIL_TOKEN")
@@ -26,7 +26,7 @@ public class MailToken implements Serializable {
 	private long id;
 
 	@Enumerated(EnumType.STRING)
-	private TypeTokenStatus typeToken;
+	private TypeToken typeToken;
 
 	private String token;
 
@@ -35,15 +35,27 @@ public class MailToken implements Serializable {
 	@ManyToOne(fetch = FetchType.EAGER)
 	private User user;
 
+	public MailToken() {
+		super();
+	}
+
+	public MailToken(TypeToken typeToken, String token, LocalDateTime validationTime, User user) {
+		super();
+		this.typeToken = typeToken;
+		this.token = token;
+		this.validationTime = validationTime;
+		this.user = user;
+	}
+
 	public long getId() {
 		return id;
 	}
 
-	public TypeTokenStatus getTypeToken() {
+	public TypeToken getTypeToken() {
 		return typeToken;
 	}
 
-	public void setTypeToken(TypeTokenStatus typeToken) {
+	public void setTypeToken(TypeToken typeToken) {
 		this.typeToken = typeToken;
 	}
 

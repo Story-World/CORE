@@ -14,7 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.storyworld.enums.Status;
-import com.storyworld.enums.TypeTokenStatus;
+import com.storyworld.enums.TypeToken;
 
 @Entity
 @Table(name = "MAIL")
@@ -27,7 +27,7 @@ public class Mail implements Serializable {
 	private long id;
 
 	@Enumerated(EnumType.STRING)
-	private TypeTokenStatus template;
+	private TypeToken template;
 
 	@Enumerated(EnumType.STRING)
 	private Status status;
@@ -37,15 +37,25 @@ public class Mail implements Serializable {
 	@ManyToOne(fetch = FetchType.EAGER)
 	private User user;
 
+	public Mail() {
+	}
+
+	public Mail(TypeToken template, Status status, User user) {
+		super();
+		this.template = template;
+		this.status = status;
+		this.user = user;
+	}
+
 	public long getId() {
 		return id;
 	}
 
-	public TypeTokenStatus getTemplate() {
+	public TypeToken getTemplate() {
 		return template;
 	}
 
-	public void setTemplate(TypeTokenStatus template) {
+	public void setTemplate(TypeToken template) {
 		this.template = template;
 	}
 

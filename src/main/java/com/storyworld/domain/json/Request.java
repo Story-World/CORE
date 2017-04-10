@@ -3,7 +3,7 @@ package com.storyworld.domain.json;
 import java.util.List;
 
 import com.storyworld.domain.sql.User;
-import com.storyworld.enums.TypeTokenStatus;
+import com.storyworld.enums.TypeToken;
 
 public class Request {
 
@@ -11,7 +11,7 @@ public class Request {
 
 	private User user;
 
-	private TypeTokenStatus tokenType;
+	private TypeToken tokenType;
 
 	private List<FavouritePlaces> favouritePlaces;
 
@@ -31,11 +31,11 @@ public class Request {
 		this.user = user;
 	}
 
-	public TypeTokenStatus getTokenType() {
+	public TypeToken getTokenType() {
 		return tokenType;
 	}
 
-	public void setTokenType(TypeTokenStatus tokenType) {
+	public void setTokenType(TypeToken tokenType) {
 		this.tokenType = tokenType;
 	}
 

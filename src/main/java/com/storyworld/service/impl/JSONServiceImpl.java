@@ -16,12 +16,10 @@ public class JSONServiceImpl implements JSONService {
 	@Override
 	public void prepareResponse(Response response, StatusMessage messageStatus, String messageString, User user,
 			List<User> users, boolean success) {
-		Message message = new Message();
-		message.setMessage(messageString);
-		message.setStatus(messageStatus);
+		if (messageStatus != null && messageString != null)
+			response.setMessage(new Message(messageStatus, messageString));
 		response.setUser(user);
 		response.setUsers(users);
 		response.setSuccess(success);
-		response.setMessage(message);
 	}
 }

@@ -2,7 +2,6 @@ package com.storyworld.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +23,7 @@ public class UserController {
 	@Autowired
 	private AuthorizationService authorizationService;
 
-	@RequestMapping(value = "login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "login", method = RequestMethod.POST)
 	public ResponseEntity<Response> login(@RequestBody Request request) {
 		Response response = new Response();
 
@@ -33,7 +32,7 @@ public class UserController {
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "register", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "register", method = RequestMethod.POST)
 	public ResponseEntity<Response> register(@RequestBody Request request) {
 		Response response = new Response();
 
@@ -42,7 +41,7 @@ public class UserController {
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "restartPassword", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "restartPassword", method = RequestMethod.POST)
 	public ResponseEntity<Response> restart(@RequestBody Request request) {
 		Response response = new Response();
 
@@ -51,7 +50,7 @@ public class UserController {
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "remindPassword", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "remindPassword", method = RequestMethod.PUT)
 	public ResponseEntity<Response> remindPassword(@RequestBody Request request) {
 		Response response = new Response();
 
@@ -60,7 +59,7 @@ public class UserController {
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "confirmRegister", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "confirmRegister", method = RequestMethod.POST)
 	public ResponseEntity<Response> confirmRegister(@RequestBody Request request) {
 		Response response = new Response();
 
@@ -69,7 +68,7 @@ public class UserController {
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "changePassword", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "changePassword", method = RequestMethod.PUT)
 	public ResponseEntity<Response> changePassword(@RequestBody Request request) {
 		Response response = new Response();
 
@@ -78,7 +77,7 @@ public class UserController {
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "updateUser", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "updateUser", method = RequestMethod.PUT)
 	public ResponseEntity<Response> updateUser(@RequestBody Request request) {
 		Response response = new Response();
 
@@ -90,7 +89,7 @@ public class UserController {
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "getUser", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "getUser", method = RequestMethod.POST)
 	public ResponseEntity<Response> getUser(@RequestBody Request request) {
 		Response response = new Response();
 
@@ -102,7 +101,7 @@ public class UserController {
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "getUsers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "getUsers", method = RequestMethod.POST)
 	public ResponseEntity<Response> getUsers(@RequestBody Request request) {
 		Response response = new Response();
 
@@ -114,11 +113,23 @@ public class UserController {
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "logout", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "logout", method = RequestMethod.POST)
 	public ResponseEntity<Response> logout(@RequestBody Request request) {
 		Response response = new Response();
 
 		userService.logout(request, response);
+
+		return new ResponseEntity<Response>(response, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "delete", method = RequestMethod.DELETE)
+	public ResponseEntity<Response> delete(@RequestBody Request request) {
+		Response response = new Response();
+
+		if (authorizationService.checkAccessToUser(request))
+			userService.delete(request, response);
+		else
+			return new ResponseEntity<Response>(response, HttpStatus.FORBIDDEN);
 
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}

@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Predicate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +20,7 @@ import com.storyworld.domain.sql.MailToken;
 import com.storyworld.domain.sql.Role;
 import com.storyworld.domain.sql.User;
 import com.storyworld.enums.Status;
-import com.storyworld.enums.TypeTokenStatus;
+import com.storyworld.enums.TypeToken;
 import com.storyworld.repository.sql.MailReposiotory;
 import com.storyworld.repository.sql.MailTokenRepository;
 import com.storyworld.repository.sql.RoleRepository;
@@ -64,7 +63,7 @@ public class UserServiceImpl implements UserService {
 
 		if (userLogon != null && userLogon.getName().equals(request.getUser().getName())
 				&& userLogon.getPassword().equals(request.getUser().getPassword())
-				&& (!userLogon.isBlock() || (userLogon.getLastIncorrectLogin() != null
+				&& (!userLogon.isBlock() || !userLogon.isBlock() || (userLogon.getLastIncorrectLogin() != null
 						&& ChronoUnit.MINUTES.between(userLogon.getLastIncorrectLogin(), LocalDateTime.now()) >= 10))) {
 			userLogon.setToken(UUID.randomUUID().toString());
 			userLogon.setLastActionTime(LocalDateTime.now());
@@ -93,24 +92,19 @@ public class UserServiceImpl implements UserService {
 		try {
 			User user = request.getUser();
 			user.setBlock(true);
+			user.setDelete(false);
 			User userRegister = userRepository.save(user);
 			Role role = roleRepository.findOne((long) 1);
 			Set<Role> roles = new HashSet<>();
 			roles.add(role);
 			userRegister.setRoles(roles);
 			userRepository.save(userRegister);
-			MailToken mailToken = new MailToken();
-			mailToken.setUser(userRegister);
-			mailToken.setValidationTime(LocalDateTime.now());
-			mailToken.setTypeToken(TypeTokenStatus.REGISTER);
-			mailToken.setToken(UUID.randomUUID().toString());
+			MailToken mailToken = new MailToken(TypeToken.REGISTER, UUID.randomUUID().toString(), LocalDateTime.now(),
+					userRegister);
 			Set<MailToken> tokens = new HashSet<>();
 			tokens.add(mailToken);
 			mailTokenRepository.save(tokens);
-			Mail mail = new Mail();
-			mail.setStatus(Status.READY);
-			mail.setTemplate(TypeTokenStatus.REGISTER);
-			mail.setUser(userRegister);
+			Mail mail = new Mail(TypeToken.REGISTER, Status.READY, userRegister);
 			mailReposiotory.save(mail);
 			jsonService.prepareResponse(response, StatusMessage.SUCCESS, "REGISTER", null, null, true);
 		} catch (Exception e) {
@@ -124,30 +118,23 @@ public class UserServiceImpl implements UserService {
 		User user = userRepository.findByMail(request.getUser().getMail());
 
 		if (user != null) {
-			MailToken mailToken = mailTokenRepository.findByUserAndTypeToken(user, TypeTokenStatus.RESTART_PASSWORD);
+			MailToken mailToken = mailTokenRepository.findByUserAndTypeToken(user, TypeToken.RESTART_PASSWORD);
 			if (mailToken == null) {
-				mailToken = new MailToken();
-				mailToken.setUser(user);
-				mailToken.setTypeToken(TypeTokenStatus.RESTART_PASSWORD);
-				mailToken.setToken(UUID.randomUUID().toString());
-				mailToken.setValidationTime(LocalDateTime.now());
+				mailToken = new MailToken(TypeToken.RESTART_PASSWORD, UUID.randomUUID().toString(), LocalDateTime.now(),
+						user);
 				Set<MailToken> tokens = mailTokenRepository.findByUser(user);
 				tokens.add(mailToken);
 				mailTokenRepository.save(tokens);
 			} else {
 				long id = mailToken.getId();
-				Predicate<MailToken> mailTokenPredicate = x -> x.getId() == id;
 				Set<MailToken> tokens = mailTokenRepository.findByUser(user);
-				tokens.removeIf(mailTokenPredicate);
+				tokens.removeIf(x -> x.getId() == id);
 				mailToken.setValidationTime(LocalDateTime.now());
 				mailToken.setToken(UUID.randomUUID().toString());
 				tokens.add(mailToken);
 				mailTokenRepository.save(tokens);
 			}
-			Mail mail = new Mail();
-			mail.setStatus(Status.READY);
-			mail.setTemplate(TypeTokenStatus.RESTART_PASSWORD);
-			mail.setUser(user);
+			Mail mail = new Mail(TypeToken.RESTART_PASSWORD, Status.READY, user);
 			mailReposiotory.save(mail);
 			jsonService.prepareResponse(response, StatusMessage.INFO, "RESTARTED", null, null, true);
 		} else
@@ -158,7 +145,7 @@ public class UserServiceImpl implements UserService {
 	public void remindPassword(Request request, Response response) {
 		MailToken mailToken = mailTokenRepository.findByToken(request.getToken());
 
-		if (mailToken != null && mailToken.getTypeToken().equals(TypeTokenStatus.RESTART_PASSWORD)
+		if (mailToken != null && mailToken.getTypeToken().equals(TypeToken.RESTART_PASSWORD)
 				&& ChronoUnit.DAYS.between(mailToken.getValidationTime(), LocalDateTime.now()) <= 1
 				&& mailToken.getToken().equals(request.getToken())) {
 			User user = userRepository.findOne(mailToken.getUser().getId());
@@ -179,7 +166,7 @@ public class UserServiceImpl implements UserService {
 	public void confirmRegister(Request request, Response response) {
 		MailToken mailToken = mailTokenRepository.findByToken(request.getToken());
 
-		if (mailToken != null && mailToken.getTypeToken().equals(TypeTokenStatus.REGISTER)
+		if (mailToken != null && mailToken.getTypeToken().equals(TypeToken.REGISTER)
 				&& mailToken.getToken().equals(request.getToken())) {
 			User user = userRepository.findOne(mailToken.getUser().getId());
 			user.setLastActionTime(LocalDateTime.now());
@@ -256,6 +243,17 @@ public class UserServiceImpl implements UserService {
 		if (users != null)
 			jsonService.prepareResponse(response, StatusMessage.SUCCESS, "LOGOUT", null, users, true);
 		else
+			jsonService.prepareResponse(response, StatusMessage.ERROR, "INCORRECT_DATA", null, null, false);
+	}
+
+	@Override
+	public void delete(Request request, Response response) {
+		if (request.getUser() != null && request.getUser().getId() > 0) {
+			User user = userRepository.findOne(request.getUser().getId());
+			user.setDelete(true);
+			userRepository.save(user);
+			jsonService.prepareResponse(response, StatusMessage.SUCCESS, "DELTED", user, null, true);
+		} else
 			jsonService.prepareResponse(response, StatusMessage.ERROR, "INCORRECT_DATA", null, null, false);
 	}
 
