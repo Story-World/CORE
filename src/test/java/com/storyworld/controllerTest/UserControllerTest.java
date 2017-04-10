@@ -145,7 +145,7 @@ public class UserControllerTest {
 		request.setToken("123");
 		json = mapper.writeValueAsString(request);
 		mockMvc.perform(post("/user/getUser").contentType(MediaType.APPLICATION_JSON_UTF8_VALUE).content(json))
-				.andExpect(status().isForbidden())
+				.andExpect(status().isUnauthorized())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
 	}
 
@@ -198,7 +198,7 @@ public class UserControllerTest {
 		request.setUser(user);
 		json = mapper.writeValueAsString(request);
 		mockMvc.perform(post("/user/getUser").contentType(MediaType.APPLICATION_JSON_UTF8_VALUE).content(json))
-				.andExpect(status().isForbidden())
+				.andExpect(status().isUnauthorized())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
 	}
 
