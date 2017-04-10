@@ -85,7 +85,7 @@ public class UserController {
 		if (authorizationService.checkAccessToEditUser(request))
 			userService.updateUser(request, response);
 		else
-			return new ResponseEntity<Response>(response, HttpStatus.FORBIDDEN);
+			return new ResponseEntity<Response>(response, HttpStatus.UNAUTHORIZED);
 
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
@@ -97,7 +97,7 @@ public class UserController {
 		if (authorizationService.checkAccessToEditUser(request))
 			userService.getUser(request, response);
 		else
-			return new ResponseEntity<Response>(response, HttpStatus.FORBIDDEN);
+			return new ResponseEntity<Response>(response, HttpStatus.UNAUTHORIZED);
 
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}

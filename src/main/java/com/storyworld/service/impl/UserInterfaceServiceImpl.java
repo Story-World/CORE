@@ -37,18 +37,23 @@ public class UserInterfaceServiceImpl implements UserInterfaceService {
 	@Override
 	public Response getFavouritePlaces(Request request, Response response) {
 		User user = authorizationService.checkAccessToUser(request.getToken());
-		ConfigComponent config = getConfigUp(user);
+		if(user!=null){
+			ConfigComponent config = getConfigUp(user);
 
-		List<FavouritePlaces> favouritePlaces = null;
-		try {
-			favouritePlaces = mapper.readValue(config.getValue(), new TypeReference<List<FavouritePlaces>>() {
-			});
-		} catch (IOException e) {
-			e.printStackTrace();
+			List<FavouritePlaces> favouritePlaces = null;
+			try {
+				favouritePlaces = mapper.readValue(config.getValue(), new TypeReference<List<FavouritePlaces>>() {
+				});
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			response.setUser(user);
+			response.setFavouritePlaces(favouritePlaces);
+			response.setSuccess(true);
+		}else{
+			response.setSuccess(false);
 		}
-		response.setUser(user);
-		response.setFavouritePlaces(favouritePlaces);
-		response.setSuccess(true);
+		
 		return response;
 	}
 
