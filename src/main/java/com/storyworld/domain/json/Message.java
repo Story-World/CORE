@@ -10,7 +10,6 @@ public class Message {
 	}
 
 	public Message(StatusMessage status, String message) {
-		super();
 		this.status = status;
 		this.message = message;
 	}

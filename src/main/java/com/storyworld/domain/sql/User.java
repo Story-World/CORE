@@ -40,7 +40,7 @@ public class User implements Serializable {
 
 	@NotNull
 	@Length(min = 6, max = 255)
-	// @JsonProperty(access = Access.WRITE_ONLY)
+	@JsonProperty(access = Access.WRITE_ONLY)
 	private String password;
 
 	@NotNull
