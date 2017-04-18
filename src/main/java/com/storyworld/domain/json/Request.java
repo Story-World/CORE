@@ -14,6 +14,10 @@ public class Request {
 	private TypeToken tokenType;
 
 	private List<FavouritePlaces> favouritePlaces;
+	
+	private int page;
+	
+	private int sizePage;
 
 	public String getToken() {
 		return token;
@@ -45,6 +49,22 @@ public class Request {
 
 	public void setFavouritePlaces(List<FavouritePlaces> favouritePlaces) {
 		this.favouritePlaces = favouritePlaces;
+	}
+
+	public int getPage() {
+		return page;
+	}
+
+	public void setPage(int page) {
+		this.page = page;
+	}
+
+	public int getSizePage() {
+		return sizePage;
+	}
+
+	public void setSizePage(int sizePage) {
+		this.sizePage = sizePage;
 	}
 
 	@Override

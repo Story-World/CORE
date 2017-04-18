@@ -44,4 +44,12 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 				&& (request.getUser() == null || (user.getId() == request.getUser().getId()
 						|| user.getRoles().removeIf(x -> x.getName().equals("ADMIN"))));
 	}
+	
+	@Override
+	public boolean checkAccessToComment(Request request) {
+		User user = userRepository.findByToken(request.getToken());
+		return user != null && ChronoUnit.HOURS.between(user.getLastActionTime(), LocalDateTime.now()) <= 2
+				&& (request.getUser() == null || (user.getId() == request.getUser().getId()
+						|| user.getRoles().removeIf(x -> x.getName().equals("ADMIN"))));
+	}
 }

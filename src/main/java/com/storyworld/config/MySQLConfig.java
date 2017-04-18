@@ -38,13 +38,6 @@ public class MySQLConfig {
 		return dataSource;
 	}
 
-	/*
-	 * @Bean public SessionFactory sessionFactory() throws Exception { return
-	 * new LocalSessionFactoryBuilder(dataSource()).scanPackages(
-	 * PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN)
-	 * .addProperties(getHibernateProperties()).buildSessionFactory(); }
-	 */
-
 	private Properties getHibernateProperties() {
 		Properties properties = new Properties();
 		properties.put("hibernate.show_sql", PROPERTY_NAME_HIBERNATE_SHOW_SQL);

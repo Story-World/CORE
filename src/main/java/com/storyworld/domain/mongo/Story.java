@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+//import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "storyworld")
+//@Document(collection = "storyworld")
 public class Story implements Serializable {
 
 	private static final long serialVersionUID = -7107821951231718602L;

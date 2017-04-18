@@ -13,7 +13,7 @@ import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
 @Configuration
-@EnableElasticsearchRepositories
+@EnableElasticsearchRepositories(basePackages = "com.storyworld.repository.elastic")
 public class ElasticSearchConfig {
 
 	private static final String PROPERTY_ELASTIC_HOST = "localhost";
@@ -22,16 +22,17 @@ public class ElasticSearchConfig {
 
 	@Bean
 	public ElasticsearchOperations elasticsearchTemplate() throws Exception {
+		//return new ElasticsearchTemplate(new NodeBuilder().local(true).settings(Settings.builder().put("path.home", "C:\\Users\\Anik\\Downloads\\elasticsearch-2.4.0")).node().client());
 		return new ElasticsearchTemplate(client());
 	}
 
-	@Bean
-	public Client client() throws Exception {
+	private Client client() throws Exception {
 		Settings esSettings = Settings.settingsBuilder().put("cluster.name", PROPERTY_ELASTIC_CLUSTER_NAME).build();
 
 		// https://www.elastic.co/guide/en/elasticsearch/guide/current/_transport_client_versus_node_client.html
 		return TransportClient.builder().settings(esSettings).build().addTransportAddress(
 				new InetSocketTransportAddress(InetAddress.getByName(PROPERTY_ELASTIC_HOST), PROPERTY_ELASTIC_PORT));
+
 	}
 
 }

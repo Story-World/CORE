@@ -1,17 +1,17 @@
 package com.storyworld.config;
 
-import org.springframework.context.annotation.Configuration;
+/*import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 import com.mongodb.Mongo;
-import com.mongodb.MongoClient;
+import com.mongodb.MongoClient;*/
 
-@Configuration
-@EnableMongoRepositories(basePackages = "com.storyworld.repository.mongo")
-public class MongoDBConfig extends AbstractMongoConfiguration {
+//@Configuration
+//@EnableMongoRepositories(basePackages = "com.storyworld.repository.mongo")
+public class MongoDBConfig {//extends AbstractMongoConfiguration {
 
-	private static final String PROPERTY_NAME_DATABASE_NAME = "storyworld";
+	/*private static final String PROPERTY_NAME_DATABASE_NAME = "storyworld";
 
 	@Override
 	protected String getDatabaseName() {
@@ -21,6 +21,6 @@ public class MongoDBConfig extends AbstractMongoConfiguration {
 	@Override
 	public Mongo mongo() {
 		return new MongoClient();
-	}
+	}*/
 
 }

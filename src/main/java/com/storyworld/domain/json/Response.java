@@ -3,6 +3,7 @@ package com.storyworld.domain.json;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.storyworld.domain.elastic.Comment;
 import com.storyworld.domain.sql.User;
 
 @SuppressWarnings("deprecation")
@@ -18,6 +19,8 @@ public class Response {
 	private List<User> users;
 
 	private List<FavouritePlaces> favouritePlaces;
+	
+	private List<Comment> comments;
 
 	public boolean isSuccess() {
 		return success;
@@ -57,6 +60,14 @@ public class Response {
 
 	public void setFavouritePlaces(List<FavouritePlaces> favouritePlaces) {
 		this.favouritePlaces = favouritePlaces;
+	}
+
+	public List<Comment> getComments() {
+		return comments;
+	}
+
+	public void setComments(List<Comment> comments) {
+		this.comments = comments;
 	}
 
 	@Override
