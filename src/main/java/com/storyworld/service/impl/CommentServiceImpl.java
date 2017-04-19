@@ -1,8 +1,6 @@
 package com.storyworld.service.impl;
 
-import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.stereotype.Service;
 
 import com.storyworld.domain.json.Request;

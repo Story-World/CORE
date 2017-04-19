@@ -108,7 +108,7 @@ public class UserController {
 		if (authorizationService.checkAccessToUser(request))
 			userService.getUsers(request, response);
 		else
-			return new ResponseEntity<Response>(response, HttpStatus.FORBIDDEN);
+			return new ResponseEntity<Response>(response, HttpStatus.UNAUTHORIZED);
 
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
@@ -122,14 +122,14 @@ public class UserController {
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "delete", method = RequestMethod.DELETE)
+	@RequestMapping(value = "delete", method = RequestMethod.POST)
 	public ResponseEntity<Response> delete(@RequestBody Request request) {
 		Response response = new Response();
 
 		if (authorizationService.checkAccessToUser(request))
 			userService.delete(request, response);
 		else
-			return new ResponseEntity<Response>(response, HttpStatus.FORBIDDEN);
+			return new ResponseEntity<Response>(response, HttpStatus.UNAUTHORIZED);
 
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
