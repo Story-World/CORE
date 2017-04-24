@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -67,12 +68,20 @@ public class User implements Serializable {
 	@JsonIgnore
 	private boolean deleted;
 
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private Set<Role> roles = new HashSet<>();
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "author")
+	private Set<Comment> comments = new HashSet<>();
+
+	@OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
+	private Set<Story> stories = new HashSet<>();
+
 	public User() {
 	}
 
 	public User(String name, String password, String mail, String token, LocalDateTime lastActionTime,
 			int incorrectLogin, boolean block, LocalDateTime lastIncorrectLogin, boolean deleted, Set<Role> roles) {
-		super();
 		this.name = name;
 		this.password = password;
 		this.mail = mail;
@@ -84,9 +93,6 @@ public class User implements Serializable {
 		this.deleted = deleted;
 		this.roles = roles;
 	}
-
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private Set<Role> roles = new HashSet<>();
 
 	public long getId() {
 		return id;
@@ -172,11 +178,20 @@ public class User implements Serializable {
 		this.roles = roles;
 	}
 
+	public Set<Comment> getComments() {
+		return comments;
+	}
+
+	public void setComments(Set<Comment> comments) {
+		this.comments = comments;
+	}
+
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", name=" + name + ", password=" + password + ", mail=" + mail + ", token=" + token
 				+ ", lastActionTime=" + lastActionTime + ", incorrectLogin=" + incorrectLogin + ", block=" + block
-				+ ", lastIncorrectLogin=" + lastIncorrectLogin + ", roles=" + roles + "]";
+				+ ", lastIncorrectLogin=" + lastIncorrectLogin + ", deleted=" + deleted + ", roles=" + roles
+				+ ", comments=" + comments + ", stories=" + stories + "]";
 	}
 
 }
