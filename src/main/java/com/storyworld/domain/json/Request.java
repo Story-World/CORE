@@ -2,7 +2,8 @@ package com.storyworld.domain.json;
 
 import java.util.List;
 
-import com.storyworld.domain.elastic.Comment;
+import com.storyworld.domain.sql.Comment;
+import com.storyworld.domain.sql.Story;
 import com.storyworld.domain.sql.User;
 import com.storyworld.enums.TypeToken;
 
@@ -17,6 +18,8 @@ public class Request {
 	private List<FavouritePlaces> favouritePlaces;
 
 	private Comment comment;
+
+	private Story story;
 
 	private int page;
 
@@ -60,6 +63,14 @@ public class Request {
 
 	public void setComment(Comment comment) {
 		this.comment = comment;
+	}
+
+	public Story getStory() {
+		return story;
+	}
+
+	public void setStory(Story story) {
+		this.story = story;
 	}
 
 	public int getPage() {
