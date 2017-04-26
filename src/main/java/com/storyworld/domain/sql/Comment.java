@@ -1,5 +1,7 @@
 package com.storyworld.domain.sql;
 
+import java.io.Serializable;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,7 +12,9 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "COMMENT")
-public class Comment {
+public class Comment implements Serializable {
+
+	private static final long serialVersionUID = 2919807702926798174L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,5 +1,6 @@
 package com.storyworld.domain.sql;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,7 +22,9 @@ import com.storyworld.enums.Status;
 
 @Entity
 @Table(name = "STORY")
-public class Story {
+public class Story implements Serializable {
+
+	private static final long serialVersionUID = -3972670387724832603L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
