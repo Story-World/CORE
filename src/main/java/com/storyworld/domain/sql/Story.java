@@ -7,6 +7,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,6 +20,8 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
 import com.storyworld.enums.Status;
+import com.storyworld.enums.StoryStatus;
+import com.storyworld.enums.StoryType;
 
 @Entity
 @Table(name = "STORY")
@@ -38,7 +42,13 @@ public class Story {
 
 	private LocalDateTime date;
 
-	private Status status;
+	@Enumerated(EnumType.STRING)
+	@NotNull
+	private StoryStatus status;
+	
+	@Enumerated(EnumType.STRING)
+	@NotNull
+	private StoryType type;
 
 	private Float avgRate;
 
@@ -51,11 +61,12 @@ public class Story {
 	public Story() {
 	}
 
-	public Story(String name, String description, LocalDateTime date, Status status, User author) {
+	public Story(String name, String description, LocalDateTime date, StoryStatus status, StoryType type, User author) {
 		this.name = name;
 		this.description = description;
 		this.date = date;
 		this.status = status;
+		this.type = type;
 		this.author = author;
 	}
 
@@ -87,12 +98,20 @@ public class Story {
 		this.date = date;
 	}
 
-	public Status getStatus() {
+	public StoryStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(Status status) {
+	public void setStatus(StoryStatus status) {
 		this.status = status;
+	}
+	
+	public StoryType getType() {
+		return type;
+	}
+
+	public void setType(StoryType type) {
+		this.type = type;
 	}
 
 	public Float getAvgRate() {
