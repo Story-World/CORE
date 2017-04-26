@@ -20,7 +20,6 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
 
-import com.storyworld.enums.Status;
 import com.storyworld.enums.StoryStatus;
 import com.storyworld.enums.StoryType;
 
@@ -54,9 +53,6 @@ public class Story implements Serializable {
 	private StoryType type;
 
 	private Float avgRate;
-
-	@OneToMany(mappedBy = "story", cascade = CascadeType.ALL)
-	private Set<Comment> listOfComment = new HashSet<>();
 
 	@ManyToOne(cascade = CascadeType.ALL)
 	private User author;
@@ -125,14 +121,6 @@ public class Story implements Serializable {
 		this.avgRate = avgRate;
 	}
 
-	public Set<Comment> getListOfComment() {
-		return listOfComment;
-	}
-
-	public void setListOfComment(Set<Comment> listOfComment) {
-		this.listOfComment = listOfComment;
-	}
-
 	public User getAuthor() {
 		return author;
 	}
@@ -144,7 +132,7 @@ public class Story implements Serializable {
 	@Override
 	public String toString() {
 		return "Story [id=" + id + ", name=" + name + ", description=" + description + ", date=" + date + ", status="
-				+ status + ", avgRate=" + avgRate + ", listOfComment=" + listOfComment + ", author=" + author + "]";
+				+ status + ", avgRate=" + avgRate + ", author=" + author + "]";
 	}
 
 }

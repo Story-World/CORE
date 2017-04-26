@@ -71,12 +71,6 @@ public class User implements Serializable {
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<Role> roles = new HashSet<>();
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "author")
-	private Set<Comment> comments = new HashSet<>();
-
-	@OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
-	private Set<Story> stories = new HashSet<>();
-
 	public User() {
 	}
 
@@ -178,20 +172,12 @@ public class User implements Serializable {
 		this.roles = roles;
 	}
 
-	public Set<Comment> getComments() {
-		return comments;
-	}
-
-	public void setComments(Set<Comment> comments) {
-		this.comments = comments;
-	}
-
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", name=" + name + ", password=" + password + ", mail=" + mail + ", token=" + token
 				+ ", lastActionTime=" + lastActionTime + ", incorrectLogin=" + incorrectLogin + ", block=" + block
 				+ ", lastIncorrectLogin=" + lastIncorrectLogin + ", deleted=" + deleted + ", roles=" + roles
-				+ ", comments=" + comments + ", stories=" + stories + "]";
+				+ "]";
 	}
 
 }
