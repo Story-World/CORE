@@ -2,8 +2,6 @@ package com.storyworld.domain.sql;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -14,7 +12,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -47,7 +44,7 @@ public class Story implements Serializable {
 	@Enumerated(EnumType.STRING)
 	@NotNull
 	private StoryStatus status;
-	
+
 	@Enumerated(EnumType.STRING)
 	@NotNull
 	private StoryType type;
@@ -58,6 +55,10 @@ public class Story implements Serializable {
 	private User author;
 
 	public Story() {
+	}
+
+	public Story(Long id) {
+		this.id = id;
 	}
 
 	public Story(String name, String description, LocalDateTime date, StoryStatus status, StoryType type, User author) {
@@ -104,7 +105,7 @@ public class Story implements Serializable {
 	public void setStatus(StoryStatus status) {
 		this.status = status;
 	}
-	
+
 	public StoryType getType() {
 		return type;
 	}

@@ -3,6 +3,8 @@ package com.storyworld.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -36,7 +38,7 @@ public class CommentController {
 	public ResponseEntity<Response> saveCommet(@RequestBody Request request) {
 		Response response = new Response();
 
-		if (authorizationService.checkAccessToComment(request))
+		if (authorizationService.checkAccess(request))
 			commentService.save(request, response);
 		else
 			return new ResponseEntity<Response>(response, HttpStatus.UNAUTHORIZED);
@@ -56,12 +58,13 @@ public class CommentController {
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "delete", method = RequestMethod.POST)
-	public ResponseEntity<Response> deleteCommet(@RequestBody Request request) {
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	public ResponseEntity<Response> deleteCommet(@PathVariable(value = "id") Long id,
+			@CookieValue("token") String token) {
 		Response response = new Response();
 
-		if (authorizationService.checkAccessToComment(request))
-			commentService.delete(request, response);
+		if (authorizationService.checkAccessToComment(new Request(token)))
+			commentService.delete(id, response);
 		else
 			return new ResponseEntity<Response>(response, HttpStatus.UNAUTHORIZED);
 

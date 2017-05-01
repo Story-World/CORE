@@ -3,6 +3,8 @@ package com.storyworld.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -122,12 +124,12 @@ public class UserController {
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "delete", method = RequestMethod.POST)
-	public ResponseEntity<Response> delete(@RequestBody Request request) {
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	public ResponseEntity<Response> delete(@PathVariable(value = "id") Long id, @CookieValue("token") String token) {
 		Response response = new Response();
 
-		if (authorizationService.checkAccessToUser(request))
-			userService.delete(request, response);
+		if (authorizationService.checkAccessToUser(new Request(token)))
+			userService.delete(id, response);
 		else
 			return new ResponseEntity<Response>(response, HttpStatus.UNAUTHORIZED);
 
