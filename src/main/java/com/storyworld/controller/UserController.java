@@ -3,9 +3,9 @@ package com.storyworld.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -95,7 +95,7 @@ public class UserController {
 	public ResponseEntity<Response> getUser(@RequestBody Request request) {
 		Response response = new Response();
 
-		if (authorizationService.checkAccessToUser(request))
+		if (authorizationService.checkAccess(request))
 			userService.getUser(request, response);
 		else
 			return new ResponseEntity<Response>(response, HttpStatus.UNAUTHORIZED);
@@ -107,7 +107,7 @@ public class UserController {
 	public ResponseEntity<Response> getUsers(@RequestBody Request request) {
 		Response response = new Response();
 
-		if (authorizationService.checkAccessToUser(request))
+		if (authorizationService.checkAccess(request))
 			userService.getUsers(request, response);
 		else
 			return new ResponseEntity<Response>(response, HttpStatus.UNAUTHORIZED);
@@ -125,7 +125,7 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<Response> delete(@PathVariable(value = "id") Long id, @CookieValue("token") String token) {
+	public ResponseEntity<Response> delete(@PathVariable(value = "id") Long id, @RequestHeader("Token") String token) {
 		Response response = new Response();
 
 		if (authorizationService.checkAccessToUser(new Request(token)))

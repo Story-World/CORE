@@ -5,7 +5,7 @@ import com.storyworld.domain.json.Response;
 
 public interface CommentService {
 
-	public void get(Request request, Response response);
+	public void get(Long idStory, int page, int pageSize, Response response);
 
 	public void save(Request request, Response response);
 

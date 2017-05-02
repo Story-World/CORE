@@ -62,7 +62,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 		User user = userRepository.findByToken(request.getToken());
 		Set<Comment> comments = commentRepository.findByAuthor(user);
 		return user != null && ChronoUnit.HOURS.between(user.getLastActionTime(), LocalDateTime.now()) <= 2
-				&& (request.getCommentContent() == null
+				&& (request.getCommentContent() != null
 						|| (comments.removeIf(x -> x.get_id().equals(request.getCommentContent().getId()))
 								|| user.getRoles().removeIf(x -> x.getName().equals("ADMIN"))));
 	}

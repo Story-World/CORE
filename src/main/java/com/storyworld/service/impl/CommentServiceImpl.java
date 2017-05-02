@@ -48,12 +48,13 @@ public class CommentServiceImpl implements CommentService {
 	private static final Logger LOG = LoggerFactory.getLogger(CommentServiceImpl.class);
 
 	@Override
-	public void get(Request request, Response response) {
-		User user = userRepository.findByToken(request.getToken());
-		if (user != null && request.getPage() > -1 && request.getSizePage() > 0 && request.getStory() != null) {
-			Story story = storyRepository.findOne(request.getStory().getId());
+	public void get(Long idStory, int page, int pageSize, Response response) {
+		Story story = storyRepository.findOne(idStory);
+		if (story != null && page > -1 && pageSize > 0) {
+			System.out.println(story.toString());
+			System.out.println("ok");
 			Page<Comment> comments = commentRepository.findByStory(story,
-					new PageRequest(request.getPage(), request.getSizePage(), new Sort(Direction.DESC, "date")));
+					new PageRequest(page, pageSize, new Sort(Direction.DESC, "date")));
 			Set<CommentContent> commentsContent = new HashSet<>();
 			for (Comment comment : comments)
 				commentsContent.add(commentContentRepository.findOne(comment.get_id()));
@@ -65,11 +66,19 @@ public class CommentServiceImpl implements CommentService {
 	@Override
 	public void save(Request request, Response response) {
 		User user = userRepository.findByToken(request.getToken());
-		Story stroy = storyRepository.findOne(request.getStory().getId());
+		Story story = storyRepository.findOne(request.getStory().getId());
 		CommentContent commentContent = request.getCommentContent();
-		if (user != null && stroy != null && commentContent != null) {
-			Comment comment = new Comment(user, stroy);
+		if (user != null && story != null && commentContent != null) {
+			Comment comment = new Comment(user, story);
 			try {
+				user.setRoles(null);
+				user.setLastIncorrectLogin(null);
+				user.setLastActionTime(null);
+				user.setToken(null);
+				user.setMail(null);
+				commentContent.setAuthor(user);
+				commentContent.setLikes(0);
+				commentContent.setDislikes(0);
 				commentContent = commentContentRepository.save(commentContent);
 				comment.set_id(commentContent.getId());
 				comment.setDate(LocalDateTime.now());

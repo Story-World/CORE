@@ -48,6 +48,7 @@ public class HomeController {
 			role = new Role("ADMIN");
 			roleRepository.save(role);
 		}
+
 		return "welcome";
 	}
 

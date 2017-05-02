@@ -3,9 +3,9 @@ package com.storyworld.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,11 +25,12 @@ public class CommentController {
 	@Autowired
 	private AuthorizationService authorizationService;
 
-	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<Response> getCommetsByStory(@RequestBody Request request) {
+	@RequestMapping(value = "/{idStory}/{page}/{pageSize}", method = RequestMethod.GET)
+	public ResponseEntity<Response> getCommetsByStory(@PathVariable(value = "idStory") Long idStory,
+			@PathVariable(value = "page") int page, @PathVariable(value = "pageSize") int pageSize) {
 		Response response = new Response();
 
-		commentService.get(request, response);
+		commentService.get(idStory, page, pageSize, response);
 
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
@@ -60,7 +61,7 @@ public class CommentController {
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Response> deleteCommet(@PathVariable(value = "id") Long id,
-			@CookieValue("token") String token) {
+			@RequestHeader("Token") String token) {
 		Response response = new Response();
 
 		if (authorizationService.checkAccessToComment(new Request(token)))

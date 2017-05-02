@@ -5,6 +5,8 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.data.elasticsearch.annotations.Document;
 
+import com.storyworld.domain.sql.User;
+
 @Document(indexName = "comment", type = "comment")
 public class CommentContent {
 
@@ -13,6 +15,12 @@ public class CommentContent {
 
 	@NotNull
 	private String content;
+
+	private User author;
+
+	private int likes;
+
+	private int dislikes;
 
 	public String getId() {
 		return id;
@@ -30,9 +38,34 @@ public class CommentContent {
 		this.content = content;
 	}
 
+	public User getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(User author) {
+		this.author = author;
+	}
+
+	public int getLikes() {
+		return likes;
+	}
+
+	public void setLikes(int likes) {
+		this.likes = likes;
+	}
+
+	public int getDislikes() {
+		return dislikes;
+	}
+
+	public void setDislikes(int dislikes) {
+		this.dislikes = dislikes;
+	}
+
 	@Override
 	public String toString() {
-		return "CommentContent [id=" + id + ", content=" + content + "]";
+		return "CommentContent [id=" + id + ", content=" + content + ", author=" + author + ", likes=" + likes
+				+ ", dislikes=" + dislikes + "]";
 	}
 
 }
