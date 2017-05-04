@@ -13,4 +13,8 @@ public interface CommentService {
 
 	public void delete(Long id, Response response);
 
+	public void like(Request request, Response response);
+
+	public void dislike(Request request, Response response);
+
 }

@@ -1,6 +1,6 @@
 package com.storyworld.service;
 
-import java.util.Set;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ public interface JSONService {
 			Page<User> users, boolean success);
 
 	public void prepareResponseForComment(Response response, StatusMessage messageStatus, String messageString,
-			Set<CommentContent> commentsContent, boolean success);
+			List<CommentContent> commentsContent, CommentContent comment, boolean success);
 
 	public void prepareErrorResponse(Response response, String messageString);
 

@@ -1,6 +1,6 @@
 package com.storyworld.service.impl;
 
-import java.util.Set;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -26,8 +26,9 @@ public class JSONServiceImpl implements JSONService {
 
 	@Override
 	public void prepareResponseForComment(Response response, StatusMessage messageStatus, String messageString,
-			Set<CommentContent> commentsContent, boolean success) {
+			List<CommentContent> commentsContent, CommentContent comment, boolean success) {
 		prepareMessage(response, messageStatus, messageString);
+		response.setComment(comment);
 		response.setComments(commentsContent);
 		response.setSuccess(success);
 	}

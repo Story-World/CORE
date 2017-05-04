@@ -1,8 +1,8 @@
 package com.storyworld.service.impl;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,10 +55,10 @@ public class CommentServiceImpl implements CommentService {
 			System.out.println("ok");
 			Page<Comment> comments = commentRepository.findByStory(story,
 					new PageRequest(page, pageSize, new Sort(Direction.DESC, "date")));
-			Set<CommentContent> commentsContent = new HashSet<>();
+			List<CommentContent> commentsContent = new LinkedList<>();
 			for (Comment comment : comments)
 				commentsContent.add(commentContentRepository.findOne(comment.get_id()));
-			jsonService.prepareResponseForComment(response, null, null, commentsContent, true);
+			jsonService.prepareResponseForComment(response, null, null, commentsContent, null, true);
 		} else
 			jsonService.prepareErrorResponse(response, "INCORRECT_DATA");
 	}
@@ -83,7 +83,7 @@ public class CommentServiceImpl implements CommentService {
 				comment.set_id(commentContent.getId());
 				comment.setDate(LocalDateTime.now());
 				commentRepository.save(comment);
-				jsonService.prepareResponseForComment(response, StatusMessage.SUCCESS, "ADDED", null, true);
+				jsonService.prepareResponseForComment(response, StatusMessage.SUCCESS, "ADDED", null, null, true);
 			} catch (Exception e) {
 				LOG.error(e.getMessage());
 				jsonService.prepareErrorResponse(response, "INCORRECT_DATA");
@@ -103,7 +103,7 @@ public class CommentServiceImpl implements CommentService {
 			comment.setDate(LocalDateTime.now());
 			commentContentRepository.save(commentContent);
 			commentRepository.save(comment);
-			jsonService.prepareResponseForComment(response, StatusMessage.SUCCESS, "UPDATED", null, true);
+			jsonService.prepareResponseForComment(response, StatusMessage.SUCCESS, "UPDATED", null, null, true);
 		} else
 			jsonService.prepareErrorResponse(response, "INCORRECT_DATA");
 	}
@@ -115,7 +115,34 @@ public class CommentServiceImpl implements CommentService {
 			CommentContent commentContent = commentContentRepository.findOne(comment.get_id());
 			commentContentRepository.delete(commentContent);
 			commentRepository.delete(comment);
-			jsonService.prepareResponseForComment(response, StatusMessage.SUCCESS, "DELETED", null, true);
+			jsonService.prepareResponseForComment(response, StatusMessage.SUCCESS, "DELETED", null, null, true);
+		} else
+			jsonService.prepareErrorResponse(response, "INCORRECT_DATA");
+	}
+
+	@Override
+	public synchronized void like(Request request, Response response) {
+		CommentContent commentContent = commentContentRepository.findOne(request.getCommentContent().getId());
+		if (commentContent != null) {
+			int like = commentContent.getLikes();
+			like++;
+			commentContent.setLikes(like);
+			commentContent = commentContentRepository.save(commentContent);
+			jsonService.prepareResponseForComment(response, StatusMessage.SUCCESS, "LIKED", null, commentContent, true);
+		} else
+			jsonService.prepareErrorResponse(response, "INCORRECT_DATA");
+	}
+
+	@Override
+	public synchronized void dislike(Request request, Response response) {
+		CommentContent commentContent = commentContentRepository.findOne(request.getCommentContent().getId());
+		if (commentContent != null) {
+			int dislike = commentContent.getDislikes();
+			dislike++;
+			commentContent.setLikes(dislike);
+			commentContentRepository.save(commentContent);
+			jsonService.prepareResponseForComment(response, StatusMessage.SUCCESS, "DISLIKED", null, commentContent,
+					true);
 		} else
 			jsonService.prepareErrorResponse(response, "INCORRECT_DATA");
 	}

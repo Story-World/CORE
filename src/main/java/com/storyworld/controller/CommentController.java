@@ -46,6 +46,30 @@ public class CommentController {
 
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
+	
+	@RequestMapping(value = "like", method = RequestMethod.POST)
+	public ResponseEntity<Response> like(@RequestBody Request request) {
+		Response response = new Response();
+
+		if (authorizationService.checkAccess(request))
+			commentService.like(request, response);
+		else
+			return new ResponseEntity<Response>(response, HttpStatus.UNAUTHORIZED);
+
+		return new ResponseEntity<Response>(response, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "dislike", method = RequestMethod.POST)
+	public ResponseEntity<Response> dislike(@RequestBody Request request) {
+		Response response = new Response();
+
+		if (authorizationService.checkAccess(request))
+			commentService.dislike(request, response);
+		else
+			return new ResponseEntity<Response>(response, HttpStatus.UNAUTHORIZED);
+
+		return new ResponseEntity<Response>(response, HttpStatus.OK);
+	}
 
 	@RequestMapping(method = RequestMethod.PUT)
 	public ResponseEntity<Response> updateCommet(@RequestBody Request request) {

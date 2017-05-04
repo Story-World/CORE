@@ -1,7 +1,6 @@
 package com.storyworld.domain.json;
 
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.data.domain.Page;
 
@@ -23,7 +22,9 @@ public class Response {
 
 	private List<FavouritePlaces> favouritePlaces;
 
-	private Set<CommentContent> comments;
+	private List<CommentContent> comments;
+
+	private CommentContent comment;
 
 	public boolean isSuccess() {
 		return success;
@@ -65,12 +66,20 @@ public class Response {
 		this.favouritePlaces = favouritePlaces;
 	}
 
-	public Set<CommentContent> getComments() {
+	public List<CommentContent> getComments() {
 		return comments;
 	}
 
-	public void setComments(Set<CommentContent> comments) {
+	public void setComments(List<CommentContent> comments) {
 		this.comments = comments;
+	}
+
+	public CommentContent getComment() {
+		return comment;
+	}
+
+	public void setComment(CommentContent comment) {
+		this.comment = comment;
 	}
 
 	@Override
