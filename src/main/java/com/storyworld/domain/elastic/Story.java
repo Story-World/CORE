@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.data.elasticsearch.annotations.Document;
 
 import com.storyworld.domain.sql.User;
-import com.storyworld.enums.StoryStatus;
+import com.storyworld.enums.StoryState;
 import com.storyworld.enums.StoryType;
 
 @Document(indexName = "story", type = "story")
@@ -22,7 +22,7 @@ public class Story {
 
 	private LocalDateTime date;
 
-	private StoryStatus status;
+	private StoryState status;
 	
 	private StoryType type;
 

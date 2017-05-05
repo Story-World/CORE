@@ -2,25 +2,23 @@ package com.storyworld.domain.sql;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
 
-import com.storyworld.enums.StoryStatus;
+import com.storyworld.enums.StoryState;
 import com.storyworld.enums.StoryType;
 
 @Entity
@@ -36,7 +34,7 @@ public class Story implements Serializable {
 	@NotNull
 	@Column(unique = true)
 	@Length(min = 4, max = 255)
-	private String name;
+	private String title;
 
 	@NotNull
 	@Length(min = 4, max = 255)
@@ -46,7 +44,7 @@ public class Story implements Serializable {
 
 	@Enumerated(EnumType.STRING)
 	@NotNull
-	private StoryStatus status;
+	private StoryState state;
 	
 	@Enumerated(EnumType.STRING)
 	@NotNull
@@ -54,17 +52,19 @@ public class Story implements Serializable {
 
 	private Float avgRate;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "authorId")
+	@NotNull
 	private User author;
 
 	public Story() {
 	}
 
-	public Story(String name, String description, LocalDateTime date, StoryStatus status, StoryType type, User author) {
-		this.name = name;
+	public Story(String title, String description, LocalDateTime date, StoryState state, StoryType type, User author) {
+		this.title = title;
 		this.description = description;
 		this.date = date;
-		this.status = status;
+		this.state = state;
 		this.type = type;
 		this.author = author;
 	}
@@ -74,11 +74,11 @@ public class Story implements Serializable {
 	}
 
 	public String getName() {
-		return name;
+		return title;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setName(String title) {
+		this.title = title;
 	}
 
 	public String getDescription() {
@@ -97,12 +97,12 @@ public class Story implements Serializable {
 		this.date = date;
 	}
 
-	public StoryStatus getStatus() {
-		return status;
+	public StoryState getState() {
+		return state;
 	}
 
-	public void setStatus(StoryStatus status) {
-		this.status = status;
+	public void setState(StoryState state) {
+		this.state = state;
 	}
 	
 	public StoryType getType() {
@@ -131,8 +131,8 @@ public class Story implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Story [id=" + id + ", name=" + name + ", description=" + description + ", date=" + date + ", status="
-				+ status + ", avgRate=" + avgRate + ", author=" + author + "]";
+		return "Story [id=" + id + ", title=" + title + ", description=" + description + ", date=" + date + ", state="
+				+ state + ", avgRate=" + avgRate + ", author=" + author + "]";
 	}
 
 }
