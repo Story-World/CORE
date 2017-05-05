@@ -3,7 +3,9 @@ package com.storyworld.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,11 +25,12 @@ public class CommentController {
 	@Autowired
 	private AuthorizationService authorizationService;
 
-	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<Response> getCommetsByStory(@RequestBody Request request) {
+	@RequestMapping(value = "/{idStory}/{page}/{pageSize}", method = RequestMethod.GET)
+	public ResponseEntity<Response> getCommetsByStory(@PathVariable(value = "idStory") Long idStory,
+			@PathVariable(value = "page") int page, @PathVariable(value = "pageSize") int pageSize) {
 		Response response = new Response();
 
-		commentService.get(request, response);
+		commentService.get(idStory, page, pageSize, response);
 
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
@@ -36,8 +39,32 @@ public class CommentController {
 	public ResponseEntity<Response> saveCommet(@RequestBody Request request) {
 		Response response = new Response();
 
-		if (authorizationService.checkAccessToComment(request))
+		if (authorizationService.checkAccess(request))
 			commentService.save(request, response);
+		else
+			return new ResponseEntity<Response>(response, HttpStatus.UNAUTHORIZED);
+
+		return new ResponseEntity<Response>(response, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "like", method = RequestMethod.POST)
+	public ResponseEntity<Response> like(@RequestBody Request request) {
+		Response response = new Response();
+
+		if (authorizationService.checkAccess(request))
+			commentService.like(request, response);
+		else
+			return new ResponseEntity<Response>(response, HttpStatus.UNAUTHORIZED);
+
+		return new ResponseEntity<Response>(response, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "dislike", method = RequestMethod.POST)
+	public ResponseEntity<Response> dislike(@RequestBody Request request) {
+		Response response = new Response();
+
+		if (authorizationService.checkAccess(request))
+			commentService.dislike(request, response);
 		else
 			return new ResponseEntity<Response>(response, HttpStatus.UNAUTHORIZED);
 
@@ -56,12 +83,13 @@ public class CommentController {
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "delete", method = RequestMethod.POST)
-	public ResponseEntity<Response> deleteCommet(@RequestBody Request request) {
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	public ResponseEntity<Response> deleteCommet(@PathVariable(value = "id") Long id,
+			@RequestHeader("Token") String token) {
 		Response response = new Response();
 
-		if (authorizationService.checkAccessToComment(request))
-			commentService.delete(request, response);
+		if (authorizationService.checkAccessToComment(new Request(token)))
+			commentService.delete(id, response);
 		else
 			return new ResponseEntity<Response>(response, HttpStatus.UNAUTHORIZED);
 

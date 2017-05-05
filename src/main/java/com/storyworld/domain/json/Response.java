@@ -2,8 +2,10 @@ package com.storyworld.domain.json;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.storyworld.domain.elastic.Comment;
+import com.storyworld.domain.elastic.CommentContent;
 import com.storyworld.domain.sql.User;
 
 @SuppressWarnings("deprecation")
@@ -16,11 +18,13 @@ public class Response {
 
 	private User user;
 
-	private List<User> users;
+	private Page<User> users;
 
 	private List<FavouritePlaces> favouritePlaces;
-	
-	private List<Comment> comments;
+
+	private List<CommentContent> comments;
+
+	private CommentContent comment;
 
 	public boolean isSuccess() {
 		return success;
@@ -46,11 +50,11 @@ public class Response {
 		this.user = user;
 	}
 
-	public List<User> getUsers() {
+	public Page<User> getUsers() {
 		return users;
 	}
 
-	public void setUsers(List<User> users) {
+	public void setUsers(Page<User> users) {
 		this.users = users;
 	}
 
@@ -62,12 +66,20 @@ public class Response {
 		this.favouritePlaces = favouritePlaces;
 	}
 
-	public List<Comment> getComments() {
+	public List<CommentContent> getComments() {
 		return comments;
 	}
 
-	public void setComments(List<Comment> comments) {
+	public void setComments(List<CommentContent> comments) {
 		this.comments = comments;
+	}
+
+	public CommentContent getComment() {
+		return comment;
+	}
+
+	public void setComment(CommentContent comment) {
+		this.comment = comment;
 	}
 
 	@Override

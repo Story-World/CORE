@@ -2,13 +2,16 @@ package com.storyworld.service.impl;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.storyworld.domain.json.Request;
 import com.storyworld.domain.json.Response;
+import com.storyworld.domain.sql.Comment;
 import com.storyworld.domain.sql.User;
+import com.storyworld.repository.sql.CommentRepository;
 import com.storyworld.repository.sql.UserRepository;
 import com.storyworld.service.AuthorizationService;
 
@@ -17,6 +20,9 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private CommentRepository commentRepository;
 
 	private void authorizeToken(String token) {
 
@@ -38,18 +44,27 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 	}
 
 	@Override
+	public boolean checkAccess(Request request) {
+		User user = userRepository.findByToken(request.getToken());
+		return user != null && ChronoUnit.HOURS.between(user.getLastActionTime(), LocalDateTime.now()) <= 2;
+	}
+
+	@Override
 	public boolean checkAccessToUser(Request request) {
 		User user = userRepository.findByToken(request.getToken());
 		return user != null && ChronoUnit.HOURS.between(user.getLastActionTime(), LocalDateTime.now()) <= 2
 				&& (request.getUser() == null || (user.getId() == request.getUser().getId()
 						|| user.getRoles().removeIf(x -> x.getName().equals("ADMIN"))));
 	}
-	
+
 	@Override
 	public boolean checkAccessToComment(Request request) {
 		User user = userRepository.findByToken(request.getToken());
+		Set<Comment> comments = commentRepository.findByAuthor(user);
 		return user != null && ChronoUnit.HOURS.between(user.getLastActionTime(), LocalDateTime.now()) <= 2
-				&& (request.getUser() == null || (user.getId() == request.getUser().getId()
-						|| user.getRoles().removeIf(x -> x.getName().equals("ADMIN"))));
+				&& (request.getCommentContent() != null
+						|| (comments.removeIf(x -> x.get_id().equals(request.getCommentContent().getId()))
+								|| user.getRoles().removeIf(x -> x.getName().equals("ADMIN"))));
 	}
+
 }

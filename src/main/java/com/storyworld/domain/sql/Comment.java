@@ -1,8 +1,8 @@
 package com.storyworld.domain.sql;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -21,17 +21,21 @@ public class Comment implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Long id;
+
+	private String _id;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "authorId")
 	@NotNull
 	private User author;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "storyId")
 	@NotNull
 	private Story story;
+
+	private LocalDateTime date;
 
 	public Comment() {
 	}
@@ -39,6 +43,18 @@ public class Comment implements Serializable {
 	public Comment(User author, Story story) {
 		this.author = author;
 		this.story = story;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public String get_id() {
+		return _id;
+	}
+
+	public void set_id(String _id) {
+		this._id = _id;
 	}
 
 	public User getAuthor() {
@@ -57,13 +73,18 @@ public class Comment implements Serializable {
 		this.story = story;
 	}
 
-	public int getId() {
-		return id;
+	public LocalDateTime getDate() {
+		return date;
+	}
+
+	public void setDate(LocalDateTime date) {
+		this.date = date;
 	}
 
 	@Override
 	public String toString() {
-		return "Comment [id=" + id + ", author=" + author + ", story=" + story + "]";
+		return "Comment [id=" + id + ", _id=" + _id + ", author=" + author + ", story=" + story + ", date=" + date
+				+ "]";
 	}
 
 }
