@@ -1,5 +1,5 @@
 package com.storyworld.enums;
 
-public enum StoryStatus {
+public enum StoryState {
 	NEW, IN_APPROVAL, APPROVED, REJECTED
 }
