@@ -19,20 +19,20 @@ public class StoryController {
 
 	@Autowired
 	private AuthorizationService authorizationService;
-	
+
 	@Autowired
 	private StoryService storyService;
-	
+
 	@RequestMapping(value = "add", method = RequestMethod.POST)
 	public ResponseEntity<Response> updateUser(@RequestBody Request request) {
 		Response response = new Response();
 
-		if (authorizationService.checkAccessToUser(request))
+		if (authorizationService.checkAccess(request))
 			storyService.addStory(request, response);
 		else
 			return new ResponseEntity<Response>(response, HttpStatus.UNAUTHORIZED);
 
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
-	
+
 }

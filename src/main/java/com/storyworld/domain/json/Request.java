@@ -115,8 +115,8 @@ public class Request {
 	@Override
 	public String toString() {
 		return "Request [token=" + token + ", user=" + user + ", tokenType=" + tokenType + ", favouritePlaces="
-				+ favouritePlaces + ", commentContent=" + commentContent + ", story=" + story + ", page=" + page
-				+ ", sizePage=" + sizePage + "]";
+				+ favouritePlaces + ", commentContent=" + commentContent + ", comment=" + comment + ", story=" + story
+				+ ", page=" + page + ", sizePage=" + sizePage + "]";
 	}
 
 }
