@@ -20,7 +20,7 @@ public interface UserService {
 
 	public void changePassword(Request request, Response response);
 
-	public void updateUser(Request request, Response response);
+	public void update(Request request, Response response);
 
 	public void getUser(Request request, Response response);
 

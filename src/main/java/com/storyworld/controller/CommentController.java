@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.storyworld.domain.json.Request;
 import com.storyworld.domain.json.Response;
+import com.storyworld.domain.sql.Comment;
 import com.storyworld.service.AuthorizationService;
 import com.storyworld.service.CommentService;
 
@@ -46,7 +47,7 @@ public class CommentController {
 
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
-	
+
 	@RequestMapping(value = "like", method = RequestMethod.POST)
 	public ResponseEntity<Response> like(@RequestBody Request request) {
 		Response response = new Response();
@@ -58,7 +59,7 @@ public class CommentController {
 
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
-	
+
 	@RequestMapping(value = "dislike", method = RequestMethod.POST)
 	public ResponseEntity<Response> dislike(@RequestBody Request request) {
 		Response response = new Response();
@@ -84,12 +85,12 @@ public class CommentController {
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<Response> deleteCommet(@PathVariable(value = "id") Long id,
+	public ResponseEntity<Response> deleteCommet(@PathVariable(value = "id") String _id,
 			@RequestHeader("Token") String token) {
 		Response response = new Response();
 
-		if (authorizationService.checkAccessToComment(new Request(token)))
-			commentService.delete(id, response);
+		if (authorizationService.checkAccessToComment(new Request(token, new Comment(_id))))
+			commentService.delete(_id, response);
 		else
 			return new ResponseEntity<Response>(response, HttpStatus.UNAUTHORIZED);
 

@@ -45,6 +45,10 @@ public class Comment implements Serializable {
 		this.story = story;
 	}
 
+	public Comment(String _id) {
+		this._id = _id;
+	}
+
 	public Long getId() {
 		return id;
 	}

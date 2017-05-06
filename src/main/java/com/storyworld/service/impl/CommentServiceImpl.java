@@ -68,8 +68,9 @@ public class CommentServiceImpl implements CommentService {
 		User user = userRepository.findByToken(request.getToken());
 		Story story = storyRepository.findOne(request.getStory().getId());
 		CommentContent commentContent = request.getCommentContent();
-		if (user != null && story != null && commentContent != null) {
-			Comment comment = new Comment(user, story);
+		Comment comment = commentRepository.findByAuthor(user);
+		if (user != null && story != null && commentContent != null && comment == null) {
+			comment = new Comment(user, story);
 			try {
 				user.setRoles(null);
 				user.setLastIncorrectLogin(null);
@@ -83,13 +84,18 @@ public class CommentServiceImpl implements CommentService {
 				comment.set_id(commentContent.getId());
 				comment.setDate(LocalDateTime.now());
 				commentRepository.save(comment);
-				jsonService.prepareResponseForComment(response, StatusMessage.SUCCESS, "ADDED", null, null, true);
+				jsonService.prepareResponseForComment(response, StatusMessage.SUCCESS, "ADDED", null, commentContent,
+						true);
 			} catch (Exception e) {
-				LOG.error(e.getMessage());
+				LOG.error(e.toString());
 				jsonService.prepareErrorResponse(response, "INCORRECT_DATA");
 			}
-		} else
-			jsonService.prepareErrorResponse(response, "INCORRECT_DATA");
+		} else {
+			if (comment != null)
+				jsonService.prepareErrorResponse(response, "UNIQUE_COMMENT");
+			else
+				jsonService.prepareErrorResponse(response, "INCORRECT_DATA");
+		}
 	}
 
 	@Override
@@ -99,18 +105,20 @@ public class CommentServiceImpl implements CommentService {
 		Comment comment = commentRepository.findByAuthorAndStory(user, story);
 		if (user != null && comment != null && request.getCommentContent() != null) {
 			CommentContent commentContent = commentContentRepository.findOne(comment.get_id());
+			commentContent.setEdited(true);
 			commentContent.setContent(request.getCommentContent().getContent());
 			comment.setDate(LocalDateTime.now());
-			commentContentRepository.save(commentContent);
+			commentContent = commentContentRepository.save(commentContent);
 			commentRepository.save(comment);
-			jsonService.prepareResponseForComment(response, StatusMessage.SUCCESS, "UPDATED", null, null, true);
+			jsonService.prepareResponseForComment(response, StatusMessage.SUCCESS, "UPDATED", null, commentContent,
+					true);
 		} else
 			jsonService.prepareErrorResponse(response, "INCORRECT_DATA");
 	}
 
 	@Override
-	public void delete(Long id, Response response) {
-		Comment comment = commentRepository.findOne(id);
+	public void delete(String id, Response response) {
+		Comment comment = commentRepository.findBy_id(id);
 		if (comment != null) {
 			CommentContent commentContent = commentContentRepository.findOne(comment.get_id());
 			commentContentRepository.delete(commentContent);
@@ -139,7 +147,7 @@ public class CommentServiceImpl implements CommentService {
 		if (commentContent != null) {
 			int dislike = commentContent.getDislikes();
 			dislike++;
-			commentContent.setLikes(dislike);
+			commentContent.setDislikes(dislike);
 			commentContentRepository.save(commentContent);
 			jsonService.prepareResponseForComment(response, StatusMessage.SUCCESS, "DISLIKED", null, commentContent,
 					true);

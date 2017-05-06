@@ -84,7 +84,7 @@ public class UserController {
 		Response response = new Response();
 
 		if (authorizationService.checkAccessToUser(request))
-			userService.updateUser(request, response);
+			userService.update(request, response);
 		else
 			return new ResponseEntity<Response>(response, HttpStatus.UNAUTHORIZED);
 

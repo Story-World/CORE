@@ -3,6 +3,7 @@ package com.storyworld.domain.elastic;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.validator.constraints.Length;
 import org.springframework.data.elasticsearch.annotations.Document;
 
 import com.storyworld.domain.sql.User;
@@ -14,6 +15,7 @@ public class CommentContent {
 	private String id;
 
 	@NotNull
+	@Length(min = 4, max = 255)
 	private String content;
 
 	private User author;
@@ -21,6 +23,8 @@ public class CommentContent {
 	private int likes;
 
 	private int dislikes;
+	
+	private boolean edited;
 
 	public String getId() {
 		return id;
@@ -60,6 +64,14 @@ public class CommentContent {
 
 	public void setDislikes(int dislikes) {
 		this.dislikes = dislikes;
+	}
+
+	public boolean isEdited() {
+		return edited;
+	}
+
+	public void setEdited(boolean edited) {
+		this.edited = edited;
 	}
 
 	@Override

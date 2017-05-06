@@ -6,6 +6,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.persistence.PersistenceException;
+
+import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,8 +111,12 @@ public class UserServiceImpl implements UserService {
 			Mail mail = new Mail(TypeToken.REGISTER, Status.READY, userRegister);
 			mailReposiotory.save(mail);
 			jsonService.prepareResponseForUser(response, StatusMessage.SUCCESS, "REGISTER", null, null, true);
+		} catch (PersistenceException e) {
+			LOG.error(e.toString());
+			if (e.getCause() instanceof ConstraintViolationException)
+				jsonService.prepareErrorResponse(response, "UNIQUE_NAME_OR_EMAIL");
 		} catch (Exception e) {
-			LOG.error(e.getMessage());
+			LOG.error(e.toString());
 			jsonService.prepareErrorResponse(response, "INCORRECT_DATA");
 		}
 	}
@@ -156,7 +163,7 @@ public class UserServiceImpl implements UserService {
 				mailTokenRepository.delete(mailToken);
 				jsonService.prepareResponseForUser(response, StatusMessage.INFO, "RESTARTED", null, null, true);
 			} catch (Exception e) {
-				LOG.error(e.getMessage());
+				LOG.error(e.toString());
 				jsonService.prepareErrorResponse(response, "INCORRECT_DATA");
 			}
 		} else
@@ -170,7 +177,6 @@ public class UserServiceImpl implements UserService {
 		if (mailToken != null && mailToken.getTypeToken().equals(TypeToken.REGISTER)
 				&& mailToken.getToken().equals(request.getToken())) {
 			User user = userRepository.findOne(mailToken.getUser().getId());
-			user.setLastActionTime(LocalDateTime.now());
 			user.setBlock(false);
 			userRepository.save(user);
 			mailTokenRepository.delete(mailToken);
@@ -188,13 +194,13 @@ public class UserServiceImpl implements UserService {
 			userRepository.save(user);
 			jsonService.prepareResponseForUser(response, StatusMessage.SUCCESS, "SUCCESS_UPDATED", user, null, true);
 		} catch (Exception e) {
-			LOG.error(e.getMessage());
+			LOG.error(e.toString());
 			jsonService.prepareErrorResponse(response, "INCORRECT_DATA");
 		}
 	}
 
 	@Override
-	public void updateUser(Request request, Response response) {
+	public void update(Request request, Response response) {
 		User user = userRepository.findOne(request.getUser().getId());
 
 		try {
@@ -204,8 +210,12 @@ public class UserServiceImpl implements UserService {
 				user.setMail(request.getUser().getMail());
 			userRepository.save(user);
 			jsonService.prepareResponseForUser(response, StatusMessage.SUCCESS, "SUCCESS_UPDATED", user, null, true);
+		} catch (PersistenceException e) {
+			LOG.error(e.toString());
+			if (e.getCause() instanceof ConstraintViolationException)
+				jsonService.prepareErrorResponse(response, "UNIQUE_NAME_OR_EMAIL");
 		} catch (Exception e) {
-			LOG.error(e.getMessage());
+			LOG.error(e.toString());
 			jsonService.prepareErrorResponse(response, "INCORRECT_DATA");
 		}
 	}

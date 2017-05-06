@@ -2,7 +2,6 @@ package com.storyworld.service.impl;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,11 +59,12 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 	@Override
 	public boolean checkAccessToComment(Request request) {
 		User user = userRepository.findByToken(request.getToken());
-		Set<Comment> comments = commentRepository.findByAuthor(user);
+		Comment comment = commentRepository.findByAuthor(user);
 		return user != null && ChronoUnit.HOURS.between(user.getLastActionTime(), LocalDateTime.now()) <= 2
-				&& (request.getCommentContent() != null
-						|| (comments.removeIf(x -> x.get_id().equals(request.getCommentContent().getId()))
-								|| user.getRoles().removeIf(x -> x.getName().equals("ADMIN"))));
+				&& (request.getComment() != null || request.getCommentContent() != null
+						|| (comment.get_id().equals(request.getCommentContent().getId())
+								|| comment.get_id().equals(request.getComment().get_id()))
+						|| user.getRoles().removeIf(x -> x.getName().equals("ADMIN")));
 	}
 
 }

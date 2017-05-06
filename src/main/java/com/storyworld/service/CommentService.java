@@ -11,7 +11,7 @@ public interface CommentService {
 
 	public void update(Request request, Response response);
 
-	public void delete(Long id, Response response);
+	public void delete(String id, Response response);
 
 	public void like(Request request, Response response);
 

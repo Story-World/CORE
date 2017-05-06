@@ -3,6 +3,7 @@ package com.storyworld.domain.json;
 import java.util.List;
 
 import com.storyworld.domain.elastic.CommentContent;
+import com.storyworld.domain.sql.Comment;
 import com.storyworld.domain.sql.Story;
 import com.storyworld.domain.sql.User;
 import com.storyworld.enums.TypeToken;
@@ -19,6 +20,8 @@ public class Request {
 
 	private CommentContent commentContent;
 
+	private Comment comment;
+
 	private Story story;
 
 	private int page;
@@ -30,6 +33,11 @@ public class Request {
 
 	public Request(String token) {
 		this.token = token;
+	}
+
+	public Request(String token, Comment comment) {
+		this.token = token;
+		this.setComment(comment);
 	}
 
 	public String getToken() {
@@ -70,6 +78,14 @@ public class Request {
 
 	public void setCommentContent(CommentContent commentContent) {
 		this.commentContent = commentContent;
+	}
+
+	public Comment getComment() {
+		return comment;
+	}
+
+	public void setComment(Comment comment) {
+		this.comment = comment;
 	}
 
 	public Story getStory() {
