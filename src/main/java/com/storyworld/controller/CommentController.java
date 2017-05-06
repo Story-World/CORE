@@ -90,7 +90,7 @@ public class CommentController {
 		Response response = new Response();
 
 		if (authorizationService.checkAccessToComment(new Request(token, new Comment(_id))))
-			commentService.delete(_id, response);
+			commentService.delete(new Request(token, new Comment(_id)), response);
 		else
 			return new ResponseEntity<Response>(response, HttpStatus.UNAUTHORIZED);
 

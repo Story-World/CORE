@@ -84,8 +84,8 @@ public class Response {
 
 	@Override
 	public String toString() {
-		return "Response [success=" + success + ", message=" + message + ", user=" + user + ", favouritePlaces="
-				+ favouritePlaces + "]";
+		return "Response [success=" + success + ", message=" + message + ", user=" + user + ", users=" + users
+				+ ", favouritePlaces=" + favouritePlaces + ", comments=" + comments + ", comment=" + comment + "]";
 	}
 
 }

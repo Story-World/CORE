@@ -208,6 +208,7 @@ public class UserServiceImpl implements UserService {
 				user.setName(request.getUser().getName());
 			if (request.getUser().getMail() != null)
 				user.setMail(request.getUser().getMail());
+			user.setLastActionTime(LocalDateTime.now());
 			userRepository.save(user);
 			jsonService.prepareResponseForUser(response, StatusMessage.SUCCESS, "SUCCESS_UPDATED", user, null, true);
 		} catch (PersistenceException e) {

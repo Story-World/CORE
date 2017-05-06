@@ -1,6 +1,7 @@
 package com.storyworld.domain.elastic;
 
 import javax.persistence.Id;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
@@ -23,8 +24,11 @@ public class CommentContent {
 	private int likes;
 
 	private int dislikes;
-	
+
 	private boolean edited;
+
+	@Transient
+	private String date;
 
 	public String getId() {
 		return id;
@@ -74,10 +78,18 @@ public class CommentContent {
 		this.edited = edited;
 	}
 
+	public String getDate() {
+		return date;
+	}
+
+	public void setDate(String date) {
+		this.date = date;
+	}
+
 	@Override
 	public String toString() {
 		return "CommentContent [id=" + id + ", content=" + content + ", author=" + author + ", likes=" + likes
-				+ ", dislikes=" + dislikes + "]";
+				+ ", dislikes=" + dislikes + ", edited=" + edited + ", date=" + date + "]";
 	}
 
 }

@@ -36,11 +36,9 @@ public class MailToken implements Serializable {
 	private User user;
 
 	public MailToken() {
-		super();
 	}
 
 	public MailToken(TypeToken typeToken, String token, LocalDateTime validationTime, User user) {
-		super();
 		this.typeToken = typeToken;
 		this.token = token;
 		this.validationTime = validationTime;
@@ -81,6 +79,12 @@ public class MailToken implements Serializable {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	@Override
+	public String toString() {
+		return "MailToken [id=" + id + ", typeToken=" + typeToken + ", token=" + token + ", validationTime="
+				+ validationTime + ", user=" + user + "]";
 	}
 
 }

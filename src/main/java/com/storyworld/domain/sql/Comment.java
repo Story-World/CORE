@@ -30,7 +30,7 @@ public class Comment implements Serializable {
 	@NotNull
 	private User author;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "storyId")
 	@NotNull
 	private Story story;

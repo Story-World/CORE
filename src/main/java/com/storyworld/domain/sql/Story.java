@@ -45,7 +45,7 @@ public class Story implements Serializable {
 	@Enumerated(EnumType.STRING)
 	@NotNull
 	private StoryState state;
-	
+
 	@Enumerated(EnumType.STRING)
 	@NotNull
 	private StoryType type;
@@ -104,7 +104,7 @@ public class Story implements Serializable {
 	public void setState(StoryState state) {
 		this.state = state;
 	}
-	
+
 	public StoryType getType() {
 		return type;
 	}
@@ -132,7 +132,7 @@ public class Story implements Serializable {
 	@Override
 	public String toString() {
 		return "Story [id=" + id + ", title=" + title + ", description=" + description + ", date=" + date + ", state="
-				+ state + ", avgRate=" + avgRate + ", author=" + author + "]";
+				+ state + ", type=" + type + ", avgRate=" + avgRate + ", author=" + author + "]";
 	}
 
 }

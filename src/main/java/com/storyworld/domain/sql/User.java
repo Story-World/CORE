@@ -22,9 +22,12 @@ import org.hibernate.validator.constraints.Length;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Entity
 @Table(name = "USER")
+@SuppressWarnings("deprecation")
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class User implements Serializable {
 
 	private static final long serialVersionUID = -3325353040709283369L;
@@ -175,8 +178,7 @@ public class User implements Serializable {
 	public String toString() {
 		return "User [id=" + id + ", name=" + name + ", password=" + password + ", mail=" + mail + ", token=" + token
 				+ ", lastActionTime=" + lastActionTime + ", incorrectLogin=" + incorrectLogin + ", block=" + block
-				+ ", lastIncorrectLogin=" + lastIncorrectLogin + ", deleted=" + deleted + ", roles=" + roles
-				+ "]";
+				+ ", lastIncorrectLogin=" + lastIncorrectLogin + ", deleted=" + deleted + ", roles=" + roles + "]";
 	}
 
 }
