@@ -2,10 +2,9 @@ package com.storyworld.domain.json;
 
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.storyworld.domain.elastic.CommentContent;
+import com.storyworld.domain.sql.Comment;
 import com.storyworld.domain.sql.Story;
 import com.storyworld.domain.sql.User;
 
@@ -19,7 +18,7 @@ public class Response {
 
 	private User user;
 
-	private Page<User> users;
+	private List<User> users;
 
 	private List<FavouritePlaces> favouritePlaces;
 
@@ -30,6 +29,8 @@ public class Response {
 	private Story story;
 	
 	private List<Story> stories;
+
+	private List<Comment> commentsList;
 
 	public boolean isSuccess() {
 		return success;
@@ -55,11 +56,11 @@ public class Response {
 		this.user = user;
 	}
 
-	public Page<User> getUsers() {
+	public List<User> getUsers() {
 		return users;
 	}
 
-	public void setUsers(Page<User> users) {
+	public void setUsers(List<User> users) {
 		this.users = users;
 	}
 
@@ -103,10 +104,19 @@ public class Response {
 		this.stories = stories;
 	}
 
+	public List<Comment> getCommentsList() {
+		return commentsList;
+	}
+
+	public void setCommentsList(List<Comment> commentsList) {
+		this.commentsList = commentsList;
+	}
+
 	@Override
 	public String toString() {
 		return "Response [success=" + success + ", message=" + message + ", user=" + user + ", users=" + users
-				+ ", favouritePlaces=" + favouritePlaces + ", comments=" + comments + ", comment=" + comment + "]";
+				+ ", favouritePlaces=" + favouritePlaces + ", comments=" + comments + ", comment=" + comment
+				+ ", commentsList=" + commentsList + ", stories=" + stories + "]";
 	}
 
 }

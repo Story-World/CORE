@@ -30,4 +30,6 @@ public interface UserService {
 
 	public void delete(Long id, Response response);
 
+	public void get(Long id, Response response);
+
 }

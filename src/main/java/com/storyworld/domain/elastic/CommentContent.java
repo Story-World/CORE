@@ -1,14 +1,17 @@
 package com.storyworld.domain.elastic;
 
 import javax.persistence.Id;
-import javax.persistence.Transient;
+
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.elasticsearch.annotations.Document;
 
 import com.storyworld.domain.sql.User;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+@SuppressWarnings("deprecation")
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @Document(indexName = "comment", type = "comment")
 public class CommentContent {
 
@@ -27,15 +30,14 @@ public class CommentContent {
 
 	private boolean edited;
 
-	@Transient
 	private String date;
-
-	public String getId() {
-		return id;
-	}
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getId() {
+		return id;
 	}
 
 	public String getContent() {

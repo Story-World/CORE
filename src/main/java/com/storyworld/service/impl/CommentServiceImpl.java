@@ -1,6 +1,7 @@
 package com.storyworld.service.impl;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,8 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.storyworld.domain.elastic.CommentContent;
@@ -47,19 +46,16 @@ public class CommentServiceImpl implements CommentService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CommentServiceImpl.class);
 
+	private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
 	@Override
 	public void get(Long idStory, int page, int pageSize, Response response) {
 		Story story = storyRepository.findOne(idStory);
 		if (story != null && page > -1 && pageSize > 0) {
-			Page<Comment> comments = commentRepository.findByStory(story,
-					new PageRequest(page, pageSize, new Sort(Direction.DESC, "date")));
+			Page<Comment> comments = commentRepository.findByStory(story, new PageRequest(page, pageSize));
 			List<CommentContent> commentsContent = new LinkedList<>();
-			for (Comment comment : comments) {
-				commentsContent.add(commentContentRepository.findOne(comment.get_id()));
-				CommentContent commentContent = commentsContent.remove(commentsContent.size() - 1);
-				commentContent.setDate(comment.getDate().toString());
-				commentsContent.add(commentContent);
-			}
+			comments.forEach(x -> commentsContent.add(commentContentRepository.findOne(x.get_id())));
+			commentsContent.sort((CommentContent o1, CommentContent o2) -> o2.getDate().compareTo(o1.getDate()));
 			jsonService.prepareResponseForComment(response, null, null, commentsContent, null, true);
 		} else
 			jsonService.prepareErrorResponse(response, "INCORRECT_DATA");
@@ -84,9 +80,9 @@ public class CommentServiceImpl implements CommentService {
 				commentContent.setAuthor(user);
 				commentContent.setLikes(0);
 				commentContent.setDislikes(0);
+				commentContent.setDate(LocalDateTime.now().format(FORMATTER).toString());
 				commentContent = commentContentRepository.save(commentContent);
 				comment.set_id(commentContent.getId());
-				comment.setDate(LocalDateTime.now());
 				commentRepository.save(comment);
 				jsonService.prepareResponseForComment(response, StatusMessage.SUCCESS, "ADDED", null, commentContent,
 						true);
@@ -110,12 +106,11 @@ public class CommentServiceImpl implements CommentService {
 			CommentContent commentContent = commentContentRepository.findOne(comment.get_id());
 			commentContent.setEdited(true);
 			commentContent.setContent(request.getCommentContent().getContent());
-			comment.setDate(LocalDateTime.now());
+			commentContent.setDate(LocalDateTime.now().format(FORMATTER).toString());
 			commentContent = commentContentRepository.save(commentContent);
 			commentRepository.save(comment);
 			user.setLastActionTime(LocalDateTime.now());
 			userRepository.save(user);
-			commentContent.setDate(LocalDateTime.now().toString());
 			jsonService.prepareResponseForComment(response, StatusMessage.SUCCESS, "UPDATED", null, commentContent,
 					true);
 		} else

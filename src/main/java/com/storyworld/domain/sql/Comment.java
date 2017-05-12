@@ -1,7 +1,6 @@
 package com.storyworld.domain.sql;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -34,8 +33,6 @@ public class Comment implements Serializable {
 	@JoinColumn(name = "storyId")
 	@NotNull
 	private Story story;
-
-	private LocalDateTime date;
 
 	public Comment() {
 	}
@@ -77,18 +74,9 @@ public class Comment implements Serializable {
 		this.story = story;
 	}
 
-	public LocalDateTime getDate() {
-		return date;
-	}
-
-	public void setDate(LocalDateTime date) {
-		this.date = date;
-	}
-
 	@Override
 	public String toString() {
-		return "Comment [id=" + id + ", _id=" + _id + ", author=" + author + ", story=" + story + ", date=" + date
-				+ "]";
+		return "Comment [id=" + id + ", _id=" + _id + ", author=" + author + ", story=" + story + "]";
 	}
 
 }

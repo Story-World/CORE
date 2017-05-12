@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.storyworld.domain.json.Request;
-import com.storyworld.domain.json.Response;
 import com.storyworld.domain.sql.Comment;
 import com.storyworld.domain.sql.User;
 import com.storyworld.repository.sql.CommentRepository;
@@ -22,17 +21,6 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
 	@Autowired
 	private CommentRepository commentRepository;
-
-	private void authorizeToken(String token) {
-
-	}
-
-	@Override
-	public Response prepareResponse(Request request) {
-		authorizeToken(request.getToken());
-		Response response = new Response();
-		return response;
-	}
 
 	@Override
 	public User checkAccessToUser(String token) {

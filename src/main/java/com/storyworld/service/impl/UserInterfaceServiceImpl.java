@@ -37,7 +37,7 @@ public class UserInterfaceServiceImpl implements UserInterfaceService {
 	@Override
 	public Response getFavouritePlaces(Request request, Response response) {
 		User user = authorizationService.checkAccessToUser(request.getToken());
-		if(user!=null){
+		if (user != null) {
 			ConfigComponent config = getConfigUp(user);
 
 			List<FavouritePlaces> favouritePlaces = null;
@@ -50,10 +50,10 @@ public class UserInterfaceServiceImpl implements UserInterfaceService {
 			response.setUser(user);
 			response.setFavouritePlaces(favouritePlaces);
 			response.setSuccess(true);
-		}else{
+		} else {
 			response.setSuccess(false);
 		}
-		
+
 		return response;
 	}
 
