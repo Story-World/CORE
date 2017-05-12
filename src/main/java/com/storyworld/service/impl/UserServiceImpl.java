@@ -3,6 +3,8 @@ package com.storyworld.service.impl;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -14,20 +16,28 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import com.storyworld.domain.elastic.CommentContent;
 import com.storyworld.domain.json.Request;
 import com.storyworld.domain.json.Response;
 import com.storyworld.domain.json.StatusMessage;
+import com.storyworld.domain.sql.Comment;
 import com.storyworld.domain.sql.Mail;
 import com.storyworld.domain.sql.MailToken;
 import com.storyworld.domain.sql.Role;
+import com.storyworld.domain.sql.Story;
 import com.storyworld.domain.sql.User;
 import com.storyworld.enums.Status;
 import com.storyworld.enums.TypeToken;
+import com.storyworld.repository.elastic.CommentContentRepository;
+import com.storyworld.repository.sql.CommentRepository;
 import com.storyworld.repository.sql.MailReposiotory;
 import com.storyworld.repository.sql.MailTokenRepository;
 import com.storyworld.repository.sql.RoleRepository;
+import com.storyworld.repository.sql.StoryRepository;
 import com.storyworld.repository.sql.UserRepository;
 import com.storyworld.service.JSONService;
 import com.storyworld.service.UserService;
@@ -46,6 +56,15 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private MailReposiotory mailReposiotory;
+
+	@Autowired
+	private StoryRepository storyRepository;
+
+	@Autowired
+	private CommentRepository commentRepository;
+
+	@Autowired
+	private CommentContentRepository commentContentRepository;
 
 	@Autowired
 	private JSONService jsonService;
@@ -254,7 +273,7 @@ public class UserServiceImpl implements UserService {
 		if (request.getPage() > -1 && request.getSizePage() > 0) {
 			Page<User> users = userRepository.findAll(new PageRequest(request.getPage(), request.getSizePage()));
 			if (users != null)
-				jsonService.prepareResponseForUser(response, null, null, null, users, true);
+				jsonService.prepareResponseForUser(response, null, null, null, users.getContent(), true);
 			else
 				jsonService.prepareErrorResponse(response, "INCORRECT_DATA");
 		} else
@@ -268,6 +287,21 @@ public class UserServiceImpl implements UserService {
 			user.setDelete(true);
 			userRepository.save(user);
 			jsonService.prepareResponseForUser(response, StatusMessage.SUCCESS, "DELTED", user, null, true);
+		} else
+			jsonService.prepareErrorResponse(response, "INCORRECT_DATA");
+	}
+
+	@Override
+	public void get(Long id, Response response) {
+		User user = userRepository.findOne(id);
+		if (user != null) {
+			Page<Story> stories = storyRepository.findByAuthor(user,
+					new PageRequest(0, 20, new Sort(Direction.DESC, "date")));
+			Page<Comment> comments = commentRepository.findByAuthor(user, new PageRequest(0, 20));
+			List<CommentContent> commentsContent = new LinkedList<>();
+			comments.forEach(x -> commentsContent.add(commentContentRepository.findOne(x.get_id())));
+			commentsContent.sort((CommentContent o1, CommentContent o2) -> o2.getDate().compareTo(o1.getDate()));
+			jsonService.prepareResponse(response, commentsContent, stories.getContent(), user, true);
 		} else
 			jsonService.prepareErrorResponse(response, "INCORRECT_DATA");
 	}

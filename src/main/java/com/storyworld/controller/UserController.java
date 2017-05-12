@@ -25,6 +25,15 @@ public class UserController {
 	@Autowired
 	private AuthorizationService authorizationService;
 
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	public ResponseEntity<Response> get(@PathVariable(value = "id") Long id) {
+		Response response = new Response();
+
+		userService.get(id, response);
+
+		return new ResponseEntity<Response>(response, HttpStatus.OK);
+	}
+
 	@RequestMapping(value = "login", method = RequestMethod.POST)
 	public ResponseEntity<Response> login(@RequestBody Request request) {
 		Response response = new Response();
