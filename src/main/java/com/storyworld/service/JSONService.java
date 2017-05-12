@@ -20,5 +20,7 @@ public interface JSONService {
 			List<CommentContent> commentsContent, CommentContent comment, boolean success);
 
 	public void prepareErrorResponse(Response response, String messageString);
+	
+	public void prepareSimpleResponse(Response response, boolean success, StatusMessage status, String messageText);
 
 }

@@ -38,6 +38,12 @@ public class JSONServiceImpl implements JSONService {
 		response.setMessage(new Message(StatusMessage.ERROR, messageString));
 		response.setSuccess(false);
 	}
+	
+	@Override
+	public void prepareSimpleResponse(Response response, boolean success, StatusMessage status, String messageText) {
+		response.setMessage(new Message(status, messageText));
+		response.setSuccess(success);
+	}
 
 	private void prepareMessage(Response response, StatusMessage messageStatus, String messageString) {
 		if (messageStatus != null && messageString != null)

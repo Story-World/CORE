@@ -2,6 +2,7 @@ package com.storyworld.domain.sql;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
@@ -29,10 +31,12 @@ public class Story implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	private Long id;
 
 	@NotNull
-	@Column(unique = true)
+	private String contentId;
+	
+	@NotNull
 	@Length(min = 4, max = 255)
 	private String title;
 
@@ -51,6 +55,12 @@ public class Story implements Serializable {
 	private StoryType type;
 
 	private Float avgRate;
+	
+	@Transient
+	private String rawText;
+	
+	@Transient
+	private List<String> pages;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "authorId")
@@ -68,8 +78,12 @@ public class Story implements Serializable {
 		this.type = type;
 		this.author = author;
 	}
+	
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
@@ -128,11 +142,36 @@ public class Story implements Serializable {
 	public void setAuthor(User author) {
 		this.author = author;
 	}
+	
+	public String getRawText() {
+		return rawText;
+	}
+
+	public void setRawText(String rawText) {
+		this.rawText = rawText;
+	}
+	
+	public List<String> getPages() {
+		return pages;
+	}
+
+	public void setPages(List<String> pages) {
+		this.pages = pages;
+	}
+	
+	public String getContentId() {
+		return contentId;
+	}
+
+	public void setContentId(String contentId) {
+		this.contentId = contentId;
+	}
 
 	@Override
 	public String toString() {
 		return "Story [id=" + id + ", title=" + title + ", description=" + description + ", date=" + date + ", state="
-				+ state + ", type=" + type + ", avgRate=" + avgRate + ", author=" + author + "]";
+				+ state + ", type=" + type + ", avgRate=" + avgRate + ", rawText=" + rawText + ", author=" + author
+				+ "]";
 	}
 
 }

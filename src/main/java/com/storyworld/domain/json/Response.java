@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.storyworld.domain.elastic.CommentContent;
+import com.storyworld.domain.sql.Story;
 import com.storyworld.domain.sql.User;
 
 @SuppressWarnings("deprecation")
@@ -25,6 +26,10 @@ public class Response {
 	private List<CommentContent> comments;
 
 	private CommentContent comment;
+	
+	private Story story;
+	
+	private List<Story> stories;
 
 	public boolean isSuccess() {
 		return success;
@@ -80,6 +85,22 @@ public class Response {
 
 	public void setComment(CommentContent comment) {
 		this.comment = comment;
+	}
+	
+	public Story getStory() {
+		return story;
+	}
+
+	public void setStory(Story story) {
+		this.story = story;
+	}
+
+	public List<Story> getStories() {
+		return stories;
+	}
+
+	public void setStories(List<Story> stories) {
+		this.stories = stories;
 	}
 
 	@Override
