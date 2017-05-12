@@ -10,7 +10,7 @@ import com.storyworld.enums.StoryState;
 
 public interface StoryRepository extends JpaRepository<Story, Long> {
 
-	public Page<Story> findByStateIn(StoryState state, Pageable page);
+	public Page<Story> findByState(StoryState state, Pageable page);
 	
 	public Page<Story> findByAuthor(User author, Pageable pageRequest);
 

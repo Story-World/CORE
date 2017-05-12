@@ -66,7 +66,7 @@ public class CommentServiceImpl implements CommentService {
 		User user = userRepository.findByToken(request.getToken());
 		Story story = storyRepository.findOne(request.getStory().getId());
 		CommentContent commentContent = request.getCommentContent();
-		Comment comment = commentRepository.findByAuthor(user);
+		Comment comment = commentRepository.findByAuthorAndStory(user, story);
 		if (user != null && story != null && commentContent != null && comment == null) {
 			comment = new Comment(user, story);
 			try {
@@ -137,8 +137,7 @@ public class CommentServiceImpl implements CommentService {
 		User user = userRepository.findByToken(request.getToken());
 		CommentContent commentContent = commentContentRepository.findOne(request.getCommentContent().getId());
 		if (user != null && commentContent != null) {
-			int like = commentContent.getLikes();
-			like++;
+			int like = commentContent.getLikes() + 1;
 			commentContent.setLikes(like);
 			commentContent = commentContentRepository.save(commentContent);
 			user.setLastActionTime(LocalDateTime.now());
@@ -153,8 +152,7 @@ public class CommentServiceImpl implements CommentService {
 		User user = userRepository.findByToken(request.getToken());
 		CommentContent commentContent = commentContentRepository.findOne(request.getCommentContent().getId());
 		if (commentContent != null) {
-			int dislike = commentContent.getDislikes();
-			dislike++;
+			int dislike = commentContent.getDislikes() + 1;
 			commentContent.setDislikes(dislike);
 			commentContent = commentContentRepository.save(commentContent);
 			user.setLastActionTime(LocalDateTime.now());

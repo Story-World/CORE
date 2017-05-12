@@ -15,8 +15,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 	public Comment findByAuthorAndStory(User author, Story story);
 
 	public Page<Comment> findByAuthor(User author, Pageable pageRequest);
-	
-	public Comment findByAuthor(User author);
-	
+
 	public Comment findBy_id(String _id);
 }

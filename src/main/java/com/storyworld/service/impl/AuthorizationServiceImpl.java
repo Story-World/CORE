@@ -47,7 +47,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 	@Override
 	public boolean checkAccessToComment(Request request) {
 		User user = userRepository.findByToken(request.getToken());
-		Comment comment = commentRepository.findByAuthor(user);
+		Comment comment = commentRepository.findByAuthorAndStory(user, request.getStory());
 		return user != null && ChronoUnit.HOURS.between(user.getLastActionTime(), LocalDateTime.now()) <= 2
 				&& (request.getComment() != null || request.getCommentContent() != null
 						|| (comment.get_id().equals(request.getCommentContent().getId())
