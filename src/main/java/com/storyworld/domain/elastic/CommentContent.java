@@ -32,6 +32,8 @@ public class CommentContent {
 
 	private String date;
 
+	private Long storyId;
+
 	public void setId(String id) {
 		this.id = id;
 	}
@@ -88,10 +90,18 @@ public class CommentContent {
 		this.date = date;
 	}
 
+	public Long getStoryId() {
+		return storyId;
+	}
+
+	public void setStoryId(Long storyId) {
+		this.storyId = storyId;
+	}
+
 	@Override
 	public String toString() {
 		return "CommentContent [id=" + id + ", content=" + content + ", author=" + author + ", likes=" + likes
-				+ ", dislikes=" + dislikes + ", edited=" + edited + ", date=" + date + "]";
+				+ ", dislikes=" + dislikes + ", edited=" + edited + ", date=" + date + ", storyId=" + storyId + "]";
 	}
 
 }

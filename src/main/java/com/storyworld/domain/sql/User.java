@@ -90,6 +90,11 @@ public class User implements Serializable {
 		this.roles = roles;
 	}
 
+	public User(long id, String name) {
+		this.id = id;
+		this.name = name;
+	}
+
 	public long getId() {
 		return id;
 	}

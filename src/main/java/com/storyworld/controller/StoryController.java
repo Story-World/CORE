@@ -41,7 +41,7 @@ public class StoryController {
 		Response response = new Response();
 
 		storyService.getStory(id, response);
-		
+
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
@@ -51,7 +51,7 @@ public class StoryController {
 		Response response = new Response();
 
 		storyService.getStories(page, size, response);
-		
+
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 

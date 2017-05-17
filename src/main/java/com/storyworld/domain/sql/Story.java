@@ -34,7 +34,7 @@ public class Story implements Serializable {
 
 	@NotNull
 	private String contentId;
-	
+
 	@NotNull
 	@Length(min = 4, max = 255)
 	private String title;
@@ -54,10 +54,10 @@ public class Story implements Serializable {
 	private StoryType type;
 
 	private Float avgRate;
-	
+
 	@Transient
 	private String rawText;
-	
+
 	@Transient
 	private List<String> pages;
 
@@ -77,7 +77,11 @@ public class Story implements Serializable {
 		this.type = type;
 		this.author = author;
 	}
-	
+
+	public Story(Long id) {
+		this.id = id;
+	}
+
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -141,7 +145,7 @@ public class Story implements Serializable {
 	public void setAuthor(User author) {
 		this.author = author;
 	}
-	
+
 	public String getRawText() {
 		return rawText;
 	}
@@ -149,7 +153,7 @@ public class Story implements Serializable {
 	public void setRawText(String rawText) {
 		this.rawText = rawText;
 	}
-	
+
 	public List<String> getPages() {
 		return pages;
 	}
@@ -157,7 +161,7 @@ public class Story implements Serializable {
 	public void setPages(List<String> pages) {
 		this.pages = pages;
 	}
-	
+
 	public String getContentId() {
 		return contentId;
 	}

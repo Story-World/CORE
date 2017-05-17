@@ -17,11 +17,14 @@ import com.storyworld.domain.json.Request;
 import com.storyworld.domain.json.Response;
 import com.storyworld.domain.json.StatusMessage;
 import com.storyworld.domain.sql.Comment;
+import com.storyworld.domain.sql.LikeTypeComment;
 import com.storyworld.domain.sql.Story;
 import com.storyworld.domain.sql.User;
+import com.storyworld.enums.LikeType;
 import com.storyworld.repository.sql.StoryRepository;
 import com.storyworld.repository.elastic.CommentContentRepository;
 import com.storyworld.repository.sql.CommentRepository;
+import com.storyworld.repository.sql.LikeTypeCommentRepository;
 import com.storyworld.repository.sql.UserRepository;
 import com.storyworld.service.CommentService;
 import com.storyworld.service.JSONService;
@@ -40,6 +43,9 @@ public class CommentServiceImpl implements CommentService {
 
 	@Autowired
 	private CommentContentRepository commentContentRepository;
+
+	@Autowired
+	private LikeTypeCommentRepository likeTypeCommentRepository;
 
 	@Autowired
 	private JSONService jsonService;
@@ -72,12 +78,9 @@ public class CommentServiceImpl implements CommentService {
 			try {
 				user.setLastActionTime(LocalDateTime.now());
 				userRepository.save(user);
-				user.setRoles(null);
-				user.setLastIncorrectLogin(null);
-				user.setLastActionTime(null);
-				user.setToken(null);
-				user.setMail(null);
+				user = new User(user.getId(), user.getName());
 				commentContent.setAuthor(user);
+				commentContent.setStoryId(story.getId());
 				commentContent.setLikes(0);
 				commentContent.setDislikes(0);
 				commentContent.setDate(LocalDateTime.now().format(FORMATTER).toString());
@@ -108,7 +111,6 @@ public class CommentServiceImpl implements CommentService {
 			commentContent.setContent(request.getCommentContent().getContent());
 			commentContent.setDate(LocalDateTime.now().format(FORMATTER).toString());
 			commentContent = commentContentRepository.save(commentContent);
-			commentRepository.save(comment);
 			user.setLastActionTime(LocalDateTime.now());
 			userRepository.save(user);
 			jsonService.prepareResponseForComment(response, StatusMessage.SUCCESS, "UPDATED", null, commentContent,
@@ -137,12 +139,28 @@ public class CommentServiceImpl implements CommentService {
 		User user = userRepository.findByToken(request.getToken());
 		CommentContent commentContent = commentContentRepository.findOne(request.getCommentContent().getId());
 		if (user != null && commentContent != null) {
-			int like = commentContent.getLikes() + 1;
-			commentContent.setLikes(like);
-			commentContent = commentContentRepository.save(commentContent);
-			user.setLastActionTime(LocalDateTime.now());
-			userRepository.save(user);
-			jsonService.prepareResponseForComment(response, StatusMessage.SUCCESS, "LIKED", null, commentContent, true);
+			Comment comment = commentRepository.findBy_id(commentContent.getId());
+			LikeTypeComment likeTypeComment = likeTypeCommentRepository.findByUserAndComment(user, comment);
+			if ((likeTypeComment != null && likeTypeComment.getLikeType().equals(LikeType.DISLIKE))
+					|| likeTypeComment == null) {
+				if (likeTypeComment != null && likeTypeComment.getLikeType().equals(LikeType.DISLIKE)) {
+					int dislike = commentContent.getDislikes() - 1;
+					commentContent.setDislikes(dislike);
+					likeTypeComment.setLikeType(LikeType.LIKE);
+					likeTypeCommentRepository.save(likeTypeComment);
+				} else {
+					likeTypeComment = new LikeTypeComment(user, comment, LikeType.LIKE);
+					likeTypeCommentRepository.save(likeTypeComment);
+				}
+				int like = commentContent.getLikes() + 1;
+				commentContent.setLikes(like);
+				commentContent = commentContentRepository.save(commentContent);
+				user.setLastActionTime(LocalDateTime.now());
+				userRepository.save(user);
+				jsonService.prepareResponseForComment(response, StatusMessage.SUCCESS, "LIKED", null, commentContent,
+						true);
+			} else
+				jsonService.prepareSimpleResponse(response, true, StatusMessage.WARNING, "UNIQUE_LIKE");
 		} else
 			jsonService.prepareErrorResponse(response, "INCORRECT_DATA");
 	}
@@ -152,13 +170,28 @@ public class CommentServiceImpl implements CommentService {
 		User user = userRepository.findByToken(request.getToken());
 		CommentContent commentContent = commentContentRepository.findOne(request.getCommentContent().getId());
 		if (commentContent != null) {
-			int dislike = commentContent.getDislikes() + 1;
-			commentContent.setDislikes(dislike);
-			commentContent = commentContentRepository.save(commentContent);
-			user.setLastActionTime(LocalDateTime.now());
-			userRepository.save(user);
-			jsonService.prepareResponseForComment(response, StatusMessage.SUCCESS, "DISLIKED", null, commentContent,
-					true);
+			Comment comment = commentRepository.findBy_id(commentContent.getId());
+			LikeTypeComment likeTypeComment = likeTypeCommentRepository.findByUserAndComment(user, comment);
+			if ((likeTypeComment != null && likeTypeComment.getLikeType().equals(LikeType.LIKE))
+					|| likeTypeComment == null) {
+				if (likeTypeComment != null && likeTypeComment.getLikeType().equals(LikeType.LIKE)) {
+					int like = commentContent.getLikes() - 1;
+					commentContent.setLikes(like);
+					likeTypeComment.setLikeType(LikeType.DISLIKE);
+					likeTypeCommentRepository.save(likeTypeComment);
+				} else {
+					likeTypeComment = new LikeTypeComment(user, comment, LikeType.DISLIKE);
+					likeTypeCommentRepository.save(likeTypeComment);
+				}
+				int dislike = commentContent.getDislikes() + 1;
+				commentContent.setDislikes(dislike);
+				commentContent = commentContentRepository.save(commentContent);
+				user.setLastActionTime(LocalDateTime.now());
+				userRepository.save(user);
+				jsonService.prepareResponseForComment(response, StatusMessage.SUCCESS, "DISLIKED", null, commentContent,
+						true);
+			} else
+				jsonService.prepareSimpleResponse(response, true, StatusMessage.WARNING, "UNIQUE_LIKE");
 		} else
 			jsonService.prepareErrorResponse(response, "INCORRECT_DATA");
 	}
