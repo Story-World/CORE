@@ -55,4 +55,10 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 						|| user.getRoles().removeIf(x -> x.getName().equals("ADMIN")));
 	}
 
+	@Override
+	public boolean checkAccessAdmin(Request request) {
+		User user = userRepository.findByToken(request.getToken());
+		return user != null && user.getRoles().removeIf(x -> x.getName().equals("ADMIN"));
+	}
+
 }

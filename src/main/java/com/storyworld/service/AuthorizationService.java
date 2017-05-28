@@ -12,4 +12,6 @@ public interface AuthorizationService {
 	public boolean checkAccessToUser(Request request);
 
 	public boolean checkAccessToComment(Request request);
+
+	public boolean checkAccessAdmin(Request request);
 }

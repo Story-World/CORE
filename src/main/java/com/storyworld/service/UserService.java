@@ -32,4 +32,6 @@ public interface UserService {
 
 	public void get(Long id, Response response);
 
+	public void block(Request request, Response response);
+
 }

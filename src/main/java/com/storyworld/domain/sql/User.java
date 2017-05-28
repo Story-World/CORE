@@ -61,7 +61,6 @@ public class User implements Serializable {
 	@JsonIgnore
 	private int incorrectLogin;
 
-	@JsonIgnore
 	private boolean block;
 
 	@JsonIgnore

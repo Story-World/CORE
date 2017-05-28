@@ -306,4 +306,18 @@ public class UserServiceImpl implements UserService {
 			jsonService.prepareErrorResponse(response, "INCORRECT_DATA");
 	}
 
+	@Override
+	public void block(Request request, Response response) {
+		User user = userRepository.findOne(request.getUser().getId());
+		if (user != null) {
+			user.setBlock(request.getUser().isBlock());
+			userRepository.save(user);
+			if (request.getUser().isBlock())
+				jsonService.prepareResponseForUser(response, StatusMessage.SUCCESS, "BLOCKED", user, null, true);
+			else
+				jsonService.prepareResponseForUser(response, StatusMessage.SUCCESS, "UNBLOCKED", user, null, true);
+		} else
+			jsonService.prepareErrorResponse(response, "INCORRECT_DATA");
+	}
+
 }

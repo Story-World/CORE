@@ -99,6 +99,18 @@ public class UserController {
 
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
+	
+	@RequestMapping(value = "block", method = RequestMethod.PUT)
+	public ResponseEntity<Response> blockUser(@RequestBody Request request) {
+		Response response = new Response();
+
+		if (authorizationService.checkAccessAdmin(request))
+			userService.block(request, response);
+		else
+			return new ResponseEntity<Response>(response, HttpStatus.UNAUTHORIZED);
+
+		return new ResponseEntity<Response>(response, HttpStatus.OK);
+	}
 
 	@RequestMapping(value = "getUser", method = RequestMethod.POST)
 	public ResponseEntity<Response> getUser(@RequestBody Request request) {
