@@ -2,24 +2,15 @@ package com.storyworld.domain.elastic;
 
 import javax.persistence.Id;
 
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.validator.constraints.Length;
 import org.springframework.data.elasticsearch.annotations.Document;
 
 import com.storyworld.domain.sql.User;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-@SuppressWarnings("deprecation")
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @Document(indexName = "comment", type = "comment")
 public class CommentContent {
-
 	@Id
 	private String id;
 
-	@NotNull
-	@Length(min = 4, max = 255)
 	private String content;
 
 	private User author;
@@ -33,14 +24,6 @@ public class CommentContent {
 	private String date;
 
 	private Long storyId;
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getId() {
-		return id;
-	}
 
 	public String getContent() {
 		return content;
@@ -98,10 +81,8 @@ public class CommentContent {
 		this.storyId = storyId;
 	}
 
-	@Override
-	public String toString() {
-		return "CommentContent [id=" + id + ", content=" + content + ", author=" + author + ", likes=" + likes
-				+ ", dislikes=" + dislikes + ", edited=" + edited + ", date=" + date + ", storyId=" + storyId + "]";
+	public String getId() {
+		return id;
 	}
 
 }
