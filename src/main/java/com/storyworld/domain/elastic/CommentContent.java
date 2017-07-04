@@ -8,6 +8,7 @@ import com.storyworld.domain.sql.User;
 
 @Document(indexName = "comment", type = "comment")
 public class CommentContent {
+
 	@Id
 	private String id;
 
@@ -24,6 +25,10 @@ public class CommentContent {
 	private String date;
 
 	private Long storyId;
+
+	public String getId() {
+		return id;
+	}
 
 	public String getContent() {
 		return content;
@@ -79,10 +84,6 @@ public class CommentContent {
 
 	public void setStoryId(Long storyId) {
 		this.storyId = storyId;
-	}
-
-	public String getId() {
-		return id;
 	}
 
 }

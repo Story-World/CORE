@@ -8,10 +8,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User implements Serializable {
 
-	private static final long serialVersionUID = 4929826277648185458L;
+	private static final long serialVersionUID = -6056699078253966279L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +35,10 @@ public class User implements Serializable {
 	private LocalDateTime lastIncorrectLogin;
 
 	private boolean deleted;
+
+	public long getId() {
+		return id;
+	}
 
 	public String getName() {
 		return name;
@@ -97,8 +104,11 @@ public class User implements Serializable {
 		this.deleted = deleted;
 	}
 
-	public long getId() {
-		return id;
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", name=" + name + ", mail=" + mail + ", token=" + token + ", lastActionTime="
+				+ lastActionTime + ", incorrectLogin=" + incorrectLogin + ", block=" + block + ", lastIncorrectLogin="
+				+ lastIncorrectLogin + ", deleted=" + deleted + "]";
 	}
 
 }

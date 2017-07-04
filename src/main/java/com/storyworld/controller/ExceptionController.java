@@ -5,25 +5,24 @@ import java.io.StringWriter;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import com.storyworld.domain.sql.User;
-
 @ControllerAdvice
 public class ExceptionController {
+
+	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
 	@ExceptionHandler
 	public ResponseEntity<?> handleControllerException(HttpServletRequest request, Throwable ex) {
 		StringWriter writer = new StringWriter();
 		joinStackTrace(ex, writer);
-		System.out.println(writer.toString());
-		HttpStatus status = HttpStatus.OK;
-		User user = new User();
-		user.setName("test");
-		return new ResponseEntity<>(user, status);
+		LOG.error(writer.toString());
+		return new ResponseEntity<>("status", HttpStatus.OK);
 	}
 
 	private static void joinStackTrace(Throwable e, StringWriter writer) {
