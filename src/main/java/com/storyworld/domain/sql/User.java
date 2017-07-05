@@ -10,8 +10,11 @@ import javax.persistence.Id;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import lombok.Data;
+
+@Data
 @Entity
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class User implements Serializable {
 
 	private static final long serialVersionUID = -6056699078253966279L;
@@ -35,80 +38,5 @@ public class User implements Serializable {
 	private LocalDateTime lastIncorrectLogin;
 
 	private boolean deleted;
-
-	public long getId() {
-		return id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getMail() {
-		return mail;
-	}
-
-	public void setMail(String mail) {
-		this.mail = mail;
-	}
-
-	public String getToken() {
-		return token;
-	}
-
-	public void setToken(String token) {
-		this.token = token;
-	}
-
-	public LocalDateTime getLastActionTime() {
-		return lastActionTime;
-	}
-
-	public void setLastActionTime(LocalDateTime lastActionTime) {
-		this.lastActionTime = lastActionTime;
-	}
-
-	public int getIncorrectLogin() {
-		return incorrectLogin;
-	}
-
-	public void setIncorrectLogin(int incorrectLogin) {
-		this.incorrectLogin = incorrectLogin;
-	}
-
-	public boolean isBlock() {
-		return block;
-	}
-
-	public void setBlock(boolean block) {
-		this.block = block;
-	}
-
-	public LocalDateTime getLastIncorrectLogin() {
-		return lastIncorrectLogin;
-	}
-
-	public void setLastIncorrectLogin(LocalDateTime lastIncorrectLogin) {
-		this.lastIncorrectLogin = lastIncorrectLogin;
-	}
-
-	public boolean isDeleted() {
-		return deleted;
-	}
-
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
-	}
-
-	@Override
-	public String toString() {
-		return "User [id=" + id + ", name=" + name + ", mail=" + mail + ", token=" + token + ", lastActionTime="
-				+ lastActionTime + ", incorrectLogin=" + incorrectLogin + ", block=" + block + ", lastIncorrectLogin="
-				+ lastIncorrectLogin + ", deleted=" + deleted + "]";
-	}
 
 }

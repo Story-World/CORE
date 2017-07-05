@@ -19,31 +19,11 @@ public class ExceptionController {
 
 	@ExceptionHandler
 	public ResponseEntity<?> handleControllerException(HttpServletRequest request, Throwable ex) {
-		StringWriter writer = new StringWriter();
-		joinStackTrace(ex, writer);
-		LOG.error(writer.toString());
+		final StringWriter sw = new StringWriter();
+		final PrintWriter pw = new PrintWriter(sw, true);
+		ex.printStackTrace(pw);
+		LOG.error(sw.getBuffer().toString());
 		return new ResponseEntity<>("status", HttpStatus.OK);
 	}
 
-	private static void joinStackTrace(Throwable e, StringWriter writer) {
-		PrintWriter printer = null;
-		try {
-			printer = new PrintWriter(writer);
-
-			while (e != null) {
-
-				printer.println(e);
-				StackTraceElement[] trace = e.getStackTrace();
-				for (int i = 0; i < trace.length; i++)
-					printer.println("\tat " + trace[i]);
-
-				e = e.getCause();
-				if (e != null)
-					printer.println("Caused by:\r\n");
-			}
-		} finally {
-			if (printer != null)
-				printer.close();
-		}
-	}
 }

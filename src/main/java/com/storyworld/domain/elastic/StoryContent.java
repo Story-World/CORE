@@ -1,36 +1,26 @@
 package com.storyworld.domain.elastic;
 
+import java.util.List;
+
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.elasticsearch.annotations.Document;
 
-import com.storyworld.domain.sql.User;
-
 import lombok.Data;
 
 @Data
-@Document(indexName = "comment", type = "comment")
-public class CommentContent {
+@Document(indexName = "story", type = "story")
+public class StoryContent {
 
 	@Id
 	private String id;
 
 	@NotNull
 	@Length(min = 4, max = 255)
-	private String content;
+	private String title;
 
-	private User author;
-
-	private int likes;
-
-	private int dislikes;
-
-	private boolean edited;
-
-	private String date;
-
-	private Long storyId;
+	private List<String> pages;
 
 }

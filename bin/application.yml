@@ -1,6 +1,9 @@
 logging:
   level:
     org.springframework.web: ERROR
+    com.storyworld: ERROR
+server:
+  context-path: /core
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/storyworld?useSSL=false
