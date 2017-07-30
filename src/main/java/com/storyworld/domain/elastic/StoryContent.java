@@ -9,8 +9,10 @@ import org.hibernate.validator.constraints.Length;
 import org.springframework.data.elasticsearch.annotations.Document;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
+@ToString
 @Document(indexName = "story", type = "story")
 public class StoryContent {
 

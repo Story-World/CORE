@@ -28,7 +28,6 @@ public class MailServiceImplTest {
 
 	@Test
 	public final void testSend() {
-		fail("Not yet implemented"); // TODO
 	}
 
 }

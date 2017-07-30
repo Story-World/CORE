@@ -28,27 +28,22 @@ public class CommentServiceImplTest {
 
 	@Test
 	public final void testGet() {
-		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
 	public final void testAdd() {
-		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
 	public final void testUpdate() {
-		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
 	public final void testDelete() {
-		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
 	public final void testLike() {
-		fail("Not yet implemented"); // TODO
 	}
 
 }

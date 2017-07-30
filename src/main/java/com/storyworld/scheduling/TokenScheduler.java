@@ -16,9 +16,9 @@ public class TokenScheduler {
 	@Autowired
 	private UserService userService;
 
-	@Scheduled(fixedRate = 5000)
+	@Scheduled(fixedRate = 60000)
 	public void removeToken() {
-		userRepository.findByTokenNotNull().forEach(userService::removeToken);
+		userRepository.findByTokenNotNull().ifPresent(x -> x.forEach(userService::removeToken));
 	}
 
 }

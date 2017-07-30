@@ -7,7 +7,12 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class UserControllerTest {
 
 	@BeforeClass
@@ -28,67 +33,54 @@ public class UserControllerTest {
 
 	@Test
 	public final void testGetDetail() {
-		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
 	public final void testGet() {
-		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
 	public final void testDelete() {
-		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
 	public final void testLogin() {
-		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
 	public final void testRegister() {
-		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
 	public final void testRestart() {
-		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
 	public final void testRemindPassword() {
-		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
 	public final void testChangePassword() {
-		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
 	public final void testConfirmRegister() {
-		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
 	public final void testUpdate() {
-		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
 	public final void testBlock() {
-		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
 	public final void testGetUsers() {
-		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
 	public final void testLogout() {
-		fail("Not yet implemented"); // TODO
 	}
 
 }

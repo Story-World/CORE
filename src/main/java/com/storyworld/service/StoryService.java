@@ -5,12 +5,10 @@ import com.storyworld.domain.json.Response;
 
 public interface StoryService {
 
-	public void add(Request request, Response response);
+	public Response addStory(Request request);
 
-	public void get(Long id, Response response);
+	public Response getStory(Long id);
 
-	public void getStories(int page, int size, Response response);
-
-	public void update(Request request, Response response);
+	public Response getStories(int page, int size);
 
 }

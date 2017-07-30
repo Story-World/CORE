@@ -8,22 +8,30 @@ public interface UserService {
 
 	public void removeToken(User user);
 
-	public void login(Request request, Response response);
+	public Response login(Request request);
 
-	public void register(Request request, Response response);
+	public Response register(Request request);
 
-	public void logout(Request request, Response response);
+	public Response restartPassword(Request request);
 
-	public void changePassword(Request request, Response response);
+	public Response remindPassword(Request request);
 
-	public void update(Request request, Response response);
-	
-	public void get(Request request, Response response);
+	public Response confirmRegister(Request request);
 
-	public void getUsers(Request request, Response response);
+	public Response changePassword(Request request);
 
-	public void delete(Long id, Response response);
+	public Response update(Request request);
 
-	public void block(Request request, Response response);
-	
+	public Response getUser(Request requeste);
+
+	public Response logout(Request request);
+
+	public Response getUsers(Request request);
+
+	public Response delete(Long id);
+
+	public Response get(Long id);
+
+	public Response block(Request request);
+
 }

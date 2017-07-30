@@ -6,11 +6,16 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.elasticsearch.annotations.Document;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.storyworld.domain.sql.User;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
+@ToString
+@SuppressWarnings("deprecation")
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @Document(indexName = "comment", type = "comment")
 public class CommentContent {
 

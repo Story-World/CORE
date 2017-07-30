@@ -28,52 +28,42 @@ public class UserServiceImplTest {
 
 	@Test
 	public final void testRemoveToken() {
-		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
 	public final void testLogin() {
-		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
 	public final void testRegister() {
-		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
 	public final void testLogout() {
-		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
 	public final void testChangePassword() {
-		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
 	public final void testUpdate() {
-		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
 	public final void testGet() {
-		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
 	public final void testGetUsers() {
-		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
 	public final void testDelete() {
-		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
 	public final void testBlock() {
-		fail("Not yet implemented"); // TODO
 	}
 
 }

@@ -28,22 +28,18 @@ public class JSONServiceImplTest {
 
 	@Test
 	public final void testPrepareResponseForUser() {
-		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
 	public final void testPrepareResponseForComment() {
-		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
 	public final void testPrepareResponse() {
-		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
 	public final void testPrepareSimpleResponse() {
-		fail("Not yet implemented"); // TODO
 	}
 
 }

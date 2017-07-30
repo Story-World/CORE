@@ -1,5 +1,6 @@
 package com.storyworld.controller;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -18,11 +19,11 @@ public class ExceptionController {
 	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
 	@ExceptionHandler
-	public ResponseEntity<?> handleControllerException(HttpServletRequest request, Throwable ex) {
+	public ResponseEntity<?> handleControllerException(HttpServletRequest request, Throwable ex) throws IOException {
 		final StringWriter sw = new StringWriter();
 		final PrintWriter pw = new PrintWriter(sw, true);
 		ex.printStackTrace(pw);
-		LOG.error(sw.getBuffer().toString());
+		LOG.error(request.getReader() + " " + sw.getBuffer().toString());
 		return new ResponseEntity<>("status", HttpStatus.OK);
 	}
 
