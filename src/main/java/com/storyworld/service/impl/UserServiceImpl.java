@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.BiPredicate;
 
 import javax.persistence.PersistenceException;
 
@@ -72,9 +73,28 @@ public class UserServiceImpl implements UserService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(UserServiceImpl.class);
 
+	private BiPredicate<LocalDateTime, Integer> checkValidTimeInMinutes = (time,
+			howLong) -> ChronoUnit.MINUTES.between(time, LocalDateTime.now()) >= howLong;
+
+	private BiPredicate<String, String> equalStrings = (x, y) -> x.equals(y);
+
+	private BiPredicate<MailToken, Request> validMailToken = (mailToken,
+			request) -> equalStrings.test(mailToken.getTypeToken().toString(), TypeToken.REGISTER.toString())
+					&& equalStrings.test(mailToken.getToken(), request.getToken());
+
+	private BiPredicate<MailToken, Request> validTokenWithTime = (mailToken,
+			request) -> validMailToken.test(mailToken, request)
+					&& checkValidTimeInMinutes.test(mailToken.getValidationTime(), 1440);
+
+	private BiPredicate<User, Request> vaildUserLogin = (user,
+			request) -> user.getName().equals(request.getUser().getName())
+					&& user.getPassword().equals(request.getUser().getPassword())
+					&& (!user.isBlock() || !user.isBlock() || (user.getLastIncorrectLogin() != null
+							&& checkValidTimeInMinutes.test(user.getLastIncorrectLogin(), 10)));
+
 	@Override
 	public void removeToken(User user) {
-		if (ChronoUnit.HOURS.between(user.getLastActionTime(), LocalDateTime.now()) >= 2) {
+		if (checkValidTimeInMinutes.test(user.getLastActionTime(), 120)) {
 			user.setLastActionTime(null);
 			user.setToken(null);
 			userRepository.save(user);
@@ -84,10 +104,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Response login(Request request) {
 		return userRepository.findByName(request.getUser().getName()).map(user -> {
-			if (user.getName().equals(request.getUser().getName())
-					&& user.getPassword().equals(request.getUser().getPassword())
-					&& (!user.isBlock() || !user.isBlock() || (user.getLastIncorrectLogin() != null
-							&& ChronoUnit.MINUTES.between(user.getLastIncorrectLogin(), LocalDateTime.now()) >= 10))) {
+			if (vaildUserLogin.test(user, request)) {
 				user.setToken(UUID.randomUUID().toString());
 				user.setLastActionTime(LocalDateTime.now());
 				user.setBlock(false);
@@ -172,9 +189,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Response remindPassword(Request request) {
 		return mailTokenRepository.findByToken(request.getToken()).map(mailToken -> {
-			if (mailToken.getTypeToken().equals(TypeToken.RESTART_PASSWORD)
-					&& ChronoUnit.DAYS.between(mailToken.getValidationTime(), LocalDateTime.now()) <= 1
-					&& mailToken.getToken().equals(request.getToken())) {
+			if (validTokenWithTime.test(mailToken, request)) {
 				return Optional.ofNullable(userRepository.findOne(mailToken.getUser().getId())).map(user -> {
 					try {
 						user.setPassword(request.getUser().getPassword());
@@ -194,8 +209,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Response confirmRegister(Request request) {
 		return mailTokenRepository.findByToken(request.getToken()).map(mailToken -> {
-			if (mailToken.getTypeToken().equals(TypeToken.REGISTER)
-					&& mailToken.getToken().equals(request.getToken())) {
+			if (validMailToken.test(mailToken, request)) {
 				return Optional.ofNullable(userRepository.findOne(mailToken.getUser().getId())).map(user -> {
 					user.setBlock(false);
 					userRepository.save(user);
