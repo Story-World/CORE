@@ -17,8 +17,14 @@ import com.storyworld.domain.sql.enums.Status;
 import com.storyworld.domain.sql.enums.TypeToken;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
+@ToString
+@EqualsAndHashCode
+@NoArgsConstructor
 @Entity
 @Table(name = "MAIL")
 public class Mail implements Serializable {
@@ -40,11 +46,7 @@ public class Mail implements Serializable {
 	@ManyToOne(fetch = FetchType.EAGER)
 	private User user;
 
-	public Mail() {
-	}
-
 	public Mail(TypeToken template, Status status, User user) {
-		super();
 		this.template = template;
 		this.status = status;
 		this.user = user;

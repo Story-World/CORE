@@ -13,7 +13,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import com.storyworld.conditions.CommonPredicate;
 import com.storyworld.domain.elastic.CommentContent;
+import com.storyworld.domain.json.Message;
 import com.storyworld.domain.json.Request;
 import com.storyworld.domain.json.Response;
 import com.storyworld.domain.json.enums.StatusMessage;
@@ -22,13 +24,13 @@ import com.storyworld.domain.sql.LikeTypeComment;
 import com.storyworld.domain.sql.Story;
 import com.storyworld.domain.sql.User;
 import com.storyworld.domain.sql.enums.LikeType;
+import com.storyworld.functionalInterface.JSONPrepare;
 import com.storyworld.repository.elastic.CommentContentRepository;
 import com.storyworld.repository.sql.CommentRepository;
 import com.storyworld.repository.sql.LikeTypeCommentRepository;
 import com.storyworld.repository.sql.StoryRepository;
 import com.storyworld.repository.sql.UserRepository;
 import com.storyworld.service.CommentService;
-import com.storyworld.service.JSONService;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -49,161 +51,161 @@ public class CommentServiceImpl implements CommentService {
 	private LikeTypeCommentRepository likeTypeCommentRepository;
 
 	@Autowired
-	private JSONService jsonService;
+	private CommonPredicate commonPredicate;
+
+	private JSONPrepare<CommentContent> jsonPrepare = (statusMessage, message, commentContent, list,
+			success) -> new Response<CommentContent>(new Message(statusMessage, message), commentContent, list,
+					success);
 
 	private static final Logger LOG = LoggerFactory.getLogger(CommentServiceImpl.class);
 
 	private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 	@Override
-	public void get(Long idStory, int page, int pageSize, Response response) {
+	public Response<CommentContent> get(Long idStory, int page, int pageSize) {
 		Story story = storyRepository.findOne(idStory);
-		if (story != null && page > -1 && pageSize > 0) {
+		if (story != null && commonPredicate.validatePageAndPageSize.test(page, pageSize)) {
 			Page<Comment> comments = commentRepository.findByStory(story, new PageRequest(page, pageSize));
 			List<CommentContent> commentsContent = new LinkedList<>();
 			comments.forEach(x -> commentsContent.add(commentContentRepository.findOne(x.get_id())));
 			commentsContent.sort((CommentContent o1, CommentContent o2) -> o2.getDate().compareTo(o1.getDate()));
-			jsonService.prepareResponseForComment(response, null, null, commentsContent, null, true);
+			return jsonPrepare.prepareResponse(null, null, null, commentsContent, true);
 		} else
-			jsonService.prepareErrorResponse("INCORRECT_DATA");
+			return jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false);
 	}
 
 	@Override
-	public void save(Request request, Response response) {
-		Optional<User> user = userRepository.findByToken(request.getToken());
-		user.ifPresent(x -> {
+	public Response<CommentContent> save(Request request) {
+		return userRepository.findByToken(request.getToken()).map(user -> {
 			Story story = storyRepository.findOne(request.getStory().getId());
-			Comment comment = commentRepository.findByAuthorAndStory(x, story);
+			Optional<Comment> comment = commentRepository.findByAuthorAndStory(user, story);
 			CommentContent commentContent = request.getCommentContent();
-			if (story != null && commentContent != null && comment == null) {
-				comment = new Comment(x, story);
+			if (story != null && commentContent != null && comment.isPresent()) {
+				Comment commentSave = new Comment(user, story);
 				try {
-					x.setLastActionTime(LocalDateTime.now());
-					userRepository.save(x);
-					x = new User(x.getId(), x.getName());
-					commentContent.setAuthor(x);
+					user.setLastActionTime(LocalDateTime.now());
+					userRepository.save(user);
+					user = new User(user.getId(), user.getName());
+					commentContent.setAuthor(user);
 					commentContent.setStoryId(story.getId());
 					commentContent.setLikes(0);
 					commentContent.setDislikes(0);
 					commentContent.setDate(LocalDateTime.now().format(FORMATTER).toString());
 					commentContent = commentContentRepository.save(commentContent);
-					comment.set_id(commentContent.getId());
-					commentRepository.save(comment);
-					jsonService.prepareResponseForComment(response, StatusMessage.SUCCESS, "ADDED", null,
-							commentContent, true);
+					commentSave.set_id(commentContent.getId());
+					commentRepository.save(commentSave);
+					return jsonPrepare.prepareResponse(StatusMessage.SUCCESS, "ADDED", commentContent, null, true);
 				} catch (Exception e) {
 					LOG.error(e.toString());
-					jsonService.prepareErrorResponse("INCORRECT_DATA");
+					return jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false);
 				}
 			} else {
 				if (comment != null)
-					jsonService.prepareErrorResponse("UNIQUE_COMMENT");
+					return jsonPrepare.prepareResponse(StatusMessage.ERROR, "UNIQUE_COMMENT", null, null, false);
 				else
-					jsonService.prepareErrorResponse("INCORRECT_DATA");
+					return jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false);
 			}
-		});
-
+		}).orElse(jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false));
 	}
 
 	@Override
-	public void update(Request request, Response response) {
-		Optional<User> user = userRepository.findByToken(request.getToken());
-		user.ifPresent(x -> {
-			Comment comment = commentRepository.findBy_id(request.getCommentContent().getId());
-			if (comment != null && request.getCommentContent() != null) {
-				CommentContent commentContent = commentContentRepository.findOne(comment.get_id());
+	public Response<CommentContent> update(Request request) {
+		return userRepository.findByToken(request.getToken()).map(user -> {
+			Optional<Comment> comment = commentRepository.findBy_id(request.getCommentContent().getId());
+			if (comment.isPresent() && request.getCommentContent() != null) {
+				CommentContent commentContent = commentContentRepository.findOne(comment.get().get_id());
 				commentContent.setEdited(true);
 				commentContent.setContent(request.getCommentContent().getContent());
 				commentContent.setDate(LocalDateTime.now().format(FORMATTER).toString());
 				commentContent = commentContentRepository.save(commentContent);
-				x.setLastActionTime(LocalDateTime.now());
-				userRepository.save(x);
-				jsonService.prepareResponseForComment(response, StatusMessage.SUCCESS, "UPDATED", null, commentContent,
-						true);
+				user.setLastActionTime(LocalDateTime.now());
+				userRepository.save(user);
+				return jsonPrepare.prepareResponse(StatusMessage.SUCCESS, "UPDATED", commentContent, null, true);
 			} else
-				jsonService.prepareErrorResponse("INCORRECT_DATA");
-		});
+				return jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false);
+		}).orElse(jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false));
 
 	}
 
 	@Override
-	public void delete(Request request, Response response) {
+	public Response<CommentContent> delete(Request request) {
 		Optional<User> user = userRepository.findByToken(request.getToken());
-		Comment comment = commentRepository.findBy_id(request.getComment().get_id());
-		if (comment != null) {
-			CommentContent commentContent = commentContentRepository.findOne(comment.get_id());
+		Optional<Comment> comment = commentRepository.findBy_id(request.getComment().get_id());
+		if (comment.isPresent()) {
+			CommentContent commentContent = commentContentRepository.findOne(comment.get().get_id());
 			commentContentRepository.delete(commentContent);
-			commentRepository.delete(comment);
+			commentRepository.delete(comment.get());
 			user.get().setLastActionTime(LocalDateTime.now());
 			userRepository.save(user.get());
-			jsonService.prepareResponseForComment(response, StatusMessage.SUCCESS, "DELETED", null, null, true);
+			return jsonPrepare.prepareResponse(StatusMessage.SUCCESS, "DELETED", null, null, true);
 		} else
-			jsonService.prepareErrorResponse("INCORRECT_DATA");
+			return jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false);
 	}
 
 	@Override
-	public synchronized void like(Request request, Response response) {
-		Optional<User> user = userRepository.findByToken(request.getToken());
-		user.ifPresent(x -> {
+	public synchronized Response<CommentContent> like(Request request) {
+		Optional<User> userGet = userRepository.findByToken(request.getToken());
+		return userGet.map(user -> {
 			CommentContent commentContent = commentContentRepository.findOne(request.getCommentContent().getId());
 			if (commentContent != null) {
-				Comment comment = commentRepository.findBy_id(commentContent.getId());
-				LikeTypeComment likeTypeComment = likeTypeCommentRepository.findByUserAndComment(x, comment);
-				if ((likeTypeComment != null && likeTypeComment.getLikeType().equals(LikeType.DISLIKE))
+				Optional<Comment> comment = commentRepository.findBy_id(commentContent.getId());
+				Optional<LikeTypeComment> likeTypeComment = likeTypeCommentRepository.findByUserAndComment(user,
+						comment.get());
+				if ((likeTypeComment.isPresent() && likeTypeComment.get().getLikeType().equals(LikeType.DISLIKE))
 						|| likeTypeComment == null) {
-					if (likeTypeComment != null && likeTypeComment.getLikeType().equals(LikeType.DISLIKE)) {
+					if (likeTypeComment.isPresent() && likeTypeComment.get().getLikeType().equals(LikeType.DISLIKE)) {
 						int dislike = commentContent.getDislikes() - 1;
 						commentContent.setDislikes(dislike);
-						likeTypeComment.setLikeType(LikeType.LIKE);
-						likeTypeCommentRepository.save(likeTypeComment);
+						likeTypeComment.get().setLikeType(LikeType.LIKE);
+						likeTypeCommentRepository.save(likeTypeComment.get());
 					} else {
-						likeTypeComment = new LikeTypeComment(x, comment, LikeType.LIKE);
-						likeTypeCommentRepository.save(likeTypeComment);
+						LikeTypeComment likeTypeCommentSave = new LikeTypeComment(user, comment.get(), LikeType.LIKE);
+						likeTypeCommentRepository.save(likeTypeCommentSave);
 					}
 					int like = commentContent.getLikes() + 1;
 					commentContent.setLikes(like);
 					commentContent = commentContentRepository.save(commentContent);
-					x.setLastActionTime(LocalDateTime.now());
-					userRepository.save(x);
-					jsonService.prepareResponseForComment(response, StatusMessage.SUCCESS, "LIKED", null,
-							commentContent, true);
+					user.setLastActionTime(LocalDateTime.now());
+					userRepository.save(user);
+					return jsonPrepare.prepareResponse(StatusMessage.SUCCESS, "LIKED", commentContent, null, true);
 				} else
-					jsonService.prepareSimpleResponse(response, true, StatusMessage.WARNING, "UNIQUE_LIKE");
+					return jsonPrepare.prepareResponse(StatusMessage.WARNING, "UNIQUE_LIKE", null, null, true);
 			} else
-				jsonService.prepareErrorResponse("INCORRECT_DATA");
-		});
+				return jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false);
+		}).orElse(jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false));
 	}
 
 	@Override
-	public synchronized void dislike(Request request, Response response) {
-		Optional<User> user = userRepository.findByToken(request.getToken());
-		user.ifPresent(x -> {
+	public synchronized Response<CommentContent> dislike(Request request) {
+		Optional<User> userGet = userRepository.findByToken(request.getToken());
+		return userGet.map(user -> {
 			CommentContent commentContent = commentContentRepository.findOne(request.getCommentContent().getId());
 			if (commentContent != null) {
-				Comment comment = commentRepository.findBy_id(commentContent.getId());
-				LikeTypeComment likeTypeComment = likeTypeCommentRepository.findByUserAndComment(x, comment);
-				if ((likeTypeComment != null && likeTypeComment.getLikeType().equals(LikeType.LIKE))
+				Optional<Comment> comment = commentRepository.findBy_id(commentContent.getId());
+				Optional<LikeTypeComment> likeTypeComment = likeTypeCommentRepository.findByUserAndComment(user,
+						comment.get());
+				if ((likeTypeComment.isPresent() && likeTypeComment.get().getLikeType().equals(LikeType.LIKE))
 						|| likeTypeComment == null) {
-					if (likeTypeComment != null && likeTypeComment.getLikeType().equals(LikeType.LIKE)) {
+					if (likeTypeComment != null && likeTypeComment.get().getLikeType().equals(LikeType.LIKE)) {
 						int like = commentContent.getLikes() - 1;
 						commentContent.setLikes(like);
-						likeTypeComment.setLikeType(LikeType.DISLIKE);
-						likeTypeCommentRepository.save(likeTypeComment);
+						likeTypeComment.get().setLikeType(LikeType.DISLIKE);
+						likeTypeCommentRepository.save(likeTypeComment.get());
 					} else {
-						likeTypeComment = new LikeTypeComment(x, comment, LikeType.DISLIKE);
-						likeTypeCommentRepository.save(likeTypeComment);
+						LikeTypeComment likeTypeCommentSave = new LikeTypeComment(user, comment.get(),
+								LikeType.DISLIKE);
+						likeTypeCommentRepository.save(likeTypeCommentSave);
 					}
 					int dislike = commentContent.getDislikes() + 1;
 					commentContent.setDislikes(dislike);
 					commentContent = commentContentRepository.save(commentContent);
-					x.setLastActionTime(LocalDateTime.now());
-					userRepository.save(x);
-					jsonService.prepareResponseForComment(response, StatusMessage.SUCCESS, "DISLIKED", null,
-							commentContent, true);
+					user.setLastActionTime(LocalDateTime.now());
+					userRepository.save(user);
+					return jsonPrepare.prepareResponse(StatusMessage.WARNING, "DISLIKED", commentContent, null, true);
 				} else
-					jsonService.prepareSimpleResponse(response, true, StatusMessage.WARNING, "UNIQUE_LIKE");
+					return jsonPrepare.prepareResponse(StatusMessage.WARNING, "UNIQUE_LIKE", null, null, true);
 			} else
-				jsonService.prepareErrorResponse("INCORRECT_DATA");
-		});
+				return jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false);
+		}).orElse(jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false));
 	}
 }

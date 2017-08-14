@@ -8,9 +8,11 @@ import com.storyworld.domain.sql.enums.TypeToken;
 
 import lombok.Data;
 import lombok.ToString;
+import lombok.NoArgsConstructor;
 
 @Data
 @ToString
+@NoArgsConstructor
 public class Request {
 
 	private String token;
@@ -28,9 +30,6 @@ public class Request {
 	private int page;
 
 	private int sizePage;
-
-	public Request() {
-	}
 
 	public Request(String token) {
 		this.token = token;

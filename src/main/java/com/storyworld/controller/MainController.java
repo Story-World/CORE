@@ -12,7 +12,7 @@ import com.storyworld.domain.json.Response;
 public class MainController {
 
 	@RequestMapping
-	public ResponseEntity<Response> defaultHandler() {
-		return new ResponseEntity<Response>(new Response(), HttpStatus.OK);
+	public ResponseEntity<Response<?>> defaultHandler() {
+		return new ResponseEntity<Response<?>>(new Response<Object>(), HttpStatus.OK);
 	}
 }

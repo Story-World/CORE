@@ -10,10 +10,12 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.storyworld.domain.sql.User;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Data
 @ToString
+@EqualsAndHashCode
 @SuppressWarnings("deprecation")
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @Document(indexName = "comment", type = "comment")

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.storyworld.domain.json.Request;
 import com.storyworld.domain.json.Response;
+import com.storyworld.domain.sql.Story;
 import com.storyworld.service.AuthorizationService;
 import com.storyworld.service.StoryService;
 
@@ -25,22 +26,22 @@ public class StoryController {
 	private StoryService storyService;
 
 	@RequestMapping(value = "add", method = RequestMethod.POST)
-	public ResponseEntity<Response> updateUser(@RequestBody Request request) {
+	public ResponseEntity<Response<Story>> updateUser(@RequestBody Request request) {
 		if (authorizationService.checkAccess(request))
-			return new ResponseEntity<Response>(storyService.addStory(request), HttpStatus.OK);
+			return new ResponseEntity<Response<Story>>(storyService.addStory(request), HttpStatus.OK);
 		else
-			return new ResponseEntity<Response>(new Response(), HttpStatus.UNAUTHORIZED);
+			return new ResponseEntity<Response<Story>>(new Response<Story>(), HttpStatus.UNAUTHORIZED);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public ResponseEntity<Response> getStory(@PathVariable(value = "id") Long id) {
-		return new ResponseEntity<Response>(storyService.getStory(id), HttpStatus.OK);
+	public ResponseEntity<Response<Story>> getStory(@PathVariable(value = "id") Long id) {
+		return new ResponseEntity<Response<Story>>(storyService.getStory(id), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/{page}/{size}", method = RequestMethod.GET)
-	public ResponseEntity<Response> getStories(@PathVariable(value = "page") int page,
+	public ResponseEntity<Response<Story>> getStories(@PathVariable(value = "page") int page,
 			@PathVariable(value = "size") int size) {
-		return new ResponseEntity<Response>(storyService.getStories(page, size), HttpStatus.OK);
+		return new ResponseEntity<Response<Story>>(storyService.getStories(page, size), HttpStatus.OK);
 	}
 
 }

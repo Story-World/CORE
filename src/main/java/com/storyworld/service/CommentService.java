@@ -1,20 +1,21 @@
 package com.storyworld.service;
 
+import com.storyworld.domain.elastic.CommentContent;
 import com.storyworld.domain.json.Request;
 import com.storyworld.domain.json.Response;
 
 public interface CommentService {
 
-	public void get(Long idStory, int page, int pageSize, Response response);
+	public Response<CommentContent> get(Long idStory, int page, int pageSize);
 
-	public void save(Request request, Response response);
+	public Response<CommentContent> save(Request request);
 
-	public void update(Request request, Response response);
+	public Response<CommentContent> update(Request request);
 
-	public void delete(Request request, Response response);
+	public Response<CommentContent> delete(Request request);
 
-	public void like(Request request, Response response);
+	public Response<CommentContent> like(Request request);
 
-	public void dislike(Request request, Response response);
+	public Response<CommentContent> dislike(Request request);
 
 }

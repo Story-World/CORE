@@ -17,8 +17,14 @@ import javax.validation.constraints.NotNull;
 import com.storyworld.domain.sql.enums.LikeType;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
+@ToString
+@EqualsAndHashCode
+@NoArgsConstructor
 @Entity
 @Table(name = "LIKETYPECOMMENT")
 public class LikeTypeComment implements Serializable {
@@ -42,9 +48,6 @@ public class LikeTypeComment implements Serializable {
 	@Enumerated(EnumType.STRING)
 	@NotNull
 	private LikeType likeType;
-
-	public LikeTypeComment() {
-	}
 
 	public LikeTypeComment(User user, Comment comment, LikeType likeType) {
 		this.user = user;

@@ -14,11 +14,13 @@ import javax.validation.constraints.NotNull;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Data
 @ToString
 @EqualsAndHashCode
+@NoArgsConstructor
 @Entity
 @Table(name = "COMMENT")
 public class Comment implements Serializable {
@@ -40,9 +42,6 @@ public class Comment implements Serializable {
 	@JoinColumn(name = "storyId")
 	@NotNull
 	private Story story;
-
-	public Comment() {
-	}
 
 	public Comment(User author, Story story) {
 		this.author = author;

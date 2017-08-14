@@ -25,8 +25,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
+@ToString
+@NoArgsConstructor
 @Entity
 @Table(name = "USER")
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
@@ -74,7 +78,9 @@ public class User implements Serializable {
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<Role> roles = new HashSet<>();
 
-	public User() {
+	public User(long id, String name) {
+		this.id = id;
+		this.name = name;
 	}
 
 	public User(String name, String password, String mail, String token, LocalDateTime lastActionTime,
@@ -91,8 +97,4 @@ public class User implements Serializable {
 		this.roles = roles;
 	}
 
-	public User(long id, String name) {
-		this.id = id;
-		this.name = name;
-	}
 }

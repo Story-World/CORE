@@ -7,8 +7,12 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Data
+@ToString
+@EqualsAndHashCode
 @Entity
 @Table(name = "ROLE")
 public class Role {

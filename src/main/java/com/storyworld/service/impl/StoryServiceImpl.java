@@ -12,14 +12,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.storyworld.domain.elastic.StoryContent;
+import com.storyworld.domain.json.Message;
 import com.storyworld.domain.json.Request;
 import com.storyworld.domain.json.Response;
 import com.storyworld.domain.json.enums.StatusMessage;
 import com.storyworld.domain.sql.Story;
+import com.storyworld.functionalInterface.JSONPrepare;
 import com.storyworld.repository.elastic.StoryContentRepository;
 import com.storyworld.repository.sql.StoryRepository;
 import com.storyworld.repository.sql.UserRepository;
-import com.storyworld.service.JSONService;
 import com.storyworld.service.StoryService;
 
 @Service
@@ -34,16 +35,16 @@ public class StoryServiceImpl implements StoryService {
 	@Autowired
 	private StoryContentRepository storyContentRepository;
 
-	@Autowired
-	private JSONService jsonService;
+	private JSONPrepare<Story> jsonPrepare = (statusMessage, message, story, list,
+			success) -> new Response<Story>(new Message(statusMessage, message), story, list, success);
 
 	private static final Logger LOG = LoggerFactory.getLogger(StoryServiceImpl.class);
 
 	@Override
-	public Response addStory(Request request) {
-		return userRepository.findByToken(request.getToken()).map(x -> {
+	public Response<Story> addStory(Request request) {
+		return userRepository.findByToken(request.getToken()).map(user -> {
 			Story story = request.getStory();
-			story.setAuthor(x);
+			story.setAuthor(user);
 			story.setDate(LocalDateTime.now());
 			StoryContent storyContent = new StoryContent();
 			List<String> pages = new ArrayList<String>();
@@ -54,33 +55,32 @@ public class StoryServiceImpl implements StoryService {
 			story.setContentId(storyContent.getId());
 			try {
 				storyRepository.save(story);
-				x.setLastActionTime(LocalDateTime.now());
-				userRepository.save(x);
-				return jsonService.prepareSimpleResponse(true, StatusMessage.SUCCESS, "STORY_CRT");
+				user.setLastActionTime(LocalDateTime.now());
+				userRepository.save(user);
+				return jsonPrepare.prepareResponse(StatusMessage.SUCCESS, "STORY_CRT", null, null, true);
 			} catch (Exception e) {
 				LOG.error(e.toString());
-				return jsonService.prepareErrorResponse("INCORRECT_DATA");
+				return jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false);
 			}
-		}).orElse(jsonService.prepareErrorResponse("INCORRECT_DATA"));
+		}).orElse(jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false));
 	}
 
 	@Override
-	public Response getStory(Long id) {
+	public Response<Story> getStory(Long id) {
 		return Optional.ofNullable(storyRepository.findOne(id)).map(story -> {
 			return Optional.ofNullable(storyContentRepository.findOne(story.getContentId())).map(storyContent -> {
 				story.setPages(storyContent.getPages());
-				return jsonService.prepareResponseForStroy(StatusMessage.SUCCESS, null, story, storyContent, null,
-						true);
-			}).orElseGet(() -> jsonService.prepareErrorResponse("INCORRECT_DATA"));
-		}).orElseGet(() -> jsonService.prepareErrorResponse("INCORRECT_DATA"));
+				return jsonPrepare.prepareResponse(StatusMessage.SUCCESS, "STORY_CRT", story, null, true);
+			}).orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false));
+		}).orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false));
 	}
 
 	@Override
-	public Response getStories(int page, int size) {
+	public Response<Story> getStories(int page, int size) {
 		return Optional.ofNullable(storyRepository.findAll(new PageRequest(page, size)))
-				.map(stories -> jsonService.prepareResponseForStroy(StatusMessage.SUCCESS, null, null, null,
+				.map(stories -> jsonPrepare.prepareResponse(StatusMessage.SUCCESS, "STORY_CRT", null,
 						stories.getContent(), true))
-				.orElseGet(() -> jsonService.prepareErrorResponse("INCORRECT_DATA"));
+				.orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false));
 	}
 
 }

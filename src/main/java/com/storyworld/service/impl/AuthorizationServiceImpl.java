@@ -1,12 +1,11 @@
 package com.storyworld.service.impl;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.storyworld.conditions.AuthorizationPredicate;
 import com.storyworld.domain.json.Request;
 import com.storyworld.domain.sql.Comment;
 import com.storyworld.domain.sql.User;
@@ -23,35 +22,33 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 	@Autowired
 	private CommentRepository commentRepository;
 
+	@Autowired
+	private AuthorizationPredicate authorizationPredicate;
+
 	@Override
 	public boolean checkAccess(Request request) {
-		Optional<User> user = userRepository.findByToken(request.getToken());
-		return user.isPresent() && ChronoUnit.HOURS.between(user.get().getLastActionTime(), LocalDateTime.now()) <= 2;
+		return authorizationPredicate.checkAccess.test(userRepository.findByToken(request.getToken()), 2L);
 	}
 
 	@Override
 	public boolean checkAccessToUser(Request request) {
-		Optional<User> user = userRepository.findByToken(request.getToken());
-		return user.isPresent() && ChronoUnit.HOURS.between(user.get().getLastActionTime(), LocalDateTime.now()) <= 2
-				&& (request.getUser() == null || (user.get().getId() == request.getUser().getId()
-						|| user.get().getRoles().removeIf(x -> x.getName().equals("ADMIN"))));
+		return authorizationPredicate.checkAccessToUser.test(userRepository.findByToken(request.getToken()), request);
 	}
 
 	@Override
 	public boolean checkAccessToComment(Request request) {
 		Optional<User> user = userRepository.findByToken(request.getToken());
-		Comment comment = commentRepository.findByAuthorAndStory(user.get(), request.getStory());
-		return user.isPresent() && ChronoUnit.HOURS.between(user.get().getLastActionTime(), LocalDateTime.now()) <= 2
+		Optional<Comment> comment = commentRepository.findByAuthorAndStory(user.get(), request.getStory());
+		return authorizationPredicate.checkAccess.test(user, 2L)
 				&& (request.getComment() != null || request.getCommentContent() != null
-						|| (comment.get_id().equals(request.getCommentContent().getId())
-								|| comment.get_id().equals(request.getComment().get_id()))
-						|| user.get().getRoles().removeIf(x -> x.getName().equals("ADMIN")));
+						|| (comment.get().get_id().equals(request.getCommentContent().getId())
+								|| comment.get().get_id().equals(request.getComment().get_id()))
+						|| authorizationPredicate.checkRole.test(user, "ADMIN"));
 	}
 
 	@Override
 	public boolean checkAccessAdmin(Request request) {
-		Optional<User> user = userRepository.findByToken(request.getToken());
-		return user.isPresent() && user.get().getRoles().removeIf(x -> x.getName().equals("ADMIN"));
+		return authorizationPredicate.checkRole.test(userRepository.findByToken(request.getToken()), "ADMIN");
 	}
 
 }

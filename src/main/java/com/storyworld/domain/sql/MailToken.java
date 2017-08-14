@@ -16,8 +16,14 @@ import javax.persistence.Table;
 import com.storyworld.domain.sql.enums.TypeToken;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
+@ToString
+@EqualsAndHashCode
+@NoArgsConstructor
 @Entity
 @Table(name = "MAIL_TOKEN")
 public class MailToken implements Serializable {
@@ -37,9 +43,6 @@ public class MailToken implements Serializable {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	private User user;
-
-	public MailToken() {
-	}
 
 	public MailToken(TypeToken typeToken, String token, LocalDateTime validationTime, User user) {
 		this.typeToken = typeToken;

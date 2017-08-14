@@ -37,3 +37,4 @@ spring:
       mail.smtp.starttls.enable: true
       mail.smtp.starttls.required: true
       mail.transport.protocol: smtp
+      mail.debug: true
