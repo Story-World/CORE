@@ -1,4 +1,4 @@
-package com.storyworld.service.impl;
+package com.storyworld.scheduling;
 
 import static org.junit.Assert.*;
 
@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class MailServiceImplTest {
+public class MailSchadulerTest {
 
 	/**
 	 * @throws java.lang.Exception
@@ -39,10 +39,10 @@ public class MailServiceImplTest {
 	}
 
 	/**
-	 * Test method for {@link com.storyworld.service.impl.MailServiceImpl#send(com.storyworld.domain.sql.Mail)}.
+	 * Test method for {@link com.storyworld.scheduling.MailSchaduler#sendMail()}.
 	 */
 	@Test
-	public final void testSend() {
+	public final void testSendMail() {
 		fail("Not yet implemented"); // TODO
 	}
 

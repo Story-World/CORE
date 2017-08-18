@@ -29,10 +29,9 @@ public class UserController {
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public ResponseEntity<Response<User>> get(@PathVariable(value = "id") Long id,
 			@RequestHeader("Token") String token) {
-		if (authorizationService.checkAccess(new Request(token)))
-			return new ResponseEntity<Response<User>>(userService.getUser(new Request(token)), HttpStatus.OK);
-		else
-			return new ResponseEntity<Response<User>>(new Response<User>(), HttpStatus.UNAUTHORIZED);
+		return authorizationService.checkAccess(new Request(token))
+				? new ResponseEntity<Response<User>>(userService.getUser(new Request(token)), HttpStatus.OK)
+				: new ResponseEntity<Response<User>>(new Response<User>(), HttpStatus.UNAUTHORIZED);
 	}
 
 	@RequestMapping(value = "login", method = RequestMethod.POST)
@@ -67,29 +66,24 @@ public class UserController {
 
 	@RequestMapping(value = "updateUser", method = RequestMethod.PUT)
 	public ResponseEntity<Response<User>> updateUser(@RequestBody Request request) {
-		if (authorizationService.checkAccessToUser(request))
-			return new ResponseEntity<Response<User>>(userService.update(request), HttpStatus.OK);
-		else
-			return new ResponseEntity<Response<User>>(new Response<User>(), HttpStatus.UNAUTHORIZED);
+		return authorizationService.checkAccessToUser(request)
+				? new ResponseEntity<Response<User>>(userService.update(request), HttpStatus.OK)
+				: new ResponseEntity<Response<User>>(new Response<User>(), HttpStatus.UNAUTHORIZED);
 
 	}
 
 	@RequestMapping(value = "block", method = RequestMethod.PUT)
 	public ResponseEntity<Response<User>> blockUser(@RequestBody Request request) {
-		if (authorizationService.checkAccessAdmin(request))
-			return new ResponseEntity<Response<User>>(userService.block(request), HttpStatus.OK);
-		else
-			return new ResponseEntity<Response<User>>(new Response<User>(), HttpStatus.UNAUTHORIZED);
-
+		return authorizationService.checkAccessAdmin(request)
+				? new ResponseEntity<Response<User>>(userService.block(request), HttpStatus.OK)
+				: new ResponseEntity<Response<User>>(new Response<User>(), HttpStatus.UNAUTHORIZED);
 	}
 
 	@RequestMapping(value = "getUsers", method = RequestMethod.POST)
 	public ResponseEntity<Response<User>> getUsers(@RequestBody Request request) {
-		if (authorizationService.checkAccess(request))
-			return new ResponseEntity<Response<User>>(userService.getUsers(request), HttpStatus.OK);
-		else
-			return new ResponseEntity<Response<User>>(new Response<User>(), HttpStatus.UNAUTHORIZED);
-
+		return authorizationService.checkAccess(request)
+				? new ResponseEntity<Response<User>>(userService.getUsers(request), HttpStatus.OK)
+				: new ResponseEntity<Response<User>>(new Response<User>(), HttpStatus.UNAUTHORIZED);
 	}
 
 	@RequestMapping(value = "logout", method = RequestMethod.POST)
@@ -100,11 +94,9 @@ public class UserController {
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Response<User>> delete(@PathVariable(value = "id") Long id,
 			@RequestHeader("Token") String token) {
-		if (authorizationService.checkAccessToUser(new Request(token)))
-			return new ResponseEntity<Response<User>>(userService.delete(id), HttpStatus.OK);
-		else
-			return new ResponseEntity<Response<User>>(new Response<User>(), HttpStatus.UNAUTHORIZED);
-
+		return authorizationService.checkAccessToUser(new Request(token))
+				? new ResponseEntity<Response<User>>(userService.delete(id), HttpStatus.OK)
+				: new ResponseEntity<Response<User>>(new Response<User>(), HttpStatus.UNAUTHORIZED);
 	}
 
 }

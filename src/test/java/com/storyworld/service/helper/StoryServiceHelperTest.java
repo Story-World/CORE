@@ -1,4 +1,4 @@
-package com.storyworld.service.impl;
+package com.storyworld.service.helper;
 
 import static org.junit.Assert.*;
 
@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class MailServiceImplTest {
+public class StoryServiceHelperTest {
 
 	/**
 	 * @throws java.lang.Exception
@@ -39,10 +39,18 @@ public class MailServiceImplTest {
 	}
 
 	/**
-	 * Test method for {@link com.storyworld.service.impl.MailServiceImpl#send(com.storyworld.domain.sql.Mail)}.
+	 * Test method for {@link com.storyworld.service.helper.StoryServiceHelper#tryToSaveStroy(com.storyworld.domain.sql.Story, com.storyworld.domain.sql.User)}.
 	 */
 	@Test
-	public final void testSend() {
+	public final void testTryToSaveStroy() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	/**
+	 * Test method for {@link com.storyworld.service.helper.StoryServiceHelper#getStoryContent(com.storyworld.domain.sql.Story)}.
+	 */
+	@Test
+	public final void testGetStoryContent() {
 		fail("Not yet implemented"); // TODO
 	}
 

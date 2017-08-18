@@ -27,10 +27,9 @@ public class StoryController {
 
 	@RequestMapping(value = "add", method = RequestMethod.POST)
 	public ResponseEntity<Response<Story>> updateUser(@RequestBody Request request) {
-		if (authorizationService.checkAccess(request))
-			return new ResponseEntity<Response<Story>>(storyService.addStory(request), HttpStatus.OK);
-		else
-			return new ResponseEntity<Response<Story>>(new Response<Story>(), HttpStatus.UNAUTHORIZED);
+		return authorizationService.checkAccess(request)
+				? new ResponseEntity<Response<Story>>(storyService.addStory(request), HttpStatus.OK)
+				: new ResponseEntity<Response<Story>>(new Response<Story>(), HttpStatus.UNAUTHORIZED);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)

@@ -35,50 +35,40 @@ public class CommentController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<Response<CommentContent>> saveCommet(@RequestBody Request request) {
-		if (authorizationService.checkAccess(request))
-			return new ResponseEntity<Response<CommentContent>>(commentService.save(request), HttpStatus.OK);
-		else
-			return new ResponseEntity<Response<CommentContent>>(new Response<CommentContent>(),
-					HttpStatus.UNAUTHORIZED);
+		return authorizationService.checkAccess(request)
+				? new ResponseEntity<Response<CommentContent>>(commentService.save(request), HttpStatus.OK)
+				: new ResponseEntity<Response<CommentContent>>(new Response<CommentContent>(), HttpStatus.UNAUTHORIZED);
 	}
 
 	@RequestMapping(value = "like", method = RequestMethod.POST)
 	public ResponseEntity<Response<CommentContent>> like(@RequestBody Request request) {
-		if (authorizationService.checkAccess(request))
-			return new ResponseEntity<Response<CommentContent>>(commentService.like(request), HttpStatus.OK);
-		else
-			return new ResponseEntity<Response<CommentContent>>(new Response<CommentContent>(),
-					HttpStatus.UNAUTHORIZED);
+		return authorizationService.checkAccess(request)
+				? new ResponseEntity<Response<CommentContent>>(commentService.like(request), HttpStatus.OK)
+				: new ResponseEntity<Response<CommentContent>>(new Response<CommentContent>(), HttpStatus.UNAUTHORIZED);
 	}
 
 	@RequestMapping(value = "dislike", method = RequestMethod.POST)
 	public ResponseEntity<Response<CommentContent>> dislike(@RequestBody Request request) {
-		if (authorizationService.checkAccess(request))
-			return new ResponseEntity<Response<CommentContent>>(commentService.dislike(request), HttpStatus.OK);
-		else
-			return new ResponseEntity<Response<CommentContent>>(new Response<CommentContent>(),
-					HttpStatus.UNAUTHORIZED);
+		return authorizationService.checkAccess(request)
+				? new ResponseEntity<Response<CommentContent>>(commentService.dislike(request), HttpStatus.OK)
+				: new ResponseEntity<Response<CommentContent>>(new Response<CommentContent>(), HttpStatus.UNAUTHORIZED);
 	}
 
 	@RequestMapping(method = RequestMethod.PUT)
 	public ResponseEntity<Response<CommentContent>> updateCommet(@RequestBody Request request) {
-		if (authorizationService.checkAccessToComment(request))
-			return new ResponseEntity<Response<CommentContent>>(commentService.update(request), HttpStatus.OK);
-		else
-			return new ResponseEntity<Response<CommentContent>>(new Response<CommentContent>(),
-					HttpStatus.UNAUTHORIZED);
+		return authorizationService.checkAccessToComment(request)
+				? new ResponseEntity<Response<CommentContent>>(commentService.update(request), HttpStatus.OK)
+				: new ResponseEntity<Response<CommentContent>>(new Response<CommentContent>(), HttpStatus.UNAUTHORIZED);
 
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Response<CommentContent>> deleteCommet(@PathVariable(value = "id") String _id,
 			@RequestHeader("Token") String token) {
-		if (authorizationService.checkAccessToComment(new Request(token, new Comment(_id))))
-			return new ResponseEntity<Response<CommentContent>>(
-					commentService.delete(new Request(token, new Comment(_id))), HttpStatus.OK);
-		else
-			return new ResponseEntity<Response<CommentContent>>(new Response<CommentContent>(),
-					HttpStatus.UNAUTHORIZED);
+		return authorizationService.checkAccessToComment(new Request(token, new Comment(_id)))
+				? new ResponseEntity<Response<CommentContent>>(
+						commentService.delete(new Request(token, new Comment(_id))), HttpStatus.OK)
+				: new ResponseEntity<Response<CommentContent>>(new Response<CommentContent>(), HttpStatus.UNAUTHORIZED);
 
 	}
 }
