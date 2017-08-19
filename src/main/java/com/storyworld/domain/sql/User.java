@@ -9,9 +9,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -23,29 +20,23 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
+import com.storyworld.domain.sql.basic.BasicWithNameEntity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @ToString
 @NoArgsConstructor
 @Entity
 @Table(name = "USER")
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-public class User implements Serializable {
+public class User extends BasicWithNameEntity implements Serializable {
 
 	private static final long serialVersionUID = -3325353040709283369L;
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
-
-	@NotNull
-	@Column(unique = true)
-	@Length(min = 4, max = 255)
-	private String name;
 
 	@NotNull
 	@Length(min = 6, max = 255)
@@ -79,12 +70,12 @@ public class User implements Serializable {
 	private Set<Role> roles = new HashSet<>();
 
 	public User(long id, String name) {
-		this.id = id;
-		this.name = name;
+		super(id, name);
 	}
 
 	public User(String name, String password, String mail, String token, LocalDateTime lastActionTime,
 			int incorrectLogin, boolean block, LocalDateTime lastIncorrectLogin, boolean deleted, Set<Role> roles) {
+		super();
 		this.name = name;
 		this.password = password;
 		this.mail = mail;

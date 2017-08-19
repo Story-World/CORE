@@ -8,19 +8,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import com.storyworld.domain.sql.TestClass;
-
 @SpringBootApplication
 public class Application {
 
 	public static void main(String[] args) throws UnknownHostException {
-		TestClass tc = new TestClass();
-		try {
-			tc.testMethod();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		SpringApplication.run(Application.class, args);
 	}
 

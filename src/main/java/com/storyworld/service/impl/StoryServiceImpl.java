@@ -50,11 +50,16 @@ public class StoryServiceImpl implements StoryService {
 	}
 
 	@Override
-	public Response<Story> getStories(int page, int size) {
-		return Optional.ofNullable(storyRepository.findAll(new PageRequest(page, size)))
-				.map(stories -> jsonPrepare.prepareResponse(StatusMessage.SUCCESS, "STORY_CRT", null,
-						stories.getContent(), true))
-				.orElse(jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false));
+	public Response<Story> getStories(int page, int size, String text) {
+		System.out.println(text);
+		System.out.println(Optional.ofNullable(text).isPresent());
+		return Optional.ofNullable(text).map(textSearch -> {
+			return Optional.ofNullable(storyRepository.findByName(text, new PageRequest(page, size)))
+					.map(stories -> jsonPrepare.prepareResponse(null, null, null, stories.getContent(), true))
+					.orElse(jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false));
+		}).orElse(Optional.ofNullable(storyRepository.findAll(new PageRequest(page, size)))
+				.map(stories -> jsonPrepare.prepareResponse(null, null, null, stories.getContent(), true))
+				.orElse(jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false)));
 	}
 
 }

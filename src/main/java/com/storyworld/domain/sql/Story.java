@@ -8,9 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -19,31 +16,28 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
 
+import com.storyworld.domain.sql.basic.BasicWithNameEntity;
 import com.storyworld.domain.sql.enums.StoryType;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Data
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "STORY")
-public class Story implements Serializable {
+public class Story extends BasicWithNameEntity implements Serializable {
 
 	private static final long serialVersionUID = -3972670387724832603L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-
 	@NotNull
 	private String contentId;
-
-	@NotNull
-	@Length(min = 4, max = 255)
-	private String title;
 
 	@NotNull
 	@Length(min = 4, max = 255)
@@ -68,11 +62,8 @@ public class Story implements Serializable {
 	@NotNull
 	private User author;
 
-	public Story() {
-	}
-
-	public Story(String title, String description, LocalDateTime date, StoryType type, User author) {
-		this.title = title;
+	public Story(String name, String description, LocalDateTime date, StoryType type, User author) {
+		super(name);
 		this.description = description;
 		this.date = date;
 		this.type = type;

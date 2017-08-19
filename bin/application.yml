@@ -4,10 +4,6 @@ logging:
     com.storyworld: ERROR
 server:
   context-path: /core
-  ssl:
-    key-store: classpath:keystore
-    key-store-password: secret
-    key-password: secret
   tomcat:
     remote-ip-header: x-forwarded-for
     protocol-header: x-forwarded-proto

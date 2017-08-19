@@ -46,7 +46,7 @@ public class StoryServiceHelper {
 		List<String> pages = new ArrayList<>();
 		pages.add(story.getRawText());
 		storyContent.setPages(pages);
-		storyContent.setTitle(story.getTitle());
+		storyContent.setTitle(story.getName());
 		storyContent = storyContentRepository.save(storyContent);
 		story.setContentId(storyContent.getId());
 		try {
@@ -63,7 +63,7 @@ public class StoryServiceHelper {
 	public Response<Story> getStoryContent(Story story) {
 		return Optional.ofNullable(storyContentRepository.findOne(story.getContentId())).map(storyContent -> {
 			story.setPages(storyContent.getPages());
-			return jsonPrepare.prepareResponse(StatusMessage.SUCCESS, "STORY_CRT", story, null, true);
+			return jsonPrepare.prepareResponse(null, null, story, null, true);
 		}).orElse(jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false));
 	}
 

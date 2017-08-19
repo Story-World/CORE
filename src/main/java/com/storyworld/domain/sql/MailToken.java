@@ -7,12 +7,10 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.storyworld.domain.sql.basic.BasicEntity;
 import com.storyworld.domain.sql.enums.TypeToken;
 
 import lombok.Data;
@@ -22,17 +20,13 @@ import lombok.ToString;
 
 @Data
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @Entity
 @Table(name = "MAIL_TOKEN")
-public class MailToken implements Serializable {
+public class MailToken extends BasicEntity implements Serializable {
 
 	private static final long serialVersionUID = 1475611475595422357L;
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
 
 	@Enumerated(EnumType.STRING)
 	private TypeToken typeToken;
@@ -45,6 +39,7 @@ public class MailToken implements Serializable {
 	private User user;
 
 	public MailToken(TypeToken typeToken, String token, LocalDateTime validationTime, User user) {
+		super();
 		this.typeToken = typeToken;
 		this.token = token;
 		this.validationTime = validationTime;

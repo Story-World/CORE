@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.storyworld.domain.sql.basic.BasicEntity;
 import com.storyworld.domain.sql.enums.LikeType;
 
 import lombok.Data;
@@ -23,11 +24,11 @@ import lombok.ToString;
 
 @Data
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @Entity
 @Table(name = "LIKETYPECOMMENT")
-public class LikeTypeComment implements Serializable {
+public class LikeTypeComment extends BasicEntity implements Serializable {
 
 	private static final long serialVersionUID = 4448839057155542878L;
 
@@ -50,6 +51,7 @@ public class LikeTypeComment implements Serializable {
 	private LikeType likeType;
 
 	public LikeTypeComment(User user, Comment comment, LikeType likeType) {
+		super();
 		this.user = user;
 		this.comment = comment;
 		this.likeType = likeType;

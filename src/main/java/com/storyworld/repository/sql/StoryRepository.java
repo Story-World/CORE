@@ -11,4 +11,5 @@ public interface StoryRepository extends JpaRepository<Story, Long> {
 
 	public Page<Story> findByAuthor(User author, Pageable pageRequest);
 
+	public Page<Story> findByName(String name, Pageable pageRequest);
 }

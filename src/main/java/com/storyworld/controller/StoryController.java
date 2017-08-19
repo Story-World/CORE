@@ -25,13 +25,6 @@ public class StoryController {
 	@Autowired
 	private StoryService storyService;
 
-	@RequestMapping(value = "add", method = RequestMethod.POST)
-	public ResponseEntity<Response<Story>> updateUser(@RequestBody Request request) {
-		return authorizationService.checkAccess(request)
-				? new ResponseEntity<Response<Story>>(storyService.addStory(request), HttpStatus.OK)
-				: new ResponseEntity<Response<Story>>(new Response<Story>(), HttpStatus.UNAUTHORIZED);
-	}
-
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public ResponseEntity<Response<Story>> getStory(@PathVariable(value = "id") Long id) {
 		return new ResponseEntity<Response<Story>>(storyService.getStory(id), HttpStatus.OK);
@@ -40,7 +33,19 @@ public class StoryController {
 	@RequestMapping(value = "/{page}/{size}", method = RequestMethod.GET)
 	public ResponseEntity<Response<Story>> getStories(@PathVariable(value = "page") int page,
 			@PathVariable(value = "size") int size) {
-		return new ResponseEntity<Response<Story>>(storyService.getStories(page, size), HttpStatus.OK);
+		return new ResponseEntity<Response<Story>>(storyService.getStories(page, size, null), HttpStatus.OK);
 	}
 
+	@RequestMapping(value = "/{page}/{size}/{text}", method = RequestMethod.GET)
+	public ResponseEntity<Response<Story>> searchStories(@PathVariable(value = "page") int page,
+			@PathVariable(value = "size") int size, @PathVariable(value = "text") String text) {
+		return new ResponseEntity<Response<Story>>(storyService.getStories(page, size, text), HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "add", method = RequestMethod.POST)
+	public ResponseEntity<Response<Story>> updateUser(@RequestBody Request request) {
+		return authorizationService.checkAccess(request)
+				? new ResponseEntity<Response<Story>>(storyService.addStory(request), HttpStatus.OK)
+				: new ResponseEntity<Response<Story>>(new Response<Story>(), HttpStatus.UNAUTHORIZED);
+	}
 }

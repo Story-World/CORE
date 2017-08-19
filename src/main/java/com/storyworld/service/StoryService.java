@@ -10,6 +10,6 @@ public interface StoryService {
 
 	public Response<Story> getStory(Long id);
 
-	public Response<Story> getStories(int page, int size);
+	public Response<Story> getStories(int page, int size, String text);
 
 }
