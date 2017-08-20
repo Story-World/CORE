@@ -12,4 +12,6 @@ public interface StoryService {
 
 	public Response<Story> getStories(int page, int size, String text);
 
+	public Response<Story> getStoriesByUser(String token);
+
 }

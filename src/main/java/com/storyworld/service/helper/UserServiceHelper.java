@@ -6,8 +6,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
@@ -50,8 +48,6 @@ public class UserServiceHelper {
 	private JSONPrepare<User> jsonPrepare = (statusMessage, message, user, list,
 			success) -> new Response<User>(new Message(statusMessage, message), user, list, success);
 
-	private static final Logger LOG = LoggerFactory.getLogger(UserServiceHelper.class);
-
 	public Response<User> successLogin(User user) {
 		user.setToken(UUID.randomUUID().toString());
 		user.setLastActionTime(LocalDateTime.now());
@@ -77,7 +73,7 @@ public class UserServiceHelper {
 	public Response<User> getUsersFromDB(int page, int sizePage) {
 		return Optional.ofNullable(userRepository.findAll(new PageRequest(page, sizePage)))
 				.map(users -> jsonPrepare.prepareResponse(null, null, null, users.getContent(), true))
-				.orElse(jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false));
+				.orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false));
 	}
 
 	public Response<User> confirmRegisterInDB(MailToken mailToken) {
@@ -86,7 +82,7 @@ public class UserServiceHelper {
 			userRepository.save(user);
 			mailTokenRepository.delete(mailToken);
 			return jsonPrepare.prepareResponse(StatusMessage.SUCCESS, "SUCCESS_REGISTERED", null, null, true);
-		}).orElse(jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false));
+		}).orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false));
 	}
 
 	public Response<User> updateUserNameOrMail(User userRequest, User user) {
@@ -108,7 +104,8 @@ public class UserServiceHelper {
 		return userPredicate.validTokenWithTime.test(mailToken, request)
 				? Optional.ofNullable(userRepository.findOne(mailToken.getUser().getId()))
 						.map(user -> updateUserPassword(request.getUser().getPassword(), user, mailToken))
-						.orElse(jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false))
+						.orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null,
+								false))
 				: jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false);
 	}
 
@@ -144,7 +141,7 @@ public class UserServiceHelper {
 	public Response<User> addMailToMailerAfterRestartPassword(User user) {
 		return mailTokenRepository.findByUserAndTypeToken(user, TypeToken.RESTART_PASSWORD)
 				.map(mailToken -> saveMailTokenAfterRequestForRestartPassword(mailToken, user))
-				.orElse(jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false));
+				.orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false));
 	}
 
 	public Response<User> saveMailTokenAfterRequestForRestartPassword(MailToken mailToken, User user) {

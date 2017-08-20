@@ -26,14 +26,6 @@ public class UserController {
 	@Autowired
 	private AuthorizationService authorizationService;
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public ResponseEntity<Response<User>> get(@PathVariable(value = "id") Long id,
-			@RequestHeader("Token") String token) {
-		return authorizationService.checkAccess(new Request(token))
-				? new ResponseEntity<Response<User>>(userService.getUser(new Request(token)), HttpStatus.OK)
-				: new ResponseEntity<Response<User>>(new Response<User>(), HttpStatus.UNAUTHORIZED);
-	}
-
 	@RequestMapping(value = "login", method = RequestMethod.POST)
 	public ResponseEntity<Response<User>> login(@RequestBody Request request) {
 		return new ResponseEntity<Response<User>>(userService.login(request), HttpStatus.OK);
@@ -87,7 +79,7 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "logout", method = RequestMethod.POST)
-	public ResponseEntity<Response<User>> logout(Request request) {
+	public ResponseEntity<Response<User>> logout(@RequestBody Request request) {
 		return new ResponseEntity<Response<User>>(userService.logout(request), HttpStatus.OK);
 	}
 
@@ -96,6 +88,14 @@ public class UserController {
 			@RequestHeader("Token") String token) {
 		return authorizationService.checkAccessToUser(new Request(token))
 				? new ResponseEntity<Response<User>>(userService.delete(id), HttpStatus.OK)
+				: new ResponseEntity<Response<User>>(new Response<User>(), HttpStatus.UNAUTHORIZED);
+	}
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	public ResponseEntity<Response<User>> get(@PathVariable(value = "id") Long id,
+			@RequestHeader("Token") String token) {
+		return authorizationService.checkAccess(new Request(token))
+				? new ResponseEntity<Response<User>>(userService.getUser(new Request(token)), HttpStatus.OK)
 				: new ResponseEntity<Response<User>>(new Response<User>(), HttpStatus.UNAUTHORIZED);
 	}
 

@@ -19,7 +19,7 @@ public class Application {
 	public WebMvcConfigurerAdapter corsConfigurer() {
 		return new WebMvcConfigurerAdapter() {
 			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**");
+				registry.addMapping("/**").allowedMethods("GET", "PUT", "DELETE", "POST", "OPTIONS");
 			}
 		};
 	}

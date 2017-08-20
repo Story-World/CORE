@@ -64,7 +64,7 @@ public class StoryServiceHelper {
 		return Optional.ofNullable(storyContentRepository.findOne(story.getContentId())).map(storyContent -> {
 			story.setPages(storyContent.getPages());
 			return jsonPrepare.prepareResponse(null, null, story, null, true);
-		}).orElse(jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false));
+		}).orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false));
 	}
 
 }

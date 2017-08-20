@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +25,11 @@ public class StoryController {
 
 	@Autowired
 	private StoryService storyService;
+
+	@RequestMapping(method = RequestMethod.GET)
+	public ResponseEntity<Response<Story>> getStoryByUser(@RequestHeader("Token") String token) {
+		return new ResponseEntity<Response<Story>>(storyService.getStoriesByUser(token), HttpStatus.OK);
+	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public ResponseEntity<Response<Story>> getStory(@PathVariable(value = "id") Long id) {

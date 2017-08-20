@@ -18,4 +18,6 @@ public interface CommentService {
 
 	public Response<CommentContent> dislike(Request request);
 
+	public Response<CommentContent> getByUser(String token);
+
 }

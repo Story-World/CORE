@@ -27,6 +27,11 @@ public class CommentController {
 	@Autowired
 	private AuthorizationService authorizationService;
 
+	@RequestMapping(method = RequestMethod.GET)
+	public ResponseEntity<Response<CommentContent>> getCommetsByUser(@RequestHeader("Token") String token) {
+		return new ResponseEntity<Response<CommentContent>>(commentService.getByUser(token), HttpStatus.OK);
+	}
+
 	@RequestMapping(value = "/{idStory}/{page}/{pageSize}", method = RequestMethod.GET)
 	public ResponseEntity<Response<CommentContent>> getCommetsByStory(@PathVariable(value = "idStory") Long idStory,
 			@PathVariable(value = "page") int page, @PathVariable(value = "pageSize") int pageSize) {
@@ -35,6 +40,7 @@ public class CommentController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<Response<CommentContent>> saveCommet(@RequestBody Request request) {
+		System.out.println(request.toString());
 		return authorizationService.checkAccess(request)
 				? new ResponseEntity<Response<CommentContent>>(commentService.save(request), HttpStatus.OK)
 				: new ResponseEntity<Response<CommentContent>>(new Response<CommentContent>(), HttpStatus.UNAUTHORIZED);

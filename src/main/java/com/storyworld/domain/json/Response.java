@@ -26,6 +26,8 @@ public class Response<T> {
 	public Response(Message message, T t, List<T> listT, boolean success) {
 		if (message.getStatus() == null)
 			this.message = null;
+		else
+			this.message = message;
 		this.t = t;
 		this.list = listT;
 		this.success = success;

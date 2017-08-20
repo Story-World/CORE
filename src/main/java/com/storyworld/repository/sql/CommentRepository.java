@@ -1,5 +1,6 @@
 package com.storyworld.repository.sql;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -20,4 +21,5 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
 	public Optional<Comment> findBy_id(String _id);
 
+	public List<Comment> findByAuthor(User author);
 }
