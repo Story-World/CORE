@@ -41,8 +41,8 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserServiceHelper userServiceHelper;
 
-	private JSONPrepare<User> jsonPrepare = (statusMessage, message, user, list,
-			success) -> new Response<User>(new Message(statusMessage, message), user, list, success);
+	private JSONPrepare<User> jsonPrepare = (statusMessage, message, user, list, success,
+			counter) -> new Response<User>(new Message(statusMessage, message), user, list, success, counter);
 
 	private static final Logger LOG = LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -60,7 +60,8 @@ public class UserServiceImpl implements UserService {
 		return userRepository.findByName(request.getUser().getName())
 				.map(user -> userPredicate.vaildUserLogin.test(user, request) ? userServiceHelper.successLogin(user)
 						: userServiceHelper.unsuccessLogin(user))
-				.orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false));
+				.orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false,
+						null));
 	}
 
 	@Override
@@ -68,32 +69,29 @@ public class UserServiceImpl implements UserService {
 		try {
 			return Optional.ofNullable(request.getUser()).map(user -> userServiceHelper.prepareUserToSave(user))
 					.orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null,
-							false));
+							false, null));
 		} catch (PersistenceException e) {
 			LOG.error(e.toString());
-			// return e.getCause() instanceof ConstraintViolationException
-			// ? jsonPrepare.prepareResponse(StatusMessage.ERROR,
-			// "UNIQUE_NAME_OR_EMAIL", null, null, false)
-			// :
-			return jsonPrepare.prepareResponse(StatusMessage.ERROR, "UNIQUE_NAME_OR_EMAIL", null, null, false);
+			return jsonPrepare.prepareResponse(StatusMessage.ERROR, "UNIQUE_NAME_OR_EMAIL", null, null, false, null);
 		} catch (Exception e) {
 			LOG.error(e.toString());
-			return jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false);
+			return jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false, null);
 		}
 	}
 
 	@Override
 	public Response<User> restartPassword(Request request) {
 		return userRepository.findByMail(request.getUser().getMail())
-				.map(user -> userServiceHelper.addMailToMailerAfterRestartPassword(user))
-				.orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false));
+				.map(user -> userServiceHelper.addMailToMailerAfterRestartPassword(user)).orElseGet(() -> jsonPrepare
+						.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false, null));
 	}
 
 	@Override
 	public Response<User> remindPassword(Request request) {
 		return mailTokenRepository.findByToken(request.getToken())
 				.map(mailToken -> userServiceHelper.changePasswordIfMailTokenIsValid(request, mailToken))
-				.orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false));
+				.orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false,
+						null));
 	}
 
 	@Override
@@ -101,8 +99,9 @@ public class UserServiceImpl implements UserService {
 		return mailTokenRepository.findByToken(request.getToken())
 				.map(mailToken -> userPredicate.validMailToken.test(mailToken, request)
 						? userServiceHelper.confirmRegisterInDB(mailToken)
-						: jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false))
-				.orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false));
+						: jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false, null))
+				.orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false,
+						null));
 	}
 
 	@Override
@@ -111,10 +110,10 @@ public class UserServiceImpl implements UserService {
 			return Optional.ofNullable(userRepository.findOne(request.getUser().getId()))
 					.map(user -> userServiceHelper.updateUserPassword(request.getUser().getPassword(), user, null))
 					.orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null,
-							false));
+							false, null));
 		} catch (Exception e) {
 			LOG.error(e.toString());
-			return jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false);
+			return jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false, null);
 		}
 	}
 
@@ -124,15 +123,15 @@ public class UserServiceImpl implements UserService {
 			return Optional.ofNullable(userRepository.findOne(request.getUser().getId()))
 					.map(user -> userServiceHelper.updateUserNameOrMail(request.getUser(), user))
 					.orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null,
-							false));
+							false, null));
 		} catch (PersistenceException e) {
 			LOG.error(e.toString());
 			return e.getCause() instanceof ConstraintViolationException
-					? jsonPrepare.prepareResponse(StatusMessage.ERROR, "UNIQUE_NAME_OR_EMAIL", null, null, false)
-					: jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false);
+					? jsonPrepare.prepareResponse(StatusMessage.ERROR, "UNIQUE_NAME_OR_EMAIL", null, null, false, null)
+					: jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false, null);
 		} catch (Exception e) {
 			LOG.error(e.toString());
-			return jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false);
+			return jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false, null);
 		}
 	}
 
@@ -144,8 +143,8 @@ public class UserServiceImpl implements UserService {
 
 		return Optional.ofNullable(userGet).map(user -> {
 			user.setToken(null);
-			return jsonPrepare.prepareResponse(null, null, user, null, true);
-		}).orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false));
+			return jsonPrepare.prepareResponse(null, null, user, null, true, null);
+		}).orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false, null));
 	}
 
 	@Override
@@ -154,15 +153,15 @@ public class UserServiceImpl implements UserService {
 			user.setToken(null);
 			user.setLastActionTime(null);
 			userRepository.save(user);
-			return jsonPrepare.prepareResponse(StatusMessage.SUCCESS, "LOGOUT", null, null, true);
-		}).orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false));
+			return jsonPrepare.prepareResponse(StatusMessage.SUCCESS, "LOGOUT", null, null, true, null);
+		}).orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false, null));
 	}
 
 	@Override
 	public Response<User> getUsers(Request request) {
 		return commonPredicate.validatePageAndPageSize.test(request.getPage(), request.getSizePage())
 				? userServiceHelper.getUsersFromDB(request.getPage(), request.getSizePage())
-				: jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false);
+				: jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false, null);
 	}
 
 	@Override
@@ -170,8 +169,8 @@ public class UserServiceImpl implements UserService {
 		return Optional.ofNullable(userRepository.findOne(id)).map(user -> {
 			user.setDeleted(true);
 			userRepository.save(user);
-			return jsonPrepare.prepareResponse(StatusMessage.SUCCESS, "DELTED", user, null, true);
-		}).orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false));
+			return jsonPrepare.prepareResponse(StatusMessage.SUCCESS, "DELTED", user, null, true, null);
+		}).orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false, null));
 	}
 
 	@Override
@@ -180,9 +179,9 @@ public class UserServiceImpl implements UserService {
 			user.setBlock(request.getUser().isBlock());
 			userRepository.save(user);
 			return request.getUser().isBlock()
-					? jsonPrepare.prepareResponse(StatusMessage.SUCCESS, "BLOCKED", user, null, true)
-					: jsonPrepare.prepareResponse(StatusMessage.SUCCESS, "UNBLOCKED", user, null, true);
-		}).orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false));
+					? jsonPrepare.prepareResponse(StatusMessage.SUCCESS, "BLOCKED", user, null, true, null)
+					: jsonPrepare.prepareResponse(StatusMessage.SUCCESS, "UNBLOCKED", user, null, true, null);
+		}).orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false, null));
 	}
 
 }

@@ -94,9 +94,7 @@ public class UserController {
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public ResponseEntity<Response<User>> get(@PathVariable(value = "id") Long id,
 			@RequestHeader("Token") String token) {
-		return authorizationService.checkAccess(new Request(token))
-				? new ResponseEntity<Response<User>>(userService.getUser(new Request(token)), HttpStatus.OK)
-				: new ResponseEntity<Response<User>>(new Response<User>(), HttpStatus.UNAUTHORIZED);
+		return new ResponseEntity<Response<User>>(userService.getUser(new Request(token)), HttpStatus.OK);
 	}
 
 }

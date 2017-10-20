@@ -23,7 +23,9 @@ public class Response<T> {
 
 	private boolean success;
 
-	public Response(Message message, T t, List<T> listT, boolean success) {
+	private Integer counter;
+
+	public Response(Message message, T t, List<T> listT, boolean success, Integer counter) {
 		if (message.getStatus() == null)
 			this.message = null;
 		else
@@ -31,6 +33,7 @@ public class Response<T> {
 		this.t = t;
 		this.list = listT;
 		this.success = success;
+		this.counter = counter;
 	}
 
 }

@@ -9,6 +9,6 @@ import com.storyworld.domain.json.enums.StatusMessage;
 public interface JSONPrepare<T> {
 
 	public Response<T> prepareResponse(StatusMessage messageStatus, String messageString, T t, List<T> list,
-			boolean success);
+			boolean success, Integer counter);
 
 }

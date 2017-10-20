@@ -34,7 +34,7 @@ public class StoryServiceHelper {
 	private StoryContentRepository storyContentRepository;
 
 	private JSONPrepare<Story> jsonPrepare = (statusMessage, message, story, list,
-			success) -> new Response<Story>(new Message(statusMessage, message), story, list, success);
+			success, counter) -> new Response<Story>(new Message(statusMessage, message), story, list, success, counter);
 
 	private static final Logger LOG = LoggerFactory.getLogger(StoryServiceHelper.class);
 
@@ -53,18 +53,18 @@ public class StoryServiceHelper {
 			storyRepository.save(story);
 			user.setLastActionTime(LocalDateTime.now());
 			userRepository.save(user);
-			return jsonPrepare.prepareResponse(StatusMessage.SUCCESS, "STORY_CRT", null, null, true);
+			return jsonPrepare.prepareResponse(StatusMessage.SUCCESS, "STORY_CRT", null, null, true, null);
 		} catch (Exception e) {
 			LOG.error(e.toString());
-			return jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false);
+			return jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false, null);
 		}
 	}
 
 	public Response<Story> getStoryContent(Story story) {
 		return Optional.ofNullable(storyContentRepository.findOne(story.getContentId())).map(storyContent -> {
 			story.setPages(storyContent.getPages());
-			return jsonPrepare.prepareResponse(null, null, story, null, true);
-		}).orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false));
+			return jsonPrepare.prepareResponse(null, null, story, null, true, null);
+		}).orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false, null));
 	}
 
 }

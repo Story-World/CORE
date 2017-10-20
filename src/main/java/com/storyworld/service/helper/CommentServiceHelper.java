@@ -42,9 +42,9 @@ public class CommentServiceHelper {
 	@Autowired
 	private CommentContentRepository commentContentRepository;
 
-	private JSONPrepare<CommentContent> jsonPrepare = (statusMessage, message, commentContent, list,
-			success) -> new Response<CommentContent>(new Message(statusMessage, message), commentContent, list,
-					success);
+	private JSONPrepare<CommentContent> jsonPrepare = (statusMessage, message, commentContent, list, success,
+			counter) -> new Response<CommentContent>(new Message(statusMessage, message), commentContent, list, success,
+					counter);
 
 	private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -55,10 +55,11 @@ public class CommentServiceHelper {
 		List<CommentContent> commentsContent = new LinkedList<>();
 		comments.forEach(x -> commentsContent.add(commentContentRepository.findOne(x.get_id())));
 		commentsContent.sort((CommentContent o1, CommentContent o2) -> o2.getDate().compareTo(o1.getDate()));
-		return jsonPrepare.prepareResponse(null, null, null, commentsContent, true);
+		return jsonPrepare.prepareResponse(null, null, null, commentsContent, true, null);
 	}
 
-	public synchronized Response<CommentContent> tryToSaveComment(User user, Story story, CommentContent commentContent) {
+	public synchronized Response<CommentContent> tryToSaveComment(User user, Story story,
+			CommentContent commentContent) {
 		Comment commentSave = new Comment(user, story);
 		try {
 			user.setLastActionTime(LocalDateTime.now());
@@ -72,10 +73,10 @@ public class CommentServiceHelper {
 			commentContent = commentContentRepository.save(commentContent);
 			commentSave.set_id(commentContent.getId());
 			commentRepository.save(commentSave);
-			return jsonPrepare.prepareResponse(StatusMessage.SUCCESS, "ADDED2", commentContent, null, true);
+			return jsonPrepare.prepareResponse(StatusMessage.SUCCESS, "ADDED2", commentContent, null, true, null);
 		} catch (Exception e) {
 			LOG.error(e.toString());
-			return jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA3", null, null, false);
+			return jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA3", null, null, false, null);
 		}
 	}
 
@@ -87,8 +88,8 @@ public class CommentServiceHelper {
 		return Optional.ofNullable(story).isPresent() && commentContent.isPresent() && !comment.isPresent()
 				? tryToSaveComment(user, story, commentContent.get())
 				: Optional.ofNullable(comment).isPresent()
-						? jsonPrepare.prepareResponse(StatusMessage.ERROR, "UNIQUE_COMMENT", null, null, false)
-						: jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false);
+						? jsonPrepare.prepareResponse(StatusMessage.ERROR, "UNIQUE_COMMENT", null, null, false, null)
+						: jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false, null);
 	}
 
 	public synchronized Response<CommentContent> updateCommentContent(Optional<Comment> comment, User user,
@@ -100,7 +101,7 @@ public class CommentServiceHelper {
 		commentContent = commentContentRepository.save(commentContent);
 		user.setLastActionTime(LocalDateTime.now());
 		userRepository.save(user);
-		return jsonPrepare.prepareResponse(StatusMessage.SUCCESS, "UPDATED", commentContent, null, true);
+		return jsonPrepare.prepareResponse(StatusMessage.SUCCESS, "UPDATED", commentContent, null, true, null);
 	}
 
 	public synchronized Response<CommentContent> deleteComment(Optional<Comment> comment, Optional<User> user) {
@@ -109,11 +110,10 @@ public class CommentServiceHelper {
 		commentRepository.delete(comment.get());
 		user.get().setLastActionTime(LocalDateTime.now());
 		userRepository.save(user.get());
-		return jsonPrepare.prepareResponse(StatusMessage.SUCCESS, "DELETED", null, null, true);
+		return jsonPrepare.prepareResponse(StatusMessage.SUCCESS, "DELETED", null, null, true, null);
 	}
 
 	public Response<CommentContent> prepareComments(User user) {
-		List<Comment> comments = commentRepository.f
 		return null;
 	}
 

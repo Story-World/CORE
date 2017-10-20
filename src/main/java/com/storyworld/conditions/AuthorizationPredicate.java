@@ -16,7 +16,7 @@ public class AuthorizationPredicate {
 	public BiPredicate<Optional<User>, Long> checkAccess = (user, time) -> user.isPresent()
 			&& ChronoUnit.HOURS.between(user.get().getLastActionTime(), LocalDateTime.now()) <= time;
 
-	public BiPredicate<Optional<User>, String> checkRole = (user, role) -> user.isPresent()
+	public BiPredicate<Optional<User>, String> checkRole = (user, role) -> checkAccess.test(user, 2L)
 			&& user.get().getRoles().removeIf(x -> x.getName().equals(role));
 
 	public BiPredicate<Optional<User>, Request> checkAccessToUser = (user, request) -> checkAccess.test(user, 2L)

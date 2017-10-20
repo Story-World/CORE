@@ -1,5 +1,10 @@
 package com.storyworld.domain.json;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.data.domain.Sort;
+
 import com.storyworld.domain.elastic.CommentContent;
 import com.storyworld.domain.sql.Comment;
 import com.storyworld.domain.sql.Story;
@@ -30,6 +35,8 @@ public class Request {
 	private int page;
 
 	private int sizePage;
+
+	private Map<Sort.Direction, String[]> sorts = new HashMap<>();
 
 	public Request(String token) {
 		this.token = token;
