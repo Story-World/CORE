@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.storyworld.annotations.Secure;
 import com.storyworld.domain.json.Request;
 import com.storyworld.domain.json.Response;
 import com.storyworld.domain.sql.Story;
@@ -48,6 +49,7 @@ public class StoryController {
 		return new ResponseEntity<Response<Story>>(storyService.getStories(page, size, text), HttpStatus.OK);
 	}
 
+	@Secure()
 	@RequestMapping(value = "add", method = RequestMethod.POST)
 	public ResponseEntity<Response<Story>> updateUser(@RequestBody Request request) {
 		return authorizationService.checkAccess(request)
