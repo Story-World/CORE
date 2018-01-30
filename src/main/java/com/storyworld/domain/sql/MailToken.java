@@ -1,6 +1,5 @@
 package com.storyworld.domain.sql;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
@@ -24,9 +23,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Entity
 @Table(name = "MAIL_TOKEN")
-public class MailToken extends BasicEntity implements Serializable {
-
-	private static final long serialVersionUID = 1475611475595422357L;
+public class MailToken extends BasicEntity {
 
 	@Enumerated(EnumType.STRING)
 	private TypeToken typeToken;

@@ -75,7 +75,7 @@ public class MailServiceImpl implements MailService {
 	}
 
 	private String geFreeMarkerTemplateContent(Map<String, Object> model, String template) {
-		StringBuffer content = new StringBuffer();
+		StringBuilder content = new StringBuilder();
 		try {
 			content.append(FreeMarkerTemplateUtils
 					.processTemplateIntoString(freemarkerConfiguration.getTemplate(template), model));

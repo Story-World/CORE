@@ -17,11 +17,12 @@ import com.storyworld.domain.elastic.CommentContent;
 import com.storyworld.domain.json.Message;
 import com.storyworld.domain.json.Request;
 import com.storyworld.domain.json.Response;
+import com.storyworld.domain.json.enums.MessageText;
 import com.storyworld.domain.json.enums.StatusMessage;
 import com.storyworld.domain.sql.Comment;
 import com.storyworld.domain.sql.Story;
 import com.storyworld.domain.sql.User;
-import com.storyworld.functionalInterface.JSONPrepare;
+import com.storyworld.functional.JSONPrepare;
 import com.storyworld.repository.elastic.CommentContentRepository;
 import com.storyworld.repository.sql.CommentRepository;
 import com.storyworld.repository.sql.StoryRepository;
@@ -69,14 +70,16 @@ public class CommentServiceHelper {
 			commentContent.setStoryId(story.getId());
 			commentContent.setLikes(0);
 			commentContent.setDislikes(0);
-			commentContent.setDate(LocalDateTime.now().format(FORMATTER).toString());
+			commentContent.setDate(LocalDateTime.now().format(FORMATTER));
 			commentContent = commentContentRepository.save(commentContent);
 			commentSave.set_id(commentContent.getId());
 			commentRepository.save(commentSave);
-			return jsonPrepare.prepareResponse(StatusMessage.SUCCESS, "ADDED2", commentContent, null, true, null);
+			return jsonPrepare.prepareResponse(StatusMessage.SUCCESS, MessageText.ADDED2, commentContent, null, true,
+					null);
 		} catch (Exception e) {
 			LOG.error(e.toString());
-			return jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA3", null, null, false, null);
+			return jsonPrepare.prepareResponse(StatusMessage.ERROR, MessageText.INCORRECT_DATA3, null, null, false,
+					null);
 		}
 	}
 
@@ -84,12 +87,13 @@ public class CommentServiceHelper {
 		Story story = storyRepository.findOne(request.getStory().getId());
 		Optional<Comment> comment = commentRepository.findByAuthorAndStory(user, story);
 		Optional<CommentContent> commentContent = Optional.ofNullable(request.getCommentContent());
-		System.out.println();
 		return Optional.ofNullable(story).isPresent() && commentContent.isPresent() && !comment.isPresent()
 				? tryToSaveComment(user, story, commentContent.get())
 				: Optional.ofNullable(comment).isPresent()
-						? jsonPrepare.prepareResponse(StatusMessage.ERROR, "UNIQUE_COMMENT", null, null, false, null)
-						: jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false, null);
+						? jsonPrepare.prepareResponse(StatusMessage.ERROR, MessageText.UNIQUE_COMMENT, null, null,
+								false, null)
+						: jsonPrepare.prepareResponse(StatusMessage.ERROR, MessageText.INCORRECT_DATA, null, null,
+								false, null);
 	}
 
 	public synchronized Response<CommentContent> updateCommentContent(Optional<Comment> comment, User user,
@@ -97,11 +101,11 @@ public class CommentServiceHelper {
 		CommentContent commentContent = commentContentRepository.findOne(comment.get().get_id());
 		commentContent.setEdited(true);
 		commentContent.setContent(commentContentRequest.getContent());
-		commentContent.setDate(LocalDateTime.now().format(FORMATTER).toString());
+		commentContent.setDate(LocalDateTime.now().format(FORMATTER));
 		commentContent = commentContentRepository.save(commentContent);
 		user.setLastActionTime(LocalDateTime.now());
 		userRepository.save(user);
-		return jsonPrepare.prepareResponse(StatusMessage.SUCCESS, "UPDATED", commentContent, null, true, null);
+		return jsonPrepare.prepareResponse(StatusMessage.SUCCESS, MessageText.UPDATED, commentContent, null, true, null);
 	}
 
 	public synchronized Response<CommentContent> deleteComment(Optional<Comment> comment, Optional<User> user) {
@@ -110,7 +114,7 @@ public class CommentServiceHelper {
 		commentRepository.delete(comment.get());
 		user.get().setLastActionTime(LocalDateTime.now());
 		userRepository.save(user.get());
-		return jsonPrepare.prepareResponse(StatusMessage.SUCCESS, "DELETED", null, null, true, null);
+		return jsonPrepare.prepareResponse(StatusMessage.SUCCESS, MessageText.DELETED, null, null, true, null);
 	}
 
 	public Response<CommentContent> prepareComments(User user) {

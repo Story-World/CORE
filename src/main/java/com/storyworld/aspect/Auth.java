@@ -17,7 +17,6 @@ public class Auth {
 
 	@Around(value = "execution(* *()) " + "&& @annotation(com.storyworld.annotations.Secure)")
 	public void auth(ProceedingJoinPoint pjp) throws Throwable {
-		System.out.println("ASPECT");
 		Object[] args = pjp.getArgs();
 		Method method = ((MethodSignature) pjp.getSignature()).getMethod();
 		Secure secure = method.getAnnotation(Secure.class);

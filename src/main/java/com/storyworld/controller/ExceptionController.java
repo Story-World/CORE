@@ -19,11 +19,12 @@ public class ExceptionController {
 	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
 	@ExceptionHandler
-	public ResponseEntity<?> handleControllerException(HttpServletRequest request, Throwable ex) throws IOException {
+	public ResponseEntity<Object> handleControllerException(HttpServletRequest request, Throwable ex)
+			throws IOException {
 		final StringWriter sw = new StringWriter();
 		final PrintWriter pw = new PrintWriter(sw, true);
 		ex.printStackTrace(pw);
-		LOG.error(request.getReader() + " " + sw.getBuffer().toString());
+		LOG.error("%s %s", request.getReader(), sw.getBuffer().toString());
 		return new ResponseEntity<>("status", HttpStatus.OK);
 	}
 

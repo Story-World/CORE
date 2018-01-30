@@ -1,6 +1,5 @@
 package com.storyworld.domain.sql;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -32,9 +31,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @Entity
 @Table(name = "STORY")
-public class Story extends BasicWithNameEntity implements Serializable {
-
-	private static final long serialVersionUID = -3972670387724832603L;
+public class Story extends BasicWithNameEntity {
 
 	@NotNull
 	private String contentId;

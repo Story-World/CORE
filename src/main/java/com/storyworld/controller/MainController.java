@@ -14,7 +14,7 @@ public class MainController {
 
 	@Secure
 	@RequestMapping
-	public ResponseEntity<Response<?>> defaultHandler() {
-		return new ResponseEntity<Response<?>>(new Response<Object>(), HttpStatus.OK);
+	public ResponseEntity<Response<Object>> defaultHandler() {
+		return new ResponseEntity<Response<Object>>(new Response<Object>(), HttpStatus.OK);
 	}
 }

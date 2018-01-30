@@ -1,7 +1,5 @@
 package com.storyworld.domain.sql;
 
-import java.io.Serializable;
-
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -28,9 +26,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Entity
 @Table(name = "LIKETYPECOMMENT")
-public class LikeTypeComment extends BasicEntity implements Serializable {
-
-	private static final long serialVersionUID = 4448839057155542878L;
+public class LikeTypeComment extends BasicEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

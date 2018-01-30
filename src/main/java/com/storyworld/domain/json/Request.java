@@ -1,6 +1,6 @@
 package com.storyworld.domain.json;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 import org.springframework.data.domain.Sort;
@@ -36,7 +36,7 @@ public class Request {
 
 	private int sizePage;
 
-	private Map<Sort.Direction, String[]> sorts = new HashMap<>();
+	private Map<Sort.Direction, String[]> sorts = new EnumMap<>(Sort.Direction.class);
 
 	public Request(String token) {
 		this.token = token;

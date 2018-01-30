@@ -2,7 +2,8 @@ package com.storyworld.domain.json;
 
 import java.util.List;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import lombok.Data;
 import lombok.ToString;
@@ -11,8 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @ToString
 @NoArgsConstructor
-@SuppressWarnings("deprecation")
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(Include.NON_NULL)
 public class Response<T> {
 
 	private Message message;

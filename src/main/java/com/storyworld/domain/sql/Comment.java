@@ -1,7 +1,5 @@
 package com.storyworld.domain.sql;
 
-import java.io.Serializable;
-
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -24,9 +22,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Entity
 @Table(name = "COMMENT")
-public class Comment extends BasicEntity implements Serializable {
-
-	private static final long serialVersionUID = 2919807702926798174L;
+public class Comment extends BasicEntity {
 
 	private String _id;
 

@@ -3,11 +3,14 @@ package com.storyworld.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.storyworld.domain.elastic.CommentContent;
@@ -18,7 +21,7 @@ import com.storyworld.service.AuthorizationService;
 import com.storyworld.service.CommentService;
 
 @RestController
-@RequestMapping(value = "comment")
+@RequestMapping("/comment")
 public class CommentController {
 
 	@Autowired
@@ -27,40 +30,39 @@ public class CommentController {
 	@Autowired
 	private AuthorizationService authorizationService;
 
-	@RequestMapping(method = RequestMethod.GET)
+	@GetMapping
 	public ResponseEntity<Response<CommentContent>> getCommetsByUser(@RequestHeader("Token") String token) {
 		return new ResponseEntity<Response<CommentContent>>(commentService.getByUser(token), HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/{idStory}/{page}/{pageSize}", method = RequestMethod.GET)
+	@GetMapping("/{idStory}/{page}/{pageSize}")
 	public ResponseEntity<Response<CommentContent>> getCommetsByStory(@PathVariable(value = "idStory") Long idStory,
 			@PathVariable(value = "page") int page, @PathVariable(value = "pageSize") int pageSize) {
 		return new ResponseEntity<Response<CommentContent>>(commentService.get(idStory, page, pageSize), HttpStatus.OK);
 	}
 
-	@RequestMapping(method = RequestMethod.POST)
+	@PostMapping
 	public ResponseEntity<Response<CommentContent>> saveCommet(@RequestBody Request request) {
-		System.out.println(request.toString());
 		return authorizationService.checkAccess(request)
 				? new ResponseEntity<Response<CommentContent>>(commentService.save(request), HttpStatus.OK)
 				: new ResponseEntity<Response<CommentContent>>(new Response<CommentContent>(), HttpStatus.UNAUTHORIZED);
 	}
 
-	@RequestMapping(value = "like", method = RequestMethod.POST)
+	@PostMapping("/like")
 	public ResponseEntity<Response<CommentContent>> like(@RequestBody Request request) {
 		return authorizationService.checkAccess(request)
 				? new ResponseEntity<Response<CommentContent>>(commentService.like(request), HttpStatus.OK)
 				: new ResponseEntity<Response<CommentContent>>(new Response<CommentContent>(), HttpStatus.UNAUTHORIZED);
 	}
 
-	@RequestMapping(value = "dislike", method = RequestMethod.POST)
+	@PostMapping("/dislike")
 	public ResponseEntity<Response<CommentContent>> dislike(@RequestBody Request request) {
 		return authorizationService.checkAccess(request)
 				? new ResponseEntity<Response<CommentContent>>(commentService.dislike(request), HttpStatus.OK)
 				: new ResponseEntity<Response<CommentContent>>(new Response<CommentContent>(), HttpStatus.UNAUTHORIZED);
 	}
 
-	@RequestMapping(method = RequestMethod.PUT)
+	@PutMapping
 	public ResponseEntity<Response<CommentContent>> updateCommet(@RequestBody Request request) {
 		return authorizationService.checkAccessToComment(request)
 				? new ResponseEntity<Response<CommentContent>>(commentService.update(request), HttpStatus.OK)
@@ -68,7 +70,7 @@ public class CommentController {
 
 	}
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	@DeleteMapping("/{id}")
 	public ResponseEntity<Response<CommentContent>> deleteCommet(@PathVariable(value = "id") String _id,
 			@RequestHeader("Token") String token) {
 		return authorizationService.checkAccessToComment(new Request(token, new Comment(_id)))

@@ -3,11 +3,14 @@ package com.storyworld.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.storyworld.domain.json.Request;
@@ -17,7 +20,7 @@ import com.storyworld.service.AuthorizationService;
 import com.storyworld.service.UserService;
 
 @RestController
-@RequestMapping(value = "user")
+@RequestMapping("/user")
 public class UserController {
 
 	@Autowired
@@ -26,37 +29,37 @@ public class UserController {
 	@Autowired
 	private AuthorizationService authorizationService;
 
-	@RequestMapping(value = "login", method = RequestMethod.POST)
+	@PostMapping("/login")
 	public ResponseEntity<Response<User>> login(@RequestBody Request request) {
 		return new ResponseEntity<Response<User>>(userService.login(request), HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "register", method = RequestMethod.POST)
+	@PostMapping("/register")
 	public ResponseEntity<Response<User>> register(@RequestBody Request request) {
 		return new ResponseEntity<Response<User>>(userService.register(request), HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "restartPassword", method = RequestMethod.POST)
+	@PostMapping("/restartPassword")
 	public ResponseEntity<Response<User>> restart(@RequestBody Request request) {
 		return new ResponseEntity<Response<User>>(userService.restartPassword(request), HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "remindPassword", method = RequestMethod.PUT)
+	@PutMapping("/remindPassword")
 	public ResponseEntity<Response<User>> remindPassword(@RequestBody Request request) {
 		return new ResponseEntity<Response<User>>(userService.remindPassword(request), HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "confirmRegister", method = RequestMethod.POST)
+	@PostMapping("/confirmRegister")
 	public ResponseEntity<Response<User>> confirmRegister(@RequestBody Request request) {
 		return new ResponseEntity<Response<User>>(userService.confirmRegister(request), HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "changePassword", method = RequestMethod.PUT)
+	@PutMapping("/changePassword")
 	public ResponseEntity<Response<User>> changePassword(Request request) {
 		return new ResponseEntity<Response<User>>(userService.changePassword(request), HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "updateUser", method = RequestMethod.PUT)
+	@PutMapping("/updateUser")
 	public ResponseEntity<Response<User>> updateUser(@RequestBody Request request) {
 		return authorizationService.checkAccessToUser(request)
 				? new ResponseEntity<Response<User>>(userService.update(request), HttpStatus.OK)
@@ -64,26 +67,26 @@ public class UserController {
 
 	}
 
-	@RequestMapping(value = "block", method = RequestMethod.PUT)
+	@PutMapping("/block")
 	public ResponseEntity<Response<User>> blockUser(@RequestBody Request request) {
 		return authorizationService.checkAccessAdmin(request)
 				? new ResponseEntity<Response<User>>(userService.block(request), HttpStatus.OK)
 				: new ResponseEntity<Response<User>>(new Response<User>(), HttpStatus.UNAUTHORIZED);
 	}
 
-	@RequestMapping(value = "getUsers", method = RequestMethod.POST)
+	@PostMapping("/getUsers")
 	public ResponseEntity<Response<User>> getUsers(@RequestBody Request request) {
 		return authorizationService.checkAccess(request)
 				? new ResponseEntity<Response<User>>(userService.getUsers(request), HttpStatus.OK)
 				: new ResponseEntity<Response<User>>(new Response<User>(), HttpStatus.UNAUTHORIZED);
 	}
 
-	@RequestMapping(value = "logout", method = RequestMethod.POST)
+	@PostMapping("/logout")
 	public ResponseEntity<Response<User>> logout(@RequestBody Request request) {
 		return new ResponseEntity<Response<User>>(userService.logout(request), HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	@DeleteMapping("/{id}")
 	public ResponseEntity<Response<User>> delete(@PathVariable(value = "id") Long id,
 			@RequestHeader("Token") String token) {
 		return authorizationService.checkAccessToUser(new Request(token))
@@ -91,7 +94,7 @@ public class UserController {
 				: new ResponseEntity<Response<User>>(new Response<User>(), HttpStatus.UNAUTHORIZED);
 	}
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	@GetMapping("/{id}")
 	public ResponseEntity<Response<User>> get(@PathVariable(value = "id") Long id,
 			@RequestHeader("Token") String token) {
 		return new ResponseEntity<Response<User>>(userService.getUser(new Request(token)), HttpStatus.OK);

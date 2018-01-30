@@ -1,23 +1,25 @@
 package com.storyworld.service.impl;
 
+import static com.storyworld.conditions.CommonPredicate.validatePageAndPageSize;
+
 import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.storyworld.conditions.CommonPredicate;
 import com.storyworld.domain.elastic.CommentContent;
 import com.storyworld.domain.json.Message;
 import com.storyworld.domain.json.Request;
 import com.storyworld.domain.json.Response;
+import com.storyworld.domain.json.enums.MessageText;
 import com.storyworld.domain.json.enums.StatusMessage;
 import com.storyworld.domain.sql.Comment;
 import com.storyworld.domain.sql.LikeTypeComment;
 import com.storyworld.domain.sql.Story;
 import com.storyworld.domain.sql.User;
 import com.storyworld.domain.sql.enums.LikeType;
-import com.storyworld.functionalInterface.JSONPrepare;
+import com.storyworld.functional.JSONPrepare;
 import com.storyworld.repository.elastic.CommentContentRepository;
 import com.storyworld.repository.sql.CommentRepository;
 import com.storyworld.repository.sql.LikeTypeCommentRepository;
@@ -45,29 +47,25 @@ public class CommentServiceImpl implements CommentService {
 	private LikeTypeCommentRepository likeTypeCommentRepository;
 
 	@Autowired
-	private CommonPredicate commonPredicate;
-
-	@Autowired
 	private CommentServiceHelper commentServiceHelper;
 
-	private JSONPrepare<CommentContent> jsonPrepare = (statusMessage, message, commentContent, list,
-			success, counter) -> new Response<CommentContent>(new Message(statusMessage, message), commentContent, list,
-					success, counter);
+	private JSONPrepare<CommentContent> jsonPrepare = (statusMessage, message, commentContent, list, success,
+			counter) -> new Response<CommentContent>(new Message(statusMessage, message), commentContent, list, success,
+					counter);
 
 	@Override
 	public Response<CommentContent> get(Long idStory, int page, int pageSize) {
 		Story story = storyRepository.findOne(idStory);
-
-		return Optional.ofNullable(story).isPresent() && commonPredicate.validatePageAndPageSize.test(page, pageSize)
+		return Optional.ofNullable(story).isPresent() && validatePageAndPageSize.test(page, pageSize)
 				? commentServiceHelper.prepareCommentContent(story, page, pageSize)
-				: jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false, null);
+				: jsonPrepare.prepareResponse(StatusMessage.ERROR, MessageText.INCORRECT_DATA, null, null, false, null);
 	}
 
 	@Override
 	public Response<CommentContent> save(Request request) {
 		return userRepository.findByToken(request.getToken())
-				.map(user -> commentServiceHelper.prepareToSaveComment(request, user))
-				.orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false, null));
+				.map(user -> commentServiceHelper.prepareToSaveComment(request, user)).orElseGet(() -> jsonPrepare
+						.prepareResponse(StatusMessage.ERROR, MessageText.INCORRECT_DATA, null, null, false, null));
 	}
 
 	@Override
@@ -76,8 +74,10 @@ public class CommentServiceImpl implements CommentService {
 			Optional<Comment> comment = commentRepository.findBy_id(request.getCommentContent().getId());
 			return comment.isPresent() && request.getCommentContent() != null
 					? commentServiceHelper.updateCommentContent(comment, user, request.getCommentContent())
-					: jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false, null);
-		}).orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false, null));
+					: jsonPrepare.prepareResponse(StatusMessage.ERROR, MessageText.INCORRECT_DATA, null, null, false,
+							null);
+		}).orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, MessageText.INCORRECT_DATA, null, null,
+				false, null));
 	}
 
 	@Override
@@ -85,7 +85,7 @@ public class CommentServiceImpl implements CommentService {
 		Optional<User> user = userRepository.findByToken(request.getToken());
 		Optional<Comment> comment = commentRepository.findBy_id(request.getComment().get_id());
 		return user.isPresent() && comment.isPresent() ? commentServiceHelper.deleteComment(comment, user)
-				: jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false, null);
+				: jsonPrepare.prepareResponse(StatusMessage.ERROR, MessageText.INCORRECT_DATA, null, null, false, null);
 	}
 
 	@Override
@@ -113,12 +113,16 @@ public class CommentServiceImpl implements CommentService {
 					commentContent = commentContentRepository.save(commentContent);
 					user.setLastActionTime(LocalDateTime.now());
 					userRepository.save(user);
-					return jsonPrepare.prepareResponse(StatusMessage.SUCCESS, "LIKED", commentContent, null, true, null);
+					return jsonPrepare.prepareResponse(StatusMessage.SUCCESS, MessageText.LIKED, commentContent, null,
+							true, null);
 				} else
-					return jsonPrepare.prepareResponse(StatusMessage.WARNING, "UNIQUE_LIKE", null, null, true, null);
+					return jsonPrepare.prepareResponse(StatusMessage.WARNING, MessageText.UNIQUE_LIKE, null, null, true,
+							null);
 			} else
-				return jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false, null);
-		}).orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false, null));
+				return jsonPrepare.prepareResponse(StatusMessage.ERROR, MessageText.INCORRECT_DATA, null, null, false,
+						null);
+		}).orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, MessageText.INCORRECT_DATA, null, null,
+				false, null));
 	}
 
 	@Override
@@ -132,7 +136,7 @@ public class CommentServiceImpl implements CommentService {
 						comment.get());
 				if ((likeTypeComment.isPresent() && likeTypeComment.get().getLikeType().equals(LikeType.LIKE))
 						|| !likeTypeComment.isPresent()) {
-					if (likeTypeComment != null && likeTypeComment.get().getLikeType().equals(LikeType.LIKE)) {
+					if (likeTypeComment.isPresent() && likeTypeComment.get().getLikeType().equals(LikeType.LIKE)) {
 						int like = commentContent.getLikes() - 1;
 						commentContent.setLikes(like);
 						likeTypeComment.get().setLikeType(LikeType.DISLIKE);
@@ -147,12 +151,16 @@ public class CommentServiceImpl implements CommentService {
 					commentContent = commentContentRepository.save(commentContent);
 					user.setLastActionTime(LocalDateTime.now());
 					userRepository.save(user);
-					return jsonPrepare.prepareResponse(StatusMessage.SUCCESS, "DISLIKED", commentContent, null, true, null);
+					return jsonPrepare.prepareResponse(StatusMessage.SUCCESS, MessageText.DISLIKED, commentContent,
+							null, true, null);
 				} else
-					return jsonPrepare.prepareResponse(StatusMessage.WARNING, "UNIQUE_LIKE", null, null, true, null);
+					return jsonPrepare.prepareResponse(StatusMessage.WARNING, MessageText.UNIQUE_LIKE, null, null, true,
+							null);
 			} else
-				return jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false, null);
-		}).orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, "INCORRECT_DATA", null, null, false, null));
+				return jsonPrepare.prepareResponse(StatusMessage.ERROR, MessageText.INCORRECT_DATA, null, null, false,
+						null);
+		}).orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, MessageText.INCORRECT_DATA, null, null,
+				false, null));
 	}
 
 	@Override
@@ -164,8 +172,8 @@ public class CommentServiceImpl implements CommentService {
 		} catch (Exception e) {
 			userGet = userRepository.findByToken(token);
 		}
-		return userGet.map(user -> commentServiceHelper.prepareComments(user))
-				.orElseGet(() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, "", null, null, false, null));
+		return userGet.map(user -> commentServiceHelper.prepareComments(user)).orElseGet(
+				() -> jsonPrepare.prepareResponse(StatusMessage.ERROR, MessageText.NULL, null, null, false, null));
 	}
 
 }

@@ -1,6 +1,5 @@
 package com.storyworld.domain.sql;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -34,9 +33,7 @@ import lombok.ToString;
 @Entity
 @Table(name = "USER")
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-public class User extends BasicWithNameEntity implements Serializable {
-
-	private static final long serialVersionUID = -3325353040709283369L;
+public class User extends BasicWithNameEntity {
 
 	@NotNull
 	@Length(min = 6, max = 255)
