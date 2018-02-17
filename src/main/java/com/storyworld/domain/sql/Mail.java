@@ -1,6 +1,6 @@
 package com.storyworld.domain.sql;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -8,6 +8,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import org.springframework.data.annotation.LastModifiedDate;
 
 import com.storyworld.domain.sql.basic.BasicEntity;
 import com.storyworld.domain.sql.enums.Status;
@@ -32,7 +34,8 @@ public class Mail extends BasicEntity {
 	@Enumerated(EnumType.STRING)
 	private Status status;
 
-	private LocalDateTime sent;
+	@LastModifiedDate
+	private Date lastModifiedDate;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	private User user;

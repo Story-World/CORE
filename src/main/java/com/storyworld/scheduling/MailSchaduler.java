@@ -19,7 +19,7 @@ public class MailSchaduler {
 
 	@Scheduled(fixedRate = 60000)
 	public void sendMail() {
-		mailRepository.findByStatus(Status.READY).get().forEach(mailService::send);
+		mailRepository.findByStatus(Status.READY).ifPresent(x -> x.forEach(mailService::send));
 	}
 
 }

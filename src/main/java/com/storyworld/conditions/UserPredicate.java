@@ -29,7 +29,7 @@ public class UserPredicate {
 	public static final BiPredicate<User, Request> vaildUserLogin = (user,
 			request) -> user.getName().equals(request.getUser().getName())
 					&& user.getPassword().equals(request.getUser().getPassword())
-					&& (!user.isBlock() || !user.isBlock() || (user.getLastIncorrectLogin() != null
+					&& (!user.isBlock() || (user.getLastIncorrectLogin() != null
 							&& checkValidTimeInMinutes.test(user.getLastIncorrectLogin(), 10)));
 
 }

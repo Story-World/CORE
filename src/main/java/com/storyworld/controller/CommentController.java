@@ -67,7 +67,6 @@ public class CommentController {
 		return authorizationService.checkAccessToComment(request)
 				? new ResponseEntity<Response<CommentContent>>(commentService.update(request), HttpStatus.OK)
 				: new ResponseEntity<Response<CommentContent>>(new Response<CommentContent>(), HttpStatus.UNAUTHORIZED);
-
 	}
 
 	@DeleteMapping("/{id}")

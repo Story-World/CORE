@@ -1,6 +1,5 @@
 package com.storyworld.service.impl;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -64,7 +63,6 @@ public class MailServiceImpl implements MailService {
 		};
 		try {
 			mailSender.send(preparator);
-			mail.setSent(LocalDateTime.now());
 			mail.setStatus(Status.FINISHED);
 		} catch (Exception e) {
 			LOG.error(e.getMessage());

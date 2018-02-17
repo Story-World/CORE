@@ -1,6 +1,5 @@
 package com.storyworld.domain.sql;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -16,6 +15,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
 import com.storyworld.domain.sql.basic.BasicWithNameEntity;
+import com.storyworld.domain.sql.enums.SchedulerStatus;
 import com.storyworld.domain.sql.enums.StoryType;
 
 import lombok.AllArgsConstructor;
@@ -40,13 +40,14 @@ public class Story extends BasicWithNameEntity {
 	@Length(min = 4, max = 255)
 	private String description;
 
-	private LocalDateTime date;
-
 	@Enumerated(EnumType.STRING)
 	@NotNull
 	private StoryType type;
 
 	private Float avgRate;
+
+	@Enumerated(EnumType.STRING)
+	private SchedulerStatus status;
 
 	@Transient
 	private String rawText;
@@ -59,11 +60,11 @@ public class Story extends BasicWithNameEntity {
 	@NotNull
 	private User author;
 
-	public Story(String name, String description, LocalDateTime date, StoryType type, User author) {
+	public Story(String name, String description, StoryType type, User author) {
 		super(name);
 		this.description = description;
-		this.date = date;
 		this.type = type;
 		this.author = author;
 	}
+
 }

@@ -42,7 +42,6 @@ public class StoryServiceHelper {
 	public Response<Story> tryToSaveStroy(Story storyRequest, User user) {
 		Story story = storyRequest;
 		story.setAuthor(user);
-		story.setDate(LocalDateTime.now());
 		StoryContent storyContent = new StoryContent();
 		List<String> pages = new ArrayList<>();
 		pages.add(story.getRawText());
