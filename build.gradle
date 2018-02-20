@@ -39,6 +39,7 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-mail')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.aspectj:aspectjweaver:1.8.11')
+	compile("org.springframework.boot:spring-boot-starter-activemq")
 	runtime('mysql:mysql-connector-java')
 	compileOnly('org.projectlombok:lombok')
 	providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')

@@ -27,6 +27,8 @@ import lombok.ToString;
 @JsonInclude(Include.NON_NULL)
 public class BasicWithNameEntity extends BasicEntity {
 
+	private static final long serialVersionUID = 5728401069192040967L;
+
 	@NotNull
 	@Column(unique = true)
 	@Length(min = 4, max = 255)

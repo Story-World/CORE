@@ -65,8 +65,7 @@ public class CommentServiceHelper {
 		try {
 			user.setLastActionTime(LocalDateTime.now());
 			userRepository.save(user);
-			user = new User(user.getId(), user.getName());
-			commentContent.setAuthor(user);
+			commentContent.setAuthorName(user.getName());
 			commentContent.setStoryId(story.getId());
 			commentContent.setLikes(0);
 			commentContent.setDislikes(0);

@@ -1,5 +1,6 @@
 package com.storyworld.domain.sql.basic;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.EntityListeners;
@@ -24,7 +25,9 @@ import lombok.NoArgsConstructor;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @JsonInclude(Include.NON_NULL)
-public class BasicEntity {
+public class BasicEntity implements Serializable {
+
+	private static final long serialVersionUID = 211795915916009456L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

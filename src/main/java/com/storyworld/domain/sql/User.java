@@ -35,6 +35,8 @@ import lombok.ToString;
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class User extends BasicWithNameEntity {
 
+	private static final long serialVersionUID = -351631306623818778L;
+
 	@NotNull
 	@Length(min = 6, max = 255)
 	@JsonProperty(access = Access.WRITE_ONLY)

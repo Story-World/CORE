@@ -8,7 +8,6 @@ import org.springframework.data.elasticsearch.annotations.Document;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.storyworld.domain.sql.User;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -28,7 +27,7 @@ public class CommentContent {
 	@Length(min = 4, max = 255)
 	private String content;
 
-	private User author;
+	private String authorName;
 
 	private int likes;
 

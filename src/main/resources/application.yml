@@ -34,3 +34,9 @@ spring:
       mail.smtp.starttls.required: true
       mail.transport.protocol: smtp
       mail.debug: true
+  activemq:
+    broker-url: tcp://localhost:61616
+    user: admin
+    password: admin
+    packages:
+      trust-all: true

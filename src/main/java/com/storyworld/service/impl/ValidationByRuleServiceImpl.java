@@ -39,10 +39,12 @@ public class ValidationByRuleServiceImpl implements ValidationByRuleService {
 		inventorContext.registerFunction("cenzoreWords", ValidationByRuleServiceImpl.class
 				.getDeclaredMethod("cenzoreWords", new Class[] { List.class, String[].class }));
 		try {
+			System.out.println(storyContent.getPages().get(0));
 			rules.stream().map(StoryRule::getScript)
-					.forEach(script -> parser.parseExpression(script).getValue(inventorContext));
+					.forEach(script -> System.out.println(parser.parseExpression(script).getValue(inventorContext)));
 			if (!storyContent.getTitle().equals(story.getName()))
 				story.setName(storyContent.getTitle());
+			System.out.println(storyContent.getPages().get(0));
 			story.setStatus(SchedulerStatus.PUBLISHED);
 			storyContentRepository.save(storyContent);
 		} catch (Exception e) {
@@ -54,8 +56,8 @@ public class ValidationByRuleServiceImpl implements ValidationByRuleService {
 	}
 
 	private static void cenzoreWords(List<String> pages, String[] words) {
-		pages.forEach(System.out::println);
-		System.out.println(words[0]);
+		// pages.forEach(System.out::println);
+		// System.out.println(words[0]);
 	}
 
 }
